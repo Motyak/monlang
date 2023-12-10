@@ -1,6 +1,7 @@
 CFLAGS_RELEASE = -c --std=c++17 -Wall -Wextra -O0
 CFLAGS_DEBUG = -c --std=c++17 -Wall -Wextra -Og -g
 
+
 # make (default builds release)
 all: release
 
@@ -18,6 +19,7 @@ clean:
 mrproper:
 	rm -rf obj bin
 
+
 ##########################
 # RELEASE
 ##########################
@@ -34,6 +36,7 @@ bin/release/monlang: obj/release/monlang.o
 # RELEASE (end)
 ##########################
 
+
 ##########################
 # DEBUG
 ##########################
@@ -49,8 +52,6 @@ bin/debug/monlang: obj/debug/monlang.o
 ##########################
 # DEBUG (end)
 ##########################
-
-
 
 
 .PHONY: all release debug clean mrproper
