@@ -17,6 +17,26 @@ Ternary operators must have one space between each operator/operand as well
 
 ---
 
-Scanner:
-1) Split the program to lines
-2) 
+# First scanner (first lexical analysis pass):
+
+PROGRAM := (PROGRAM-SENTENCE NEWLINE)*
+
+---
+
+PROGRAM-SENTENCE := PROGRAM-WORD (SPACE PROG-WORD)*
+
+---
+
+PROGRAM-WORD := ASSOCIATION | PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | CURLY-BRACKETS-GROUP | ATOM
+
+---
+
+ASSOCIATION := {PROGRAM-WORD - ASSOCIATION} ':' ASSOCIATION
+
+PARENTHESES-GROUP := '(' (ATOM (',' SPACE ATOM)*)? ')'
+
+SQUARE-BRACKETS-GROUP := '[' (ATOM (',' SPACE ATOM)*)? ']'
+
+CURLY-BRACKETS-GROUP := '{' (PROGRAM-SENTENCE NEWLINE (PROGRAM-SENTENCE NEWLINE)*)? '}'
+
+---
