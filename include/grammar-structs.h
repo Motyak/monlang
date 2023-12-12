@@ -46,6 +46,7 @@ struct CurlyBracketsGroup {
 
 struct Association;
 using ProgramWord = std::variant<Association*, ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*, Atom*>;
+const std::string SENTENCE_TERMINATOR = "\n";
 
 using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*, Atom*>;
 

@@ -87,7 +87,7 @@ let make-account (balance):{
 
 var account make-account(100)
 let acc-withdraw(x) account("withdraw", x)
-let acc-deposit account("deposit", x)
+let acc-deposit(x) account("deposit", x)
 
 acc-withdraw(25) # 75
 acc-withdraw(25) # 50
