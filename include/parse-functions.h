@@ -8,18 +8,19 @@
 
 Program consumeProgram(std::istringstream&);
 
-ProgramSentence consumeProgramSentence(std::istringstream&);
+ProgramSentence* consumeProgramSentence(std::istringstream&);
 
 ProgramWord consumeProgramWord(std::istringstream&);
 ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
-std::optional<Association> tryConsumeAssociation(std::istringstream&);
+std::optional<Association*> tryConsumeAssociation(std::istringstream&);
 std::optional<ParenthesesGroup> tryConsumeParenthesesGroup(std::istringstream&);
 std::optional<SquareBracketsGroup> tryConsumeSquareBracketsGroup(std::istringstream&);
-std::optional<DoubleQuotesGroup> tryConsumeDoubleQuotesGroup(std::istringstream&);
+std::optional<Quotation> tryConsumeQuotation(std::istringstream&);
 std::optional<CurlyBracketsGroup> tryConsumeCurlyBracketsGroup(std::istringstream&);
+Quoted consumeQuoted(std::istringstream&);
 Atom consumeAtom(std::istringstream&);
 
-void consumeSequence(std::string sequence, std::istringstream& input);
+void consumeSequence(std::vector<char> sequence, std::istringstream& input);
 
 #endif // PARSE_FUNCTIONS_H
