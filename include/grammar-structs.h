@@ -41,6 +41,17 @@ struct Quoted {
     std::string value;
 };
 
+struct Quotation {
+    Quoted quoted;
+};
+
+struct ParenthesesGroup;
+struct SquareBracketsGroup;
+struct CurlyBracketsGroup;
+struct Association;
+using ProgramWord = std::variant<ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Association*, Atom>;
+using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Atom>;
+
 struct ParenthesesGroup {
     std::vector<ProgramWord> words;
 };
@@ -49,31 +60,21 @@ struct SquareBracketsGroup {
     std::vector<ProgramWord> words;
 };
 
-struct Quotation {
-    Quoted quoted;
+struct ProgramSentence {
+    std::vector<ProgramWord> words;
 };
 
-struct ProgramSentence;
 struct CurlyBracketsGroup {
-    std::vector<ProgramSentence*> sentences;
+    std::vector<ProgramSentence> sentences;
 };
-
-struct Association;
-using ProgramWord = std::variant<Association*, ParenthesesGroup, SquareBracketsGroup, Quotation, CurlyBracketsGroup, Atom>;
-
-using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup, SquareBracketsGroup, Quotation, CurlyBracketsGroup, Atom>;
 
 struct Association {
     ProgramWordWithoutAssociation firstWord;
     ProgramWord secondWord;
 };
 
-struct ProgramSentence {
-    std::vector<ProgramWord> words;
-};
-
 struct Program {
-    std::vector<ProgramSentence*> sentences;
+    std::vector<ProgramSentence> sentences;
 };
 
 #endif // GRAMMAR_STRUCTS_H

@@ -4,7 +4,7 @@
 #include <iostream>
 
 Program consumeProgram(std::istringstream& input) {
-    std::vector<ProgramSentence*> sentences;
+    std::vector<ProgramSentence> sentences;
     while (input) {
         auto currentSentence = consumeProgramSentence(input);
         consumeSequence({'\n'}, input); // throw exception if not found
@@ -13,7 +13,7 @@ Program consumeProgram(std::istringstream& input) {
     return Program{sentences};
 }
 
-ProgramSentence* consumeProgramSentence(std::istringstream& input) {
+ProgramSentence consumeProgramSentence(std::istringstream& input) {
     std::vector<ProgramWord> words;
     auto currentWord = consumeProgramWord(input);
     words.push_back(currentWord);
@@ -22,25 +22,25 @@ ProgramSentence* consumeProgramSentence(std::istringstream& input) {
         currentWord = consumeProgramWord(input);
         words.push_back(currentWord);
     }
-    return new ProgramSentence{words};
+    return ProgramSentence{words};
 }
 
 ProgramWord consumeProgramWord(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-        return *potentialParenthesesGroup;
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-        return *potentialSquareBracketsGroup;
-    }
-    if (auto potentialQuotation = tryConsumeQuotation(input)) {
-        return *potentialQuotation;
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
-        return *potentialCurlyBracketsGroup;
-    }
-    if (auto potentialAssociation = tryConsumeAssociation(input)) {
-        return *potentialAssociation;
-    }
+    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
+    //     return *potentialParenthesesGroup;
+    // }
+    // if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
+    //     return *potentialSquareBracketsGroup;
+    // }
+    // if (auto potentialQuotation = tryConsumeQuotation(input)) {
+    //     return *potentialQuotation;
+    // }
+    // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
+    //     return *potentialCurlyBracketsGroup;
+    // }
+    // if (auto potentialAssociation = tryConsumeAssociation(input)) {
+    //     return *potentialAssociation;
+    // }
     return consumeAtom(input);
 }
 
@@ -60,7 +60,7 @@ ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istrings
     return consumeAtom(input);
 }
 
-std::optional<ParenthesesGroup> tryConsumeParenthesesGroup(std::istringstream& input) {
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream& input) {
     // backup initial istringstream, try stuff, then if it fails rollback (restore backup)
     // save initial position
     auto initialPosition = input.tellg();
@@ -69,7 +69,7 @@ std::optional<ParenthesesGroup> tryConsumeParenthesesGroup(std::istringstream& i
     input.seekg(initialPosition);
 }
 
-std::optional<SquareBracketsGroup> tryConsumeSquareBracketsGroup(std::istringstream& input) {
+std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(std::istringstream& input) {
     if (input.peek() != '[') {
         return {};
     }
@@ -80,7 +80,7 @@ std::optional<SquareBracketsGroup> tryConsumeSquareBracketsGroup(std::istringstr
     switch (input.peek()) {
         case ']':
             input.ignore(1);
-            return SquareBracketsGroup{words};
+            return new SquareBracketsGroup{words};
 
         case EOF:
             std::cerr << "unexpected EOF while about to parse a program word in square brackets group" << std::endl;
@@ -101,7 +101,7 @@ std::optional<SquareBracketsGroup> tryConsumeSquareBracketsGroup(std::istringstr
     }
     input.ignore(1); // consume closing square bracket
 
-    return SquareBracketsGroup{words};
+    return new SquareBracketsGroup{words};
 }
 
 std::optional<Quotation> tryConsumeQuotation(std::istringstream& input) {
@@ -123,7 +123,7 @@ std::optional<Quotation> tryConsumeQuotation(std::istringstream& input) {
     return Quotation{quoted};
 }
 
-std::optional<CurlyBracketsGroup> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
 
 }
 
@@ -155,7 +155,7 @@ Atom consumeAtom(std::istringstream& input) {
 void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
     for (auto c: sequence) {
         if (input.peek() != c) {
-            std::cerr << "was expecting `" << c << "` but found " << input.peek() << std::endl;
+            std::cerr << "was expecting `" << c << "` but found `" << (char)input.peek() << "`" << std::endl;
             exit(1);
         }
         input.ignore(1);
