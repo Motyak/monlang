@@ -14,15 +14,21 @@ PROGRAM-SENTENCE := PROGRAM-WORD (SPACE PROG-WORD)*
 
 ---
 
-PROGRAM-WORD := ASSOCIATION | PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | CURLY-BRACKETS-GROUP | ATOM
+PROGRAM-WORD := ASSOCIATION | PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | DOUBLE-QUOTES-GROUP | CURLY-BRACKETS-GROUP | ATOM
 
 ---
 
 ASSOCIATION := {PROGRAM-WORD - ASSOCIATION} ':' PROGRAM-WORD
 
-PARENTHESES-GROUP := '(' (ATOM (',' SPACE ATOM)*)? ')'
+PARENTHESES-GROUP := '(' (PROGRAM-WORD 
+    (',' SPACE PROGRAM-WORD)* 
+    | (SPACE PROGRAM-WORD)*
+    )? ')'
 
-SQUARE-BRACKETS-GROUP := '[' (ATOM (',' SPACE ATOM)*)? ']'
+SQUARE-BRACKETS-GROUP := '[' (PROGRAM-WORD (',' SPACE PROGRAM-WORD)*)? ']'
+
+DOUBLE-QUOTES-GROUP := '"' ATOM '"'
+// note: should be /(?!\)"/ rather than /"/, otherwise escaped double quote can be misinterpreted
 
 CURLY-BRACKETS-GROUP := '{' PROGRAM-SENTENCE? | (NEWLINE PROGRAM-SENTENCE (NEWLINE PROGRAM-SENTENCE)*) '}'
 */
@@ -32,23 +38,26 @@ struct Atom {
 };
 
 struct ParenthesesGroup {
-    std::vector<Atom*> atoms;
+    std::vector<Atom> atoms;
 };
 
 struct SquareBracketsGroup {
-    std::vector<Atom*> atoms;
+    std::vector<Atom> atoms;
+};
+
+struct DoubleQuotesGroup {
+    Atom atom;
 };
 
 struct ProgramSentence;
 struct CurlyBracketsGroup {
-    std::vector<ProgramSentence*> sentences;
+    std::vector<ProgramSentence> sentences;
 };
 
 struct Association;
-using ProgramWord = std::variant<Association*, ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*, Atom*>;
-const std::string SENTENCE_TERMINATOR = "\n";
+using ProgramWord = std::variant<Association, ParenthesesGroup, SquareBracketsGroup, DoubleQuotesGroup, CurlyBracketsGroup, Atom>;
 
-using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*, Atom*>;
+using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup, SquareBracketsGroup, DoubleQuotesGroup, CurlyBracketsGroup, Atom>;
 
 struct Association {
     ProgramWordWithoutAssociation firstWord;
@@ -60,7 +69,7 @@ struct ProgramSentence {
 };
 
 struct Program {
-    std::vector<ProgramSentence*> sentences;
+    std::vector<ProgramSentence> sentences;
 };
 
 #endif // GRAMMAR_STRUCTS_H

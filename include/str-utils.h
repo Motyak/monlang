@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 
 std::vector<std::string> split(const std::string& input, const std::string& delim) {
     std::vector<std::string> res;
@@ -26,6 +27,10 @@ std::vector<std::string> split(const std::string& input, const std::string& deli
     }
     res.push_back(token);
     return res;
+}
+
+std::string peekRemainingCharacters(std::istringstream& iss) {
+    return iss.str().substr(iss.tellg());
 }
 
 #endif //STR_UTILS_H

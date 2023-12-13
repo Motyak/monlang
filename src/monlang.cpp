@@ -15,7 +15,5 @@ std::istringstream slurpInputStream(std::istream& inputStream) {
 int main()
 {
     std::istringstream input = slurpInputStream(std::cin);
-    
-    // parseWord()
 
 }

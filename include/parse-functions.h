@@ -4,18 +4,22 @@
 #include <grammar-structs.h>
 
 #include <optional>
+#include <sstream>
 
-Program parseProgram(const std::string& input);
+Program consumeProgram(std::istringstream&);
 
-ProgramSentence* parseProgramSentence(const std::string&);
+ProgramSentence consumeProgramSentence(std::istringstream&);
 
-ProgramWord parseProgramWord(const std::string&);
-ProgramWordWithoutAssociation parseProgramWordWithoutAssociation(const std::string&);
+ProgramWord consumeProgramWord(std::istringstream&);
+ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
-std::optional<Association*> tryParseAssociation(const std::string&);
-std::optional<ParenthesesGroup*> tryParseParenthesesGroup(const std::string&);
-std::optional<SquareBracketsGroup*> tryParseSquareBracketsGroup(const std::string&);
-std::optional<CurlyBracketsGroup*> tryParseCurlyBracketsGroup(const std::string&);
-Atom* parseAtom(const std::string&);
+std::optional<Association> tryConsumeAssociation(std::istringstream&);
+std::optional<ParenthesesGroup> tryConsumeParenthesesGroup(std::istringstream&);
+std::optional<SquareBracketsGroup> tryConsumeSquareBracketsGroup(std::istringstream&);
+std::optional<DoubleQuotesGroup> tryConsumeDoubleQuotesGroup(std::istringstream&);
+std::optional<CurlyBracketsGroup> tryConsumeCurlyBracketsGroup(std::istringstream&);
+Atom consumeAtom(std::istringstream&);
+
+void consumeSequence(std::string sequence, std::istringstream& input);
 
 #endif // PARSE_FUNCTIONS_H
