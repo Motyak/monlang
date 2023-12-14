@@ -57,33 +57,60 @@ using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBrac
 struct ParenthesesGroup {
     std::vector<ProgramWord> words;
 
-    static const std::vector<char> WORD_TERMINATORS;
+    static const std::vector<char> CONTINUATOR_SEQUENCE;
+    static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static ProgramWord consumeProgramWord(std::istringstream&);
+
+  private:
+    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
+    static Atom consumeAtom(std::istringstream&);
 };
 
 struct SquareBracketsGroup {
     std::vector<ProgramWord> words;
 
-    static const std::vector<char> WORD_TERMINATORS;
+    static const std::vector<char> CONTINUATOR_SEQUENCE;
+    static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static ProgramWord consumeProgramWord(std::istringstream&);
+
+  private:
+    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
+    static Atom consumeAtom(std::istringstream&);
 };
 
 struct ProgramSentence {
     std::vector<ProgramWord> words;
 
-    static const std::vector<char> WORD_TERMINATORS;
+    static const std::vector<char> CONTINUATOR_SEQUENCE;
+    static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static ProgramWord consumeProgramWord(std::istringstream&);
+
+  private:
+    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
+    static Atom consumeAtom(std::istringstream&);
 };
 
 struct CurlyBracketsGroup {
     std::vector<ProgramSentence> sentences;
-
-    static const std::vector<char> SENTENCE_TERMINATORS; // }
 };
 
 struct Association {
     ProgramWordWithoutAssociation leftPart;
     ProgramWord rightPart;
 
-    static const std::vector<char> LEFT_PART_TERMINATORS; // :
-    static const std::vector<char> RIGHT_PART_TERMINATORS; // SPACE or NEWLINE
+    static const std::vector<char> SEPARATOR_SEQUENCE;
+
+    std::vector<char> TERMINATOR_SEQUENCE(); // inherits terminator from parent, have to do a look-up
+    static ProgramWord consumeProgramWord(std::istringstream&);
+
+  private:
+    std::variant<ProgramSentence, ParenthesesGroup*, SquareBracketsGroup*, Association*> parent;
+
+    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
+    static Atom consumeAtom(std::istringstream&);
 };
 
 struct Program {
@@ -92,18 +119,18 @@ struct Program {
 
 Program consumeProgram(std::istringstream&);
 
-ProgramSentence consumeProgramSentence(const std::vector<char> terminators, std::istringstream&);
+ProgramSentence consumeProgramSentence(std::istringstream&);
 
-ProgramWord consumeProgramWord(const std::vector<char> terminators, std::istringstream&);
-ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(const std::vector<char> terminators, std::istringstream&);
+// ProgramWord consumeProgramWord(std::istringstream&);
+// ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
-std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(const std::vector<char> terminators, std::istringstream&);
-std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(const std::vector<char> terminators, std::istringstream&);
-std::optional<Quotation> tryConsumeQuotation(const std::vector<char> terminators, std::istringstream&);
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(const std::vector<char> terminators, std::istringstream&);
-std::optional<Association*> tryConsumeAssociation(const std::vector<char> terminators, std::istringstream&);
-Quoted consumeQuoted(const std::vector<char> terminators, std::istringstream&);
-Atom consumeAtom(const std::vector<char> terminators, std::istringstream&);
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&);
+std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(std::istringstream&);
+std::optional<Quotation> tryConsumeQuotation(std::istringstream&);
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&);
+// std::optional<Association*> tryConsumeAssociation(std::istringstream&);
+Quoted consumeQuoted(std::istringstream&);
+// Atom consumeAtom(std::istringstream&);
 
 void consumeSequence(std::vector<char> sequence, std::istringstream& input);
 
