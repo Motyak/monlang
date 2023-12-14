@@ -100,15 +100,15 @@ struct CurlyBracketsGroup {
 struct Association {
     ProgramWordWithoutAssociation leftPart;
     ProgramWord rightPart;
+    // std::variant<ProgramSentence, ParenthesesGroup*, SquareBracketsGroup*, Association*> parent;
 
     static const std::vector<char> SEPARATOR_SEQUENCE;
 
-    std::vector<char> TERMINATOR_SEQUENCE(); // inherits terminator from parent, have to do a look-up
+    // std::vector<char> TERMINATOR_SEQUENCE(); // inherits terminator from parent, have to do a look-up
     static ProgramWord consumeProgramWord(std::istringstream&);
+    static ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
   private:
-    std::variant<ProgramSentence, ParenthesesGroup*, SquareBracketsGroup*, Association*> parent;
-
     static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
     static Atom consumeAtom(std::istringstream&);
 };

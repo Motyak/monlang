@@ -36,10 +36,23 @@ ProgramWord ParenthesesGroup::consumeProgramWord(std::istringstream& input) {
 
 std::optional<Association*> ParenthesesGroup::tryConsumeAssociation(std::istringstream& input) {
     
+    auto firstPart = Association::consumeProgramWordWithoutAssociation(input);
+
+    for (auto c: Association::SEPARATOR_SEQUENCE) {
+        if (input.peek() != c) {
+        std::cerr << "was expecting `" << c << "` but found " << input.peek() << std::endl;
+            exit(1);
+        }
+        input.ignore(1); // consume character
+    }
+
+    auto secondPart = consumeProgramWord(input); //recursive until hitting an Atom as ProgramWord
+
+    return new Association{firstPart, secondPart};
 }
 
 Atom ParenthesesGroup::consumeAtom(std::istringstream& input) {
-
+    // consume characters until hitting ')' or NEWLINE
 }
 
 // -------------------------------------

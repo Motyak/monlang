@@ -101,6 +101,8 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(std::istringst
     }
     input.ignore(1); // consume closing square bracket
 
+    // si le prochain caractère est un ':', ALORS on appelle consumeAssociation(leftPart, input); ou la leftPart est le ProgramWord qu'on vient de parser
+
     return new SquareBracketsGroup{words};
 }
 
