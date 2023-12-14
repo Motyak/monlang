@@ -8,64 +8,16 @@
 #define SPACE (char(32))
 #define NEWLINE (char(10))
 
-// -------------------------------------
-// struct ParenthesesGroup
-// -------------------------------------
-
-const std::vector<char> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
-const std::vector<char> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
-
-ProgramWord ParenthesesGroup::consumeProgramWord(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-        return *potentialParenthesesGroup;
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-        return *potentialSquareBracketsGroup;
-    }
-    if (auto potentialQuotation = tryConsumeQuotation(input)) {
-        return *potentialQuotation;
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
-        return *potentialCurlyBracketsGroup;
-    }
-    if (auto potentialAssociation = tryConsumeAssociation(input)) {
-        return *potentialAssociation;
-    }
-    return consumeAtom(input);
-}
-
-std::optional<Association*> ParenthesesGroup::tryConsumeAssociation(std::istringstream& input) {
-    
-    auto firstPart = Association::consumeProgramWordWithoutAssociation(input);
-
-    for (auto c: Association::SEPARATOR_SEQUENCE) {
-        if (input.peek() != c) {
-        std::cerr << "was expecting `" << c << "` but found " << input.peek() << std::endl;
-            exit(1);
-        }
-        input.ignore(1); // consume character
-    }
-
-    auto secondPart = consumeProgramWord(input); //recursive until hitting an Atom as ProgramWord
-
-    return new Association{firstPart, secondPart};
-}
-
-Atom ParenthesesGroup::consumeAtom(std::istringstream& input) {
-    // consume characters until hitting ')' or NEWLINE
-}
-
-// -------------------------------------
-// struct ParenthesesGroup (end)
-// -------------------------------------
-
-
-
-const std::vector<char> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
-const std::vector<char> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
-
 const std::vector<char> ProgramSentence::CONTINUATOR_SEQUENCE = { SPACE };
 const std::vector<char> ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
+
+const std::vector<char> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const std::vector<char> ParenthesesGroup::ALT_CONTINUATOR_SEQUENCE = { SPACE };
+const std::vector<char> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
+
+const std::vector<char> SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
+const std::vector<char> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const std::vector<char> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
 
 Program consumeProgram(std::istringstream& input) {
     std::vector<ProgramSentence> sentences;
@@ -79,9 +31,13 @@ Program consumeProgram(std::istringstream& input) {
 
 ProgramSentence consumeProgramSentence(std::istringstream& input) {
     std::vector<ProgramWord> words;
+    if (!input) {
+        std::cerr << "was expecting at least one word in ProgramSentence, found none" << std::endl;
+        exit(1);
+    }
     auto currentWord = consumeProgramWord(input);
     words.push_back(currentWord);
-    while (input && input.peek() != '\n') {
+    while (input && !peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input);
         currentWord = consumeProgramWord(input);
         words.push_back(currentWord);
@@ -102,107 +58,94 @@ ProgramWord consumeProgramWord(std::istringstream& input) {
     if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
         return *potentialCurlyBracketsGroup;
     }
-    if (auto potentialAssociation = tryConsumeAssociation(input)) {
-        return *potentialAssociation;
-    }
     return consumeAtom(input);
 }
 
 ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
+    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input, AllowAssociation::FALSE)) {
         return *potentialParenthesesGroup;
     }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
+    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input, AllowAssociation::FALSE)) {
         return *potentialSquareBracketsGroup;
     }
-    if (auto potentialQuotation = tryConsumeQuotation(input)) {
+    if (auto potentialQuotation = tryConsumeQuotation(input, AllowAssociation::FALSE)) {
         return *potentialQuotation;
     }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
+    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input, AllowAssociation::FALSE)) {
         return *potentialCurlyBracketsGroup;
     }
-    return consumeAtom(input);
+    return consumeAtom(input, AllowAssociation::FALSE); // we should hit a space or newline here ? do we check inside and consume after fcall ?
 }
 
-std::optional<Association*> SquareBracketsGroup::tryConsumeAssociation(std::istringstream&) {
-
-}
-
-Atom SquareBracketsGroup::consumeAtom(std::istringstream&) {
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&, AllowAssociation flag) {
 
 }
 
-ProgramWord SquareBracketsGroup::consumeProgramWord(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-        return *potentialParenthesesGroup;
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-        return *potentialSquareBracketsGroup;
-    }
-    if (auto potentialQuotation = tryConsumeQuotation(input)) {
-        return *potentialQuotation;
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
-        return *potentialCurlyBracketsGroup;
-    }
-    if (auto potentialAssociation = tryConsumeAssociation(input)) {
-        return *potentialAssociation;
-    }
-    return consumeAtom(input);
-}
-
-std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(std::istringstream& input) {
-    if (input.peek() != '[') {
+std::optional<ProgramWord> tryConsumeSquareBracketsGroup(std::istringstream& input, AllowAssociation flag) {
+    if (!peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
-    input.ignore(1); // consume opening square bracket
+    input.ignore(SquareBracketsGroup::INITIATOR_SEQUENCE.size()); // consume initiator characters
 
     std::vector<ProgramWord> words;
 
-    switch (input.peek()) {
-        case ']':
-            input.ignore(1);
-            return new SquareBracketsGroup{words};
-
-        case EOF:
-            std::cerr << "unexpected EOF while about to parse a program word in square brackets group" << std::endl;
-            exit(1);
+    if (input.peek() == EOF) {
+        std::cerr << "unexpected EOF while about to parse a program word in square brackets group" << std::endl;
+        exit(1);
     }
 
-    auto currentWord = SquareBracketsGroup::consumeProgramWord(input);
+    if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+        input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+        return new SquareBracketsGroup{words}; // empty
+    }
+
+    auto currentWord = consumeProgramWord(input);
     words.push_back(currentWord);
-    while (input && input.peek() != ']') {
-        consumeSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input);
-        currentWord = SquareBracketsGroup::consumeProgramWord(input);
+    while (input
+            && (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input))
+            && (!peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input))
+            && (!peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input))) {
+        consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input);
+        currentWord = consumeProgramWord(input);
         words.push_back(currentWord);
     }
 
-    if (input.peek() != ']') {
-        std::cerr << "was expecting `]` but found " << input.peek() << std::endl;
-            exit(1);
+    if (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+        auto& ts = SquareBracketsGroup::TERMINATOR_SEQUENCE;
+        std::cerr << "was expecting `" 
+                << std::string(ts.begin(), ts.end()) 
+                << "` but found `" << input.peek() << "`" << std::endl;
+        exit(1);
     }
-    input.ignore(1); // consume closing square bracket
+    input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+
+    if (flag == AllowAssociation::TRUE && peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        ProgramWordWithoutAssociation leftPart = new SquareBracketsGroup{words};
+        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        ProgramWord rightPart = consumeProgramWord(input);
+        return new Association{leftPart, rightPart};
+    }
 
     return new SquareBracketsGroup{words};
 }
 
-std::optional<Quotation> tryConsumeQuotation(std::istringstream& input) {
+std::optional<Quotation> tryConsumeQuotation(std::istringstream& input, AllowAssociation flag) {
     
 }
 
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream& input, AllowAssociation flag) {
     
 }
 
-std::optional<Association*> tryConsumeAssociation(std::istringstream& input) {
+// std::optional<Association*> tryConsumeAssociation(std::istringstream& input) {
+    
+// }
+
+Quoted consumeQuoted(std::istringstream& input, AllowAssociation flag) {
     
 }
 
-Quoted consumeQuoted(std::istringstream& input) {
-    
-}
-
-Atom consumeAtom(std::istringstream& input) {
+Atom consumeAtom(std::istringstream& input, AllowAssociation flag) {
     
 }
 
@@ -214,4 +157,8 @@ void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
         }
         input.ignore(1);
     }
+}
+
+bool peekSequence(std::vector<char> sequence, std::istringstream& input) {
+
 }

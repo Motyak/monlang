@@ -16,7 +16,7 @@ PROGRAM-SENTENCE := PROGRAM-WORD (SPACE PROG-WORD)*
 
 ---
 
-PROGRAM-WORD :=  PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | QUOTATION | CURLY-BRACKETS-GROUP | ASSOCIATION | ATOM
+PROGRAM-WORD :=  ASSOCIATION | PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | QUOTATION | CURLY-BRACKETS-GROUP | ATOM
 
 ---
 
@@ -51,33 +51,23 @@ struct ParenthesesGroup;
 struct SquareBracketsGroup;
 struct CurlyBracketsGroup;
 struct Association;
-using ProgramWord = std::variant<ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Association*, Atom>;
+using ProgramWord = std::variant<Association*, ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Atom>;
 using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Atom>;
 
 struct ParenthesesGroup {
     std::vector<ProgramWord> words;
 
     static const std::vector<char> CONTINUATOR_SEQUENCE;
+    static const std::vector<char> ALT_CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
-
-    static ProgramWord consumeProgramWord(std::istringstream&);
-
-  private:
-    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-    static Atom consumeAtom(std::istringstream&);
 };
 
 struct SquareBracketsGroup {
     std::vector<ProgramWord> words;
 
+    static const std::vector<char> INITIATOR_SEQUENCE;
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
-
-    static ProgramWord consumeProgramWord(std::istringstream&);
-
-  private:
-    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-    static Atom consumeAtom(std::istringstream&);
 };
 
 struct ProgramSentence {
@@ -85,12 +75,6 @@ struct ProgramSentence {
 
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
-
-    static ProgramWord consumeProgramWord(std::istringstream&);
-
-  private:
-    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-    static Atom consumeAtom(std::istringstream&);
 };
 
 struct CurlyBracketsGroup {
@@ -100,17 +84,8 @@ struct CurlyBracketsGroup {
 struct Association {
     ProgramWordWithoutAssociation leftPart;
     ProgramWord rightPart;
-    // std::variant<ProgramSentence, ParenthesesGroup*, SquareBracketsGroup*, Association*> parent;
 
     static const std::vector<char> SEPARATOR_SEQUENCE;
-
-    // std::vector<char> TERMINATOR_SEQUENCE(); // inherits terminator from parent, have to do a look-up
-    static ProgramWord consumeProgramWord(std::istringstream&);
-    static ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
-
-  private:
-    static std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-    static Atom consumeAtom(std::istringstream&);
 };
 
 struct Program {
@@ -121,17 +96,23 @@ Program consumeProgram(std::istringstream&);
 
 ProgramSentence consumeProgramSentence(std::istringstream&);
 
-// ProgramWord consumeProgramWord(std::istringstream&);
-// ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
+ProgramWord consumeProgramWord(std::istringstream&);
+ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
-std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&);
-std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroup(std::istringstream&);
-std::optional<Quotation> tryConsumeQuotation(std::istringstream&);
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&);
+enum struct AllowAssociation {
+    TRUE,
+    FALSE
+};
+
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+std::optional<ProgramWord> tryConsumeSquareBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+std::optional<Quotation> tryConsumeQuotation(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
 // std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-Quoted consumeQuoted(std::istringstream&);
-// Atom consumeAtom(std::istringstream&);
+Quoted consumeQuoted(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+Atom consumeAtom(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
 
-void consumeSequence(std::vector<char> sequence, std::istringstream& input);
+void consumeSequence(std::vector<char> sequence, std::istringstream&);
+bool peekSequence(std::vector<char> sequence, std::istringstream&);
 
 #endif // GRAMMAR_H

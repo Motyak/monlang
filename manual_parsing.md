@@ -130,3 +130,36 @@ program sentence 1:
   -> program word 1: `reduce(sum, 0, [1, 2, 3])`
     -> atom
 // note: at this point we don't distinguish yet a unary expression from any other word type (language keyword, variable, primitive expression, .....)
+
+---
+
+("123 321":[1, 2, 3], 321) "abc:def"
+  -> sentence 1:
+    -> word 1: ParenthesesGroup: `("123 321":[1, 2, 3])`
+      -> word 1: Association: `"123 321":[1, 2, 3]`
+        -> left part: Quotation: `"123 321"`
+        -> right part: SquareBracketsGroup: `[1, 2, 3]`
+          -> word 1: Atom: `1`
+          -> word 2: Atom: `2`
+          -> word 3: Atom: `3`
+      -> word 2: Atom: `321`
+    -> word 2: Quotation: `"abc:def"`
+
+
+("123 321":[1, 2, 3], 321 fds
+  -> ce corpus pose un problème car on rencontre un SPACE après le 321, et on s'attendait à avoir une ',' avant de recontrer un SPACE ou un NEWLINE
+
+
+
+("123 321":[1, 2, 3], 
+  -> ce corpus pose un problème car on rencontre un NEWLINE là où on essaie de parser un ProgramWord
+
+
+
+("123 321":[1, 2, 3], 321) "abc:def"
+  -> Dans ce cas exemple, à supposé que j'essaie de parser une Association en premier, comment pourrais-je savoir si il faut que j'interprète le premier ProgramWord de la ProgramSentence comme une Association ou bien une ParenthesesGroup ??
+    -> Il faut être capable de déduire si le ':' est enprisonné ou pas (c'est le cas ici, du coup on va interpréter le mot comme un ParenthesesGroup QUI CONTIENT une Association, plutôt qu'interprété comme une Association mal formée.
+
+
+("123 321"):(fds)
+  -> en parsant le premier caractère, on pourrait croire que le mot est un ParenthesesGroup, alors qu'en réalité c'est une Association avec en firstPart un ParenthesesGroup.
