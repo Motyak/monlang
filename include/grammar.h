@@ -105,7 +105,8 @@ enum struct AllowAssociation {
 };
 
 std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-std::optional<ProgramWord> tryConsumeSquareBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+// returns either a SquareBracketsGroup or a Association between a SquareBracketsGroup and another ProgramWord (if flag enabled and association found)
+std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
 std::optional<Quotation> tryConsumeQuotation(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
 std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
 // std::optional<Association*> tryConsumeAssociation(std::istringstream&);

@@ -24,8 +24,8 @@ mrproper:
 # RELEASE
 ##########################
 
-# compiles parse-functions.cpp in release
-obj/release/parse-functions.o: src/parse-functions.cpp
+# compiles grammar.cpp in release
+obj/release/grammar.o: src/grammar.cpp
 	g++ $(CFLAGS_RELEASE) -I include $^ -o $@
 
 # compiles monlang.cpp in release
@@ -33,7 +33,7 @@ obj/release/monlang.o: src/monlang.cpp
 	g++ $(CFLAGS_RELEASE) -I include $^ -o $@
 
 # link object files and build binary for monlang in release
-bin/release/monlang: obj/release/parse-functions.o obj/release/monlang.o
+bin/release/monlang: obj/release/grammar.o obj/release/monlang.o
 	g++ $^ -o $@
 
 ##########################
@@ -45,16 +45,16 @@ bin/release/monlang: obj/release/parse-functions.o obj/release/monlang.o
 # DEBUG
 ##########################
 
-# compiles parse-functions.cpp in release
-obj/debug/parse-functions.o: src/parse-functions.cpp
+# compiles grammar.cpp in debug
+obj/debug/grammar.o: src/grammar.cpp
 	g++ $(CFLAGS_DEBUG) -I include $^ -o $@
 
-# compiles monlang.cpp in release
+# compiles monlang.cpp in debug
 obj/debug/monlang.o: src/monlang.cpp
 	g++ $(CFLAGS_DEBUG) -I include $^ -o $@
 
-# link object files and build binary for monlang in release
-bin/debug/monlang: obj/release/parse-functions.o obj/release/monlang.o
+# link object files and build binary for monlang in debug
+bin/debug/monlang: obj/debug/grammar.o obj/debug/monlang.o
 	g++ $^ -o $@
 
 ##########################

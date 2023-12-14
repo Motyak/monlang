@@ -1,5 +1,6 @@
 
 #include <grammar.h>
+#include <variant-utils.h>
 
 #include <sstream>
 #include <vector>
@@ -18,6 +19,8 @@ const std::vector<char> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
 const std::vector<char> SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
 const std::vector<char> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
 const std::vector<char> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
+
+const std::vector<char> Association::SEPARATOR_SEQUENCE = { ':' };
 
 Program consumeProgram(std::istringstream& input) {
     std::vector<ProgramSentence> sentences;
@@ -46,34 +49,35 @@ ProgramSentence consumeProgramSentence(std::istringstream& input) {
 }
 
 ProgramWord consumeProgramWord(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-        return *potentialParenthesesGroup;
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-        return *potentialSquareBracketsGroup;
-    }
-    if (auto potentialQuotation = tryConsumeQuotation(input)) {
-        return *potentialQuotation;
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
-        return *potentialCurlyBracketsGroup;
-    }
+    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
+    //     return *potentialParenthesesGroup;
+    // }
+    // if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
+    //     return variant_cast(*potentialSquareBracketsGroup);
+    // }
+    // if (auto potentialQuotation = tryConsumeQuotation(input)) {
+    //     return *potentialQuotation;
+    // }
+    // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
+    //     return *potentialCurlyBracketsGroup;
+    // }
     return consumeAtom(input);
 }
 
 ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input, AllowAssociation::FALSE)) {
-        return *potentialParenthesesGroup;
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input, AllowAssociation::FALSE)) {
-        return *potentialSquareBracketsGroup;
-    }
-    if (auto potentialQuotation = tryConsumeQuotation(input, AllowAssociation::FALSE)) {
-        return *potentialQuotation;
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input, AllowAssociation::FALSE)) {
-        return *potentialCurlyBracketsGroup;
-    }
+    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input, AllowAssociation::FALSE)) {
+    //     return *potentialParenthesesGroup;
+    // }
+    // if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input, AllowAssociation::FALSE)) {
+    //     // since we passed the AllowAssociation::FALSE flag, we know we got a SquareBracketsGroup
+    //     return ProgramWordWithoutAssociation{std::get<SquareBracketsGroup*>(*potentialSquareBracketsGroup)};
+    // }
+    // if (auto potentialQuotation = tryConsumeQuotation(input, AllowAssociation::FALSE)) {
+    //     return *potentialQuotation;
+    // }
+    // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input, AllowAssociation::FALSE)) {
+    //     return *potentialCurlyBracketsGroup;
+    // }
     return consumeAtom(input, AllowAssociation::FALSE); // we should hit a space or newline here ? do we check inside and consume after fcall ?
 }
 
@@ -81,7 +85,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&,
 
 }
 
-std::optional<ProgramWord> tryConsumeSquareBracketsGroup(std::istringstream& input, AllowAssociation flag) {
+std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input, AllowAssociation flag) {
     if (!peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
@@ -160,5 +164,20 @@ void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
 }
 
 bool peekSequence(std::vector<char> sequence, std::istringstream& input) {
+    // save stream position
+    std::streampos initialPosition = input.tellg();
 
+    // peek, check, consume      in a loop
+    for (auto c: sequence) {
+        if (input.peek() != c) {
+            // restore stream position
+            input.seekg(initialPosition);
+            return false;
+        }
+        input.ignore(1);
+    }
+
+    // restore stream position
+    input.seekg(initialPosition);
+    return true;
 }
