@@ -1,0 +1,9 @@
+make obj/release/grammar.o
+g++ obj/release/grammar.o src/pg.cpp -I include --std=c++17 -o pg
+./pg
+
+---
+
+TODO: 
+- faire un header par type d'entité grammaire, et faire un bloc unit test par header
+- modifier le makefile pour ajouter les unit tests (faire un dossier test/ en parallèle de release/ et debug/)
