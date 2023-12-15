@@ -1,26 +1,54 @@
 
 #include <grammar.h>
+#include <vec-utils.h>
 #include <variant-utils.h>
 
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #define SPACE (char(32))
 #define NEWLINE (char(10))
 
 const std::vector<char> ProgramSentence::CONTINUATOR_SEQUENCE = { SPACE };
 const std::vector<char> ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
+const std::vector<std::vector<char>> ProgramSentence::RESERVED_SEQUENCES = {
+    { SPACE },
+    { NEWLINE },
+};
 
+const std::vector<char> ParenthesesGroup::INITIATOR_SEQUENCE = { '(' };
 const std::vector<char> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
 const std::vector<char> ParenthesesGroup::ALT_CONTINUATOR_SEQUENCE = { SPACE };
 const std::vector<char> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
+const std::vector<std::vector<char>> ParenthesesGroup::RESERVED_SEQUENCES = {
+    { '(' },
+    { ',' },
+    { SPACE },
+    { ')' },
+};
 
 const std::vector<char> SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
 const std::vector<char> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
 const std::vector<char> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
+const std::vector<std::vector<char>> SquareBracketsGroup::RESERVED_SEQUENCES = {
+    { '[' },
+    { ',' },
+    { SPACE },
+    { ']' },
+};
 
 const std::vector<char> Association::SEPARATOR_SEQUENCE = { ':' };
+const std::vector<std::vector<char>> Association::RESERVED_SEQUENCES = {
+    { ':' },
+};
+
+const std::vector<char> Quotation::INITIATOR_SEQUENCE = { '"' };
+const std::vector<char> Quotation::TERMINATOR_SEQUENCE = { '"' };
+const std::vector<std::vector<char>> Quotation::RESERVED_SEQUENCES = {
+    { '"' }
+};
 
 Program consumeProgram(std::istringstream& input) {
     std::vector<ProgramSentence> sentences;
@@ -52,9 +80,9 @@ ProgramWord consumeProgramWord(std::istringstream& input) {
     // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
     //     return *potentialParenthesesGroup;
     // }
-    // if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-    //     return variant_cast(*potentialSquareBracketsGroup);
-    // }
+    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
+        return variant_cast(*potentialSquareBracketsGroup);
+    }
     // if (auto potentialQuotation = tryConsumeQuotation(input)) {
     //     return *potentialQuotation;
     // }
@@ -64,28 +92,11 @@ ProgramWord consumeProgramWord(std::istringstream& input) {
     return consumeAtom(input);
 }
 
-ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream& input) {
-    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input, AllowAssociation::FALSE)) {
-    //     return *potentialParenthesesGroup;
-    // }
-    // if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input, AllowAssociation::FALSE)) {
-    //     // since we passed the AllowAssociation::FALSE flag, we know we got a SquareBracketsGroup
-    //     return ProgramWordWithoutAssociation{std::get<SquareBracketsGroup*>(*potentialSquareBracketsGroup)};
-    // }
-    // if (auto potentialQuotation = tryConsumeQuotation(input, AllowAssociation::FALSE)) {
-    //     return *potentialQuotation;
-    // }
-    // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input, AllowAssociation::FALSE)) {
-    //     return *potentialCurlyBracketsGroup;
-    // }
-    return consumeAtom(input, AllowAssociation::FALSE); // we should hit a space or newline here ? do we check inside and consume after fcall ?
-}
-
-std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&, AllowAssociation flag) {
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&) {
 
 }
 
-std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input, AllowAssociation flag) {
+std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input) {
     if (!peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
@@ -116,14 +127,20 @@ std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquare
 
     if (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         auto& ts = SquareBracketsGroup::TERMINATOR_SEQUENCE;
-        std::cerr << "was expecting `" 
+        if (input.peek() == -1) {
+            std::cerr << "was expecting `" 
                 << std::string(ts.begin(), ts.end()) 
-                << "` but found `" << input.peek() << "`" << std::endl;
+                << "` but hit EOF" << std::endl;
+        } else {
+            std::cerr << "was expecting `" 
+                << std::string(ts.begin(), ts.end()) 
+                << "` but found `" << char(input.peek()) << "`" << std::endl;
+        }
         exit(1);
     }
     input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
 
-    if (flag == AllowAssociation::TRUE && peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = new SquareBracketsGroup{words};
         input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
         ProgramWord rightPart = consumeProgramWord(input);
@@ -133,11 +150,11 @@ std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquare
     return new SquareBracketsGroup{words};
 }
 
-std::optional<Quotation> tryConsumeQuotation(std::istringstream& input, AllowAssociation flag) {
+std::optional<Quotation> tryConsumeQuotation(std::istringstream& input) {
     
 }
 
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream& input, AllowAssociation flag) {
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
     
 }
 
@@ -145,18 +162,52 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstre
     
 // }
 
-Quoted consumeQuoted(std::istringstream& input, AllowAssociation flag) {
+Quoted consumeQuoted(std::istringstream& input) {
     
 }
 
-Atom consumeAtom(std::istringstream& input, AllowAssociation flag) {
-    
+Atom consumeAtom(std::istringstream& input) {
+    static const auto FORBIDDEN_SEQUENCES = vec_union({
+        ProgramSentence::RESERVED_SEQUENCES,
+        ParenthesesGroup::RESERVED_SEQUENCES,
+        SquareBracketsGroup::RESERVED_SEQUENCES,
+        Association::RESERVED_SEQUENCES,
+        Quotation::RESERVED_SEQUENCES,
+    });
+
+    std::string value;
+
+    if (input.peek() == EOF) {
+        std::cerr << "unexpected EOF while about to parse an atom value" << std::endl;
+        exit(1);
+    }
+
+    char currentChar;
+    while (input && std::all_of(
+                FORBIDDEN_SEQUENCES.begin(),
+                FORBIDDEN_SEQUENCES.end(),
+                [&input](auto seq){return !peekSequence(seq, input);})) {
+        input.get(currentChar);
+        value += currentChar;
+    }
+
+    if (value.size() == 0) {
+        std::cerr << "expected an atom value but found nothing" << std::endl;
+        exit(1);
+    }
+
+    return Atom{value};
 }
 
 void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
     for (auto c: sequence) {
         if (input.peek() != c) {
-            std::cerr << "was expecting `" << c << "` but found `" << (char)input.peek() << "`" << std::endl;
+            if (input.peek() == -1) {
+                std::cerr << "was expecting `" << c << "` but hit EOF" << std::endl;
+            } else {
+                std::cerr << "was expecting `" << c 
+                        << "` but found `" << char(input.peek()) << "`" << std::endl;
+            }
             exit(1);
         }
         input.ignore(1);

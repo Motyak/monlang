@@ -45,6 +45,11 @@ struct Quoted {
 
 struct Quotation {
     Quoted quoted;
+
+    static const std::vector<char> INITIATOR_SEQUENCE;
+    static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
 
 struct ParenthesesGroup;
@@ -57,9 +62,12 @@ using ProgramWordWithoutAssociation = std::variant<ParenthesesGroup*, SquareBrac
 struct ParenthesesGroup {
     std::vector<ProgramWord> words;
 
+    static const std::vector<char> INITIATOR_SEQUENCE;
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> ALT_CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
 
 struct SquareBracketsGroup {
@@ -68,6 +76,8 @@ struct SquareBracketsGroup {
     static const std::vector<char> INITIATOR_SEQUENCE;
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
 
 struct ProgramSentence {
@@ -75,6 +85,8 @@ struct ProgramSentence {
 
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
+
+    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
 
 struct CurlyBracketsGroup {
@@ -86,6 +98,8 @@ struct Association {
     ProgramWord rightPart;
 
     static const std::vector<char> SEPARATOR_SEQUENCE;
+
+    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
 
 struct Program {
@@ -99,19 +113,12 @@ ProgramSentence consumeProgramSentence(std::istringstream&);
 ProgramWord consumeProgramWord(std::istringstream&);
 ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
-enum struct AllowAssociation {
-    TRUE,
-    FALSE
-};
-
-std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-// returns either a SquareBracketsGroup or a Association between a SquareBracketsGroup and another ProgramWord (if flag enabled and association found)
-std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-std::optional<Quotation> tryConsumeQuotation(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-// std::optional<Association*> tryConsumeAssociation(std::istringstream&);
-Quoted consumeQuoted(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
-Atom consumeAtom(std::istringstream&, AllowAssociation = AllowAssociation::FALSE);
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&);
+std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream&);
+std::optional<Quotation> tryConsumeQuotation(std::istringstream&);
+std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&);
+Quoted consumeQuoted(std::istringstream&);
+Atom consumeAtom(std::istringstream&);
 
 void consumeSequence(std::vector<char> sequence, std::istringstream&);
 bool peekSequence(std::vector<char> sequence, std::istringstream&);
