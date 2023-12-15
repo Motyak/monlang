@@ -118,7 +118,7 @@ std::optional<std::variant<SquareBracketsGroup*, Association*>> tryConsumeSquare
 std::optional<Quotation> tryConsumeQuotation(std::istringstream&);
 std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroup(std::istringstream&);
 Quoted consumeQuoted(std::istringstream&);
-Atom consumeAtom(std::istringstream&);
+std::variant<Atom, Association*> consumeAtom(std::istringstream&);
 
 void consumeSequence(std::vector<char> sequence, std::istringstream&);
 bool peekSequence(std::vector<char> sequence, std::istringstream&);

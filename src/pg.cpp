@@ -8,7 +8,7 @@
 int main()
 {
     {
-        std::istringstream iss("[123, [a, b, c]]");
+        std::istringstream iss("[123, [k1:v1, k2:v2]]");
         auto res = tryConsumeSquareBracketsGroup(iss);
         if (res) {
             std::visit(overload{
@@ -19,7 +19,8 @@ int main()
                             [](SquareBracketsGroup* sbg) {
                                 std::cout << "SquareBracketsGroup:" << std::endl;
                                 for (auto word: sbg->words) {
-                                    std::cout << "Atom: ```" << std::get<Atom>(word).value << "```" << std::endl;
+                                    std::cout << "Association (left part): ```" << std::get<Atom>(std::get<Association*>(word)->leftPart).value << "```" << std::endl;
+                                    std::cout << "Association (right part): ```" << std::get<Atom>(std::get<Association*>(word)->rightPart).value << "```" << std::endl;
                                 }
                             },
                             [](auto other){std::cout << "other" << std::endl;}

@@ -89,7 +89,7 @@ ProgramWord consumeProgramWord(std::istringstream& input) {
     // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
     //     return *potentialCurlyBracketsGroup;
     // }
-    return consumeAtom(input);
+    return variant_cast(consumeAtom(input));
 }
 
 std::optional<ParenthesesGroup*> tryConsumeParenthesesGroup(std::istringstream&) {
@@ -166,7 +166,7 @@ Quoted consumeQuoted(std::istringstream& input) {
     
 }
 
-Atom consumeAtom(std::istringstream& input) {
+std::variant<Atom, Association*> consumeAtom(std::istringstream& input) {
     static const auto FORBIDDEN_SEQUENCES = vec_union({
         ProgramSentence::RESERVED_SEQUENCES,
         ParenthesesGroup::RESERVED_SEQUENCES,
@@ -189,6 +189,13 @@ Atom consumeAtom(std::istringstream& input) {
                 [&input](auto seq){return !peekSequence(seq, input);})) {
         input.get(currentChar);
         value += currentChar;
+    }
+
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        ProgramWordWithoutAssociation leftPart = Atom{value};
+        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        ProgramWord rightPart = consumeProgramWord(input);
+        return new Association{leftPart, rightPart};
     }
 
     if (value.size() == 0) {
