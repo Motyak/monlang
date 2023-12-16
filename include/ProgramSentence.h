@@ -4,6 +4,7 @@
 #include <Term.h>
 
 #include <vector>
+#include <sstream>
 
 struct ProgramSentence {
     Term term;
@@ -12,5 +13,7 @@ struct ProgramSentence {
 
     static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
+
+ProgramSentence consumeProgramSentence(std::istringstream&);
 
 #endif // PROGRAM_SENTENCE_H

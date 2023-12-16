@@ -12,7 +12,7 @@
 #include <PostfixParenthesesGroup.h>
 #include <PostfixSquareBracketsGroup.h>
 #include <CurlyBracketsGroup.h>
-#include <Quotation.h>
 
+#include <Quotation.h>
 #include <Quoted.h>
 #include <Atom.h>

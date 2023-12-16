@@ -5,6 +5,9 @@
 
 #include <vector>
 #include <string>
+#include <optional>
+#include <variant>
+#include <sstream>
 
 using QuotedFormat = std::string;
 
@@ -19,5 +22,10 @@ struct Quotation {
 
     static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
 };
+
+struct Association;
+struct PostfixParenthesesGroup;
+struct PostfixSquareBracketsGroup;
+std::optional<std::variant<Quotation*, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> tryConsumeQuotation(std::istringstream&);
 
 #endif // QUOTATION_H
