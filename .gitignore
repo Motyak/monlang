@@ -1,3 +1,5 @@
 .vscode
 bin
 obj
+lib/libs.a
+lib/catch2/obj

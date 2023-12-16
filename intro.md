@@ -173,3 +173,12 @@ evaluate block expression
 ```
 6
 ```
+
+---
+
+```dispatch[msg](args)```
+  -> sentence 1: word1: PostfixParenthesesGroup
+    -> leftPart: PostfixSquareBracketsGroup: ```dispatch[msg]```
+      -> leftPart: Atom: ```dispatch```
+      -> rightPart: SquareBracketsGroup: ```[msg]```
+    -> rightPart: ParenthesesGroup: ```(args)```

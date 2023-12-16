@@ -1,0 +1,5 @@
+#ifndef PROGRAM_SENTENCE_H
+#define PROGRAM_SENTENCE_H
+
+
+#endif // PROGRAM_SENTENCE_H
