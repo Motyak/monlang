@@ -35,7 +35,7 @@ TEST_DEPS := $(foreach ent,$(ENTITIES),obj/test/$(ent).d)
 
 TEST_BINS := $(foreach ent,$(ENTITIES),bin/test/$(ent))
 
-LIBS_OBJ_DIR := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
+LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
 ###########################################################
 
@@ -52,7 +52,10 @@ clean:
 	$(RM) obj $(DEPS) $(TEST_DEPS)
 
 mrproper:
-	$(RM) obj $(DEPS) $(TEST_DEPS) lib/libs.a $(LIBS_OBJ_DIR) bin
+	$(RM) obj $(DEPS) $(TEST_DEPS) lib/libs.a $(LIB_OBJ_DIRS) bin
+
+
+.PHONY: all release debug test clean mrproper
 
 ###########################################################
 
@@ -101,7 +104,5 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 
 ###########################################################
 
-.PHONY: all release debug test clean mrproper
-
 # will create all necessary directories after the Makefile is parsed #
-$(shell mkdir -p obj/release obj/debug obj/test bin/release bin/debug bin/test $(LIBS_OBJ_DIR))
+$(shell mkdir -p obj/release obj/debug obj/test bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
