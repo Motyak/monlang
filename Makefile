@@ -2,7 +2,7 @@ CFLAGS_RELEASE = -c --std=c++17 -Wall -Wextra -O0
 CFLAGS_DEBUG = -c --std=c++17 -Wall -Wextra -Og -g
 CFLAGS_TEST = -c --std=c++17 -Wall -Wextra -Og -g
 
-LIBS_OBJ_DIR := $(foreach lib,$(wildcard lib/*/),$(lib)/obj)
+LIBS_OBJ_DIR := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj)
 
 # make (default builds release)
 all: release
@@ -20,11 +20,11 @@ test: $$(test_binaries)
 
 # make clean
 clean:
-	rm -rf obj lib/libs.a $(LIBS_OBJ_DIR)
+	rm -rf obj
 
 # make mrproper
 mrproper:
-	rm -rf obj bin lib/libs.a $(LIBS_OBJ_DIR)
+	rm -rf obj lib/libs.a $(LIBS_OBJ_DIR) bin
 
 
 ############################################################
