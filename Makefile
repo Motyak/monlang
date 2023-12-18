@@ -3,7 +3,8 @@ RM := rm -rf
 CXXFLAGS_RELEASE := --std=c++17 -Wall -Wextra -O0 -I include -I lib
 CXXFLAGS_DEBUG := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
 CXXFLAGS_TEST := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
-DEPFLAGS = -MMD -MP
+DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
+DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rvs
 
 ###########################################################
@@ -24,12 +25,12 @@ Quoted \
 SquareBracketsGroup \
 Term \
 
-RELEASE_OBJS := $(foreach ent,$(ENTITIES),obj/release/$(ent).o)
-DEBUG_OBJS := $(foreach ent,$(ENTITIES),obj/debug/$(ent).o)
-TEST_BINS := $(foreach ent,$(ENTITIES),bin/test/$(ent))
+RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o)
+DEBUG_OBJS := $(ENTITIES:%=obj/debug/%.o)
+TEST_BINS := $(ENTITIES:%=bin/test/%)
 
-DEPS := $(foreach ent,$(ENTITIES),obj/$(ent).d)
-TEST_DEPS := $(foreach ent,$(ENTITIES),bin/test/$(ent).d)
+DEPS := $(ENTITIES:%=.deps/%.d)
+TEST_DEPS := $(ENTITIES:%=.deps/test/%.d)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
@@ -45,10 +46,10 @@ test: $(TEST_BINS)
 	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f || exit $$?; done
 
 clean:
-	$(RM) obj $(DEPS) $(TEST_DEPS)
+	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(DEPS) $(TEST_DEPS)
 
 mrproper:
-	$(RM) obj $(DEPS) $(TEST_DEPS) lib/libs.a $(LIB_OBJ_DIRS) bin
+	$(RM) obj $(DEPS) $(TEST_DEPS) lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS) bin
 
 
 .PHONY: all release debug test clean mrproper
@@ -63,7 +64,7 @@ bin/debug/monlang: lib/libs.a $(DEBUG_OBJS) obj/debug/monlang.o
 
 .SECONDEXPANSION:
 $(TEST_BINS): %: lib/test-libs.a obj/debug/$$(notdir %.o) src/test/$$(notdir %.cpp)
-	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
 $(RELEASE_OBJS) obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
@@ -97,4 +98,4 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed #
-$(shell mkdir -p obj/release obj/debug bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
+$(shell mkdir -p obj/release obj/debug .deps/test bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
