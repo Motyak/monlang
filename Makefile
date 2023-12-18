@@ -1,9 +1,10 @@
+SHELL := /bin/bash
+RM := rm -rf
 CXXFLAGS_RELEASE := --std=c++17 -Wall -Wextra -O0 -I include -I lib
 CXXFLAGS_DEBUG := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
 CXXFLAGS_TEST := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
 DEPFLAGS = -MMD -MP
 ARFLAGS := rvs
-RM := rm -rf
 
 ###########################################################
 
@@ -23,17 +24,12 @@ Quoted \
 SquareBracketsGroup \
 Term \
 
-SRCS := $(foreach ent,$(ENTITIES),src/$(ent).cpp)
-TEST_SRCS := $(foreach ent,$(ENTITIES),src/test/$(ent).cpp)
-
 RELEASE_OBJS := $(foreach ent,$(ENTITIES),obj/release/$(ent).o)
 DEBUG_OBJS := $(foreach ent,$(ENTITIES),obj/debug/$(ent).o)
-TEST_OBJS := $(foreach ent,$(ENTITIES),obj/test/$(ent).o)
+TEST_BINS := $(foreach ent,$(ENTITIES),bin/test/$(ent))
 
 DEPS := $(foreach ent,$(ENTITIES),obj/$(ent).d)
-TEST_DEPS := $(foreach ent,$(ENTITIES),obj/test/$(ent).d)
-
-TEST_BINS := $(foreach ent,$(ENTITIES),bin/test/$(ent))
+TEST_DEPS := $(foreach ent,$(ENTITIES),bin/test/$(ent).d)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
@@ -46,7 +42,7 @@ release: bin/release/monlang
 debug: bin/debug/monlang
 
 test: $(TEST_BINS)
-	for test_binary in bin/test/*; do echo "$$test_binary:"; ./$$test_binary || exit $$?; done
+	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f || exit $$?; done
 
 clean:
 	$(RM) obj $(DEPS) $(TEST_DEPS)
@@ -66,8 +62,8 @@ bin/debug/monlang: lib/libs.a $(DEBUG_OBJS) obj/debug/monlang.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
-$(TEST_BINS): %: lib/test-libs.a obj/debug/$$(notdir %.o) obj/test/$$(notdir %.o)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+$(TEST_BINS): %: lib/test-libs.a obj/debug/$$(notdir %.o) src/test/$$(notdir %.cpp)
+	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS) $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
 $(RELEASE_OBJS) obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
@@ -76,10 +72,6 @@ $(RELEASE_OBJS) obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
 .SECONDEXPANSION:
 $(DEBUG_OBJS) obj/debug/monlang.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_DEBUG) $(DEPFLAGS)
-
-.SECONDEXPANSION:
-$(TEST_OBJS): %.o: src/test/$$(notdir %.cpp)
-	$(CXX) -o $@ -c $^ $(CXXFLAGS_TEST) $(DEPFLAGS)
 
 -include $(DEPS) $(TEST_DEPS)
 
@@ -105,4 +97,4 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed #
-$(shell mkdir -p obj/release obj/debug obj/test bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
+$(shell mkdir -p obj/release obj/debug bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
