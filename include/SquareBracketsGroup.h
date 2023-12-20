@@ -21,6 +21,8 @@ struct SquareBracketsGroup {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-std::optional<std::variant<SquareBracketsGroup*, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> tryConsumeSquareBracketsGroup(std::istringstream&);
+std::optional<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream&);
+
+std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::istringstream&);
 
 #endif // SQUARE_BRACKETS_GROUP_H

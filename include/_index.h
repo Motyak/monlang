@@ -7,10 +7,10 @@
 #include <ProgramWord.h>
 
 #include <Association.h>
-#include <ParenthesesGroup.h>
-#include <SquareBracketsGroup.h>
 #include <PostfixParenthesesGroup.h>
 #include <PostfixSquareBracketsGroup.h>
+#include <ParenthesesGroup.h>
+#include <SquareBracketsGroup.h>
 #include <CurlyBracketsGroup.h>
 
 #include <Quotation.h>

@@ -9,7 +9,7 @@ ARFLAGS := rvs
 
 ###########################################################
 
-# ENTITIES := $(foreach file,$(wildcard src/*.cpp),$(notdir $(file:%.cpp=%)))
+# ENTITIES := $(foreach file,$(wildcard src/[A-Z]*.cpp),$(notdir $(file:%.cpp=%)))
 ENTITIES := \
 Association \
 Atom \
@@ -46,32 +46,34 @@ test: $(TEST_BINS)
 	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f || exit $$?; done
 
 clean:
-	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(DEPS) $(TEST_DEPS)
+	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(DEPS) $(TEST_DEPS) \
+			obj/{release,debug}/common.o \
+			obj/{release,debug}/monlang.o
 
 mrproper:
-	$(RM) obj $(DEPS) $(TEST_DEPS) lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS) bin
+	$(RM) obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS) bin
 
 
 .PHONY: all release debug test clean mrproper
 
 ###########################################################
 
-bin/release/monlang: lib/libs.a $(RELEASE_OBJS) obj/release/monlang.o
+bin/release/monlang: $(RELEASE_OBJS) lib/libs.a obj/release/{common,monlang}.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-bin/debug/monlang: lib/libs.a $(DEBUG_OBJS) obj/debug/monlang.o
+bin/debug/monlang: $(DEBUG_OBJS) lib/libs.a obj/debug/{common,monlang}.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
-$(TEST_BINS): %: lib/test-libs.a obj/debug/$$(notdir %.o) src/test/$$(notdir %.cpp)
+$(TEST_BINS): %: obj/debug/$$(notdir %.o) lib/test-libs.a obj/debug/common.o src/test/$$(notdir %.cpp)
 	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
-$(RELEASE_OBJS) obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
+$(RELEASE_OBJS) obj/release/{common,monlang}.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS)
 
 .SECONDEXPANSION:
-$(DEBUG_OBJS) obj/debug/monlang.o: %.o: src/$$(notdir %.cpp)
+$(DEBUG_OBJS) obj/debug/{common,monlang}.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_DEBUG) $(DEPFLAGS)
 
 -include $(DEPS) $(TEST_DEPS)

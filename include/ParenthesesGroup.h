@@ -23,4 +23,6 @@ struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 std::optional<std::variant<ParenthesesGroup*, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> tryConsumeParenthesesGroup(std::istringstream&);
 
+std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istringstream&);
+
 #endif // PARENTHESES_GROUP_H

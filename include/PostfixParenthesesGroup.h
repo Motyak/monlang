@@ -2,11 +2,11 @@
 #define POSTFIX_PARENTHESES_GROUP_H
 
 #include <ProgramWord.h>
-#include <ParenthesesGroup.h>
 
+struct ParenthesesGroup;
 struct PostfixParenthesesGroup {
     ProgramWordWithoutAssociation leftPart;
-    ParenthesesGroup rightPart;
+    ParenthesesGroup* rightPart;
 
     // no separator between the two parts, as opposed to Association
 };

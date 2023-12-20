@@ -2,11 +2,11 @@
 #define POSTFIX_SQUARE_BRACKETS_GROUP_H
 
 #include <ProgramWord.h>
-#include <SquareBracketsGroup.h>
 
+struct SquareBracketsGroup;
 struct PostfixSquareBracketsGroup {
     ProgramWordWithoutAssociation leftPart;
-    SquareBracketsGroup rightPart;
+    SquareBracketsGroup* rightPart;
 
     // no separator between the two parts, as opposed to Association
 };
