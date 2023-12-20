@@ -1,6 +1,6 @@
-.vscode
+.deps
 bin
 obj
 lib/libs.a
 lib/test-libs.a
-lib/catch2/obj
+lib/*/obj
