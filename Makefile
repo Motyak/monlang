@@ -27,6 +27,7 @@ Term \
 
 RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o)
 DEBUG_OBJS := $(ENTITIES:%=obj/debug/%.o)
+TEST_OBJS := $(ENTITIES:%=obj/test/%.o)
 TEST_BINS := $(ENTITIES:%=bin/test/%)
 
 DEPS := $(ENTITIES:%=.deps/%.d)
@@ -46,9 +47,9 @@ test: $(TEST_BINS)
 	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f || exit $$?; done
 
 clean:
-	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(DEPS) $(TEST_DEPS) \
-			obj/{release,debug}/common.o \
-			obj/{release,debug}/monlang.o
+	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS) \
+			obj/release/common.o obj/debug/common.o \
+			obj/release/monlang.o obj/debug/monlang.o
 
 mrproper:
 	$(RM) obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS) bin
@@ -65,8 +66,8 @@ bin/debug/monlang: $(DEBUG_OBJS) lib/libs.a obj/debug/common.o obj/debug/monlang
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
-$(TEST_BINS): %: obj/debug/$$(notdir %.o) lib/test-libs.a obj/debug/common.o src/test/$$(notdir %.cpp)
-	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
+$(TEST_BINS): %: $(DEBUG_OBJS) obj/test/$$(notdir %.o) lib/test-libs.a obj/debug/common.o
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
 $(RELEASE_OBJS) obj/release/common.o obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
@@ -75,6 +76,10 @@ $(RELEASE_OBJS) obj/release/common.o obj/release/monlang.o: %.o: src/$$(notdir %
 .SECONDEXPANSION:
 $(DEBUG_OBJS) obj/debug/common.o obj/debug/monlang.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_DEBUG) $(DEPFLAGS)
+
+.SECONDEXPANSION:
+$(TEST_OBJS): %.o: src/test/$$(notdir %.cpp)
+	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
 -include $(DEPS) $(TEST_DEPS)
 
@@ -100,4 +105,4 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed #
-$(shell mkdir -p obj/release obj/debug .deps/test bin/release bin/debug bin/test $(LIB_OBJ_DIRS))
+$(shell mkdir -p obj/release obj/debug obj/test .deps/test bin/release bin/debug bin/test $(LIB_OBJ_DIRS))

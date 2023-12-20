@@ -56,7 +56,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while entering a square brackets group" << std::endl;
-        exit(1);
+        throw std::runtime_error("user exception");
     }
 
     std::vector<Term> terms;
