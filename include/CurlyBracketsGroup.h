@@ -15,7 +15,7 @@ struct CurlyBracketsGroup {
     static const std::vector<char> CONTINUATOR_SEQUENCE;
     static const std::vector<char> TERMINATOR_SEQUENCE;
 
-    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
+    static const std::vector<char> RESERVED_CHARACTERS;
 };
 
 struct Association;

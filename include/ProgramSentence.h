@@ -11,7 +11,7 @@ struct ProgramSentence {
 
     static const std::vector<char> TERMINATOR_SEQUENCE;
 
-    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
+    static const std::vector<char> RESERVED_CHARACTERS;
 };
 
 ProgramSentence consumeProgramSentence(std::istringstream&);

@@ -11,9 +11,9 @@ struct Term {
 
     static const std::vector<char> CONTINUATOR_SEQUENCE;
 
-    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
+    static const std::vector<char> RESERVED_CHARACTERS;
 };
 
-Term consumeTerm(std::istringstream&);
+Term consumeTerm(std::istringstream&, const std::vector<char>& terminatorSequences);
 
 #endif // TERM_H

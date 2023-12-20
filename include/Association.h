@@ -11,7 +11,7 @@ struct Association {
 
     static const std::vector<char> SEPARATOR_SEQUENCE;
 
-    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
+    static const std::vector<char> RESERVED_CHARACTERS;
 };
 
 #endif // ASSOCIATION_H

@@ -13,6 +13,8 @@ struct Atom {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-std::optional<std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> consumeAtom(std::istringstream&);
+std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*> consumeAtom(std::istringstream&);
+
+Atom consumeAtomStrictly(std::istringstream&);
 
 #endif // ATOM_H

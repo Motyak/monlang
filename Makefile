@@ -58,10 +58,10 @@ mrproper:
 
 ###########################################################
 
-bin/release/monlang: $(RELEASE_OBJS) lib/libs.a obj/release/{common,monlang}.o
+bin/release/monlang: $(RELEASE_OBJS) lib/libs.a obj/release/common.o obj/release/monlang.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-bin/debug/monlang: $(DEBUG_OBJS) lib/libs.a obj/debug/{common,monlang}.o
+bin/debug/monlang: $(DEBUG_OBJS) lib/libs.a obj/debug/common.o obj/debug/monlang.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
@@ -69,11 +69,11 @@ $(TEST_BINS): %: obj/debug/$$(notdir %.o) lib/test-libs.a obj/debug/common.o src
 	$(CXX) -o $@ $^ $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
 
 .SECONDEXPANSION:
-$(RELEASE_OBJS) obj/release/{common,monlang}.o: %.o: src/$$(notdir %.cpp)
+$(RELEASE_OBJS) obj/release/common.o obj/release/monlang.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS)
 
 .SECONDEXPANSION:
-$(DEBUG_OBJS) obj/debug/{common,monlang}.o: %.o: src/$$(notdir %.cpp)
+$(DEBUG_OBJS) obj/debug/common.o obj/debug/monlang.o: %.o: src/$$(notdir %.cpp)
 	$(CXX) -o $@ -c $< $(CXXFLAGS_DEBUG) $(DEPFLAGS)
 
 -include $(DEPS) $(TEST_DEPS)

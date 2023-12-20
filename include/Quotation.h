@@ -20,7 +20,7 @@ struct Quotation {
     static const std::vector<char> ALT_INITIATOR_SEQUENCE;
     static const std::vector<char> ALT_TERMINATOR_SEQUENCE;
 
-    static const std::vector<std::vector<char>> RESERVED_SEQUENCES;
+    static const std::vector<char> RESERVED_CHARACTERS;
 };
 
 struct Association;

@@ -8,9 +8,15 @@
 
 #include <iostream>
 
-const std::vector<char> INITIATOR_SEQUENCE = { '[' };
-const std::vector<char> CONTINUATOR_SEQUENCE = { ',', SPACE };
-const std::vector<char> TERMINATOR_SEQUENCE = { ']' };
+const std::vector<char> SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
+const std::vector<char> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const std::vector<char> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
+
+const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
+    SquareBracketsGroup::INITIATOR_SEQUENCE[0],
+    SquareBracketsGroup::CONTINUATOR_SEQUENCE[0],
+    SquareBracketsGroup::TERMINATOR_SEQUENCE[0],
+};
 
 std::optional<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input) {
     auto squareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input);
@@ -60,11 +66,15 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
         return new SquareBracketsGroup{terms}; // empty
     }
 
-    auto currentTerm = consumeTerm(input);
+    std::vector<char> terminatorCharacters = {
+        SquareBracketsGroup::CONTINUATOR_SEQUENCE[0],
+        SquareBracketsGroup::TERMINATOR_SEQUENCE[0]
+    };
+    auto currentTerm = consumeTerm(input, terminatorCharacters);
     terms.push_back(currentTerm);
     while (input && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input);
-        currentTerm = consumeTerm(input);
+        currentTerm = consumeTerm(input, terminatorCharacters);
         terms.push_back(currentTerm);
     }
 
