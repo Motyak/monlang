@@ -1,5 +1,10 @@
 #include <ParenthesesGroup.h>
+#include <SquareBracketsGroup.h>
+#include <PostfixParenthesesGroup.h>
+#include <PostfixSquareBracketsGroup.h>
+#include <Association.h>
 #include <common.h>
+#include <utils/variant-utils.h>
 
 #include <iostream>
 
@@ -13,6 +18,36 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     ParenthesesGroup::TERMINATOR_SEQUENCE[0],
 };
 
+std::optional<std::variant<ParenthesesGroup*, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> tryConsumeParenthesesGroup(std::istringstream& input) {
+    auto parenthesesGroup = tryConsumeParenthesesGroupStrictly(input);
+    if (!parenthesesGroup) {
+        return {};
+    }
+
+    using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = *parenthesesGroup;
+
+    BEGIN:
+    if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
+        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), *postfixParenthesesGroup};
+        goto BEGIN;
+    }
+
+    if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
+        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), *postfixSquareBracketsGroup};
+        goto BEGIN;
+    }
+
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
+        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        ProgramWord rightPart = consumeProgramWord(input);
+        return new Association{leftPart, rightPart};
+    }
+
+    return variant_cast(accumulatedPostfixLeftPart);
+}
+
 std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istringstream& input) {
     if (!peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return {};
@@ -21,7 +56,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while entering a square brackets group" << std::endl;
-        exit(1);
+        throw std::runtime_error("user exception");
     }
 
     std::vector<Term> terms;
@@ -37,7 +72,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
     };
     auto currentTerm = consumeTerm(input, terminatorSequences);
     terms.push_back(currentTerm);
-    while (input && !peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
+    while (input.peek() != EOF && !peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input);
         currentTerm = consumeTerm(input, terminatorSequences);
         terms.push_back(currentTerm);
@@ -54,7 +89,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
                 << std::string(ts.begin(), ts.end()) 
                 << "` but found `" << char(input.peek()) << "`" << std::endl;
         }
-        exit(1);
+        throw std::runtime_error("user exception");
     }
     input.ignore(ParenthesesGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
 

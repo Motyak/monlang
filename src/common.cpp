@@ -11,7 +11,7 @@ void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
                 std::cerr << "was expecting `" << c 
                         << "` but found `" << char(input.peek()) << "`" << std::endl;
             }
-            exit(1);
+            throw std::runtime_error("user exception");
         }
         input.ignore(1);
     }

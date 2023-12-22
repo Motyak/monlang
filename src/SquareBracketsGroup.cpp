@@ -72,8 +72,12 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     };
     auto currentTerm = consumeTerm(input, terminatorCharacters);
     terms.push_back(currentTerm);
-    while (input && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+    while (input.peek() != EOF && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input);
+        if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+            std::cerr << "was expecting another word" << std::endl;
+            throw std::runtime_error("user exception");
+        }
         currentTerm = consumeTerm(input, terminatorCharacters);
         terms.push_back(currentTerm);
     }
@@ -89,7 +93,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
                 << std::string(ts.begin(), ts.end()) 
                 << "` but found `" << char(input.peek()) << "`" << std::endl;
         }
-        exit(1);
+        throw std::runtime_error("user exception");
     }
     input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
 

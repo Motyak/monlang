@@ -55,12 +55,12 @@ Atom consumeAtomStrictly(std::istringstream& input) {
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while about to parse an atom value" << std::endl;
-        exit(1);
+        throw std::runtime_error("user exception");
     }
 
     std::string value;
     char currentChar;
-    while (input && std::all_of(
+    while (input.peek() != EOF && std::all_of(
                 TERMINATOR_CHARACTERS.begin(),
                 TERMINATOR_CHARACTERS.end(),
                 [&input](auto terminatorChar){return input.peek() != terminatorChar;})) {
@@ -70,7 +70,7 @@ Atom consumeAtomStrictly(std::istringstream& input) {
 
     if (value.size() == 0) {
         std::cerr << "expected an atom value but found nothing" << std::endl;
-        exit(1);
+        throw std::runtime_error("user exception");
     }
 
     return Atom{value};
