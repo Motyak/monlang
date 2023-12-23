@@ -18,6 +18,6 @@ using ProgramWord = std::variant<Association*, PostfixParenthesesGroup*, Postfix
 using ProgramWordWithoutAssociation = std::variant<PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, ParenthesesGroup*, SquareBracketsGroup*, Quotation, CurlyBracketsGroup*, Atom>;
 
 ProgramWord consumeProgramWord(std::istringstream&);
-ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
+// ProgramWordWithoutAssociation consumeProgramWordWithoutAssociation(std::istringstream&);
 
 #endif // PROGRAM_WORD_H

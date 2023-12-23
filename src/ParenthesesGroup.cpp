@@ -5,6 +5,7 @@
 #include <Association.h>
 #include <common.h>
 #include <utils/variant-utils.h>
+#include <utils/str-utils.h>
 
 #include <iostream>
 
@@ -18,7 +19,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     ParenthesesGroup::TERMINATOR_SEQUENCE[0],
 };
 
-std::optional<std::variant<ParenthesesGroup*, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> tryConsumeParenthesesGroup(std::istringstream& input) {
+std::optional<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeParenthesesGroup(std::istringstream& input) {
     auto parenthesesGroup = tryConsumeParenthesesGroupStrictly(input);
     if (!parenthesesGroup) {
         return {};
@@ -80,15 +81,8 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
 
     if (!peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         auto& ts = ParenthesesGroup::TERMINATOR_SEQUENCE;
-        if (input.peek() == -1) {
-            std::cerr << "was expecting `" 
-                << std::string(ts.begin(), ts.end()) 
-                << "` but hit EOF" << std::endl;
-        } else {
-            std::cerr << "was expecting `" 
-                << std::string(ts.begin(), ts.end()) 
-                << "` but found `" << char(input.peek()) << "`" << std::endl;
-        }
+        std::cerr << "was expecting " << str(ts)
+                << " but got " << str(input.peek()) << std::endl;
         throw std::runtime_error("user exception");
     }
     input.ignore(ParenthesesGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters

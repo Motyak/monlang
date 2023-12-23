@@ -6,6 +6,7 @@
 #include <common.h>
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
+#include <utils/str-utils.h>
 
 #include <iostream>
 
@@ -75,7 +76,8 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     try {
         currentTerm = consumeTerm(input, terminatorCharacters);
     } catch (std::runtime_error& e) {
-        std::cerr << "was expecting end of square brackets group" << std::endl;
+        std::cerr << "was expecting end of square brackets group" 
+                << " but got " << str(input.peek()) << std::endl;
         throw new std::runtime_error("user exception");
     }
     terms.push_back(currentTerm);
@@ -96,18 +98,9 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
 
     if (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         auto& ts = SquareBracketsGroup::TERMINATOR_SEQUENCE;
-        if (input.peek() == -1) {
-            std::cerr << "was expecting `" 
-                << std::string(ts.begin(), ts.end()) 
-                << "` but hit EOF" << std::endl;
-            throw std::runtime_error("user exception");
-        }
-        else {
-            std::cerr << "was expecting `" 
-                << std::string(ts.begin(), ts.end()) 
-                << "` but found `" << char(input.peek()) << "`" << std::endl;
-            SHOULD_NOT_HAPPEN();
-        }
+        std::cerr << "was expecting " << str(ts)
+                << " but got " << str(input.peek()) << std::endl;
+        throw std::runtime_error("user exception");
         
     }
     input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters

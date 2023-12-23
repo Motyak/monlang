@@ -4,13 +4,43 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <map>
 
-std::vector<std::string> split(const std::string& input, const std::string& delim) {
+inline std::string str(char c) {
+    static const std::map<char, std::string> invisible_chars = {
+        {-1, "EOF"},
+        {0, "NUL"},
+        {9, "TAB"},
+        {10, "NEWLINE(LF)"},
+        {32, "SPACE"},
+    };
+    if (invisible_chars.find(c) != invisible_chars.end()) {
+        return invisible_chars.at(c);
+    }
+    if (c == '`') {
+        return "'" + std::string(1, c) + "'";
+    }
+    return "`" + std::string(1, c) + "`";
+}
+
+inline std::string str(std::vector<char> seq) {
+    std::string res("{");
+    for (size_t i = 0; i < seq.size() - 1; ++i) {
+        res += str(seq[i]) + ", ";
+    }
+    if (seq.size() != 0) {
+        res += str(seq[seq.size() - 1]);
+    }
+    res += "}";
+    return res;
+}
+
+inline std::vector<std::string> split(const std::string& input, const std::string& delim) {
     std::vector<std::string> res;
     std::string token = "";
-    for (int i = 0; i < input.size(); i++) {
+    for (size_t i = 0; i < input.size(); i++) {
         bool flag = true;
-        for (int j = 0; j < delim.size(); j++) {
+        for (size_t j = 0; j < delim.size(); j++) {
             if (input[i + j] != delim[j]) {
                 flag = false;
             }
@@ -29,7 +59,7 @@ std::vector<std::string> split(const std::string& input, const std::string& deli
     return res;
 }
 
-std::string peekRemainingCharacters(std::istringstream& iss) {
+inline std::string peekRemainingCharacters(std::istringstream& iss) {
     return iss.str().substr(iss.tellg());
 }
 

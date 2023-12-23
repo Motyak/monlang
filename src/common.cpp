@@ -1,16 +1,13 @@
 #include <common.h>
+#include <utils/str-utils.h>
 
 #include <iostream>
 
 void consumeSequence(std::vector<char> sequence, std::istringstream& input) {
     for (auto c: sequence) {
         if (input.peek() != c) {
-            if (input.peek() == -1) {
-                std::cerr << "was expecting `" << c << "` but hit EOF" << std::endl;
-            } else {
-                std::cerr << "was expecting `" << c 
-                        << "` but found `" << char(input.peek()) << "`" << std::endl;
-            }
+                std::cerr << "was expecting " << str(c) 
+                        << " but found " << str(input.peek()) << std::endl;
             throw std::runtime_error("user exception");
         }
         input.ignore(1);
