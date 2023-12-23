@@ -1,8 +1,14 @@
 #include <CurlyBracketsGroup.h>
 #include <ProgramSentence.h>
+#include <ParenthesesGroup.h>
+#include <SquareBracketsGroup.h>
+#include <PostfixParenthesesGroup.h>
+#include <PostfixSquareBracketsGroup.h>
+#include <Association.h>
 #include <common.h>
 #include <utils/assert-utils.h>
 #include <utils/str-utils.h>
+#include <utils/variant-utils.h>
 
 #include <iostream>
 
@@ -20,9 +26,28 @@ std::optional<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, Postfi
         return {};
     }
 
-    //TODO: 
+    using PostfixLeftPart = std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = *curlyBracketsGroup;
 
-    return curlyBracketsGroup;
+    BEGIN:
+    if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
+        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), *postfixParenthesesGroup};
+        goto BEGIN;
+    }
+
+    if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
+        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), *postfixSquareBracketsGroup};
+        goto BEGIN;
+    }
+
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
+        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        ProgramWord rightPart = consumeProgramWord(input);
+        return new Association{leftPart, rightPart};
+    }
+
+    return variant_cast(accumulatedPostfixLeftPart);
 }
 
 static CurlyBracketsGroup* consumeOnelineGroup(std::istringstream&);
@@ -100,6 +125,8 @@ CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
                 << " but got " << str(input.peek()) << std::endl;
         throw std::runtime_error("user exception");
     }
+
+    input.ignore(1); // consume end of curly brackets group characters sequence
 
     return new CurlyBracketsGroup{{ProgramSentence{term}}};
 }

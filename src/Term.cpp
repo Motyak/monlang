@@ -11,7 +11,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 };
 
 Term consumeTerm(std::istringstream& input, const std::vector<char>& terminatorCharacters) {
-    if (!input) {
+    if (input.peek() == EOF) {
         std::cerr << "was expecting at least one word in Term, found none" << std::endl;
         throw std::runtime_error("user exception");
     }
