@@ -27,11 +27,11 @@ inline std::string str(std::vector<CharacterAppearance> seq) {
     std::string res("{");
     for (size_t i = 0; i < seq.size() - 1; ++i) {
         res += std::to_string(seq[i].ntimes) + " * ";
-        res += str(seq[i].c) + ", ";
+        res += str(seq[i]) + ", ";
     }
     if (seq.size() != 0) {
         res += std::to_string(seq[seq.size() - 1].ntimes) + " * ";
-        res += str(seq[seq.size() - 1].c);
+        res += str(seq[seq.size() - 1]);
     }
     res += "}";
     return res;

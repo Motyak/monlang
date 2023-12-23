@@ -16,8 +16,8 @@ const std::vector<CharacterAppearance> CurlyBracketsGroup::INITIATOR_SEQUENCE = 
 const std::vector<CharacterAppearance> CurlyBracketsGroup::TERMINATOR_SEQUENCE = { '}' };
 
 const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
-    INITIATOR_SEQUENCE[0].c,
-    TERMINATOR_SEQUENCE[0].c
+    INITIATOR_SEQUENCE[0],
+    TERMINATOR_SEQUENCE[0]
 };
 
 std::optional<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
@@ -108,7 +108,7 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::ist
 
 CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
     std::vector<char> terminatorCharacters = {
-        CurlyBracketsGroup::TERMINATOR_SEQUENCE[0].c
+        CurlyBracketsGroup::TERMINATOR_SEQUENCE[0]
     };
     Term term;
     try {

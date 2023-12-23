@@ -15,9 +15,9 @@ const std::vector<CharacterAppearance> SquareBracketsGroup::CONTINUATOR_SEQUENCE
 const std::vector<CharacterAppearance> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
 
 const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
-    SquareBracketsGroup::INITIATOR_SEQUENCE[0].c,
-    SquareBracketsGroup::CONTINUATOR_SEQUENCE[0].c,
-    SquareBracketsGroup::TERMINATOR_SEQUENCE[0].c,
+    SquareBracketsGroup::INITIATOR_SEQUENCE[0],
+    SquareBracketsGroup::CONTINUATOR_SEQUENCE[0],
+    SquareBracketsGroup::TERMINATOR_SEQUENCE[0],
 };
 
 std::optional<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input) {
@@ -69,8 +69,8 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     }
 
     std::vector<char> terminatorCharacters = {
-        SquareBracketsGroup::CONTINUATOR_SEQUENCE[0].c,
-        SquareBracketsGroup::TERMINATOR_SEQUENCE[0].c
+        SquareBracketsGroup::CONTINUATOR_SEQUENCE[0],
+        SquareBracketsGroup::TERMINATOR_SEQUENCE[0]
     };
     Term currentTerm;
     try {
