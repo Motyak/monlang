@@ -5,6 +5,7 @@
 #include <Association.h>
 #include <common.h>
 #include <utils/variant-utils.h>
+#include <utils/assert-utils.h>
 
 #include <iostream>
 
@@ -70,7 +71,13 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
         SquareBracketsGroup::CONTINUATOR_SEQUENCE[0],
         SquareBracketsGroup::TERMINATOR_SEQUENCE[0]
     };
-    auto currentTerm = consumeTerm(input, terminatorCharacters);
+    Term currentTerm;
+    try {
+        currentTerm = consumeTerm(input, terminatorCharacters);
+    } catch (std::runtime_error& e) {
+        std::cerr << "was expecting end of square brackets group" << std::endl;
+        throw new std::runtime_error("user exception");
+    }
     terms.push_back(currentTerm);
     while (input.peek() != EOF && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input);
@@ -78,7 +85,12 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
             std::cerr << "was expecting another word" << std::endl;
             throw std::runtime_error("user exception");
         }
-        currentTerm = consumeTerm(input, terminatorCharacters);
+        try {
+            currentTerm = consumeTerm(input, terminatorCharacters);
+        } catch (std::runtime_error& e) {
+            std::cerr << "was expecting end of square brackets group" << std::endl;
+            throw new std::runtime_error("user exception");
+        }
         terms.push_back(currentTerm);
     }
 
@@ -88,12 +100,15 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
             std::cerr << "was expecting `" 
                 << std::string(ts.begin(), ts.end()) 
                 << "` but hit EOF" << std::endl;
-        } else {
+            throw std::runtime_error("user exception");
+        }
+        else {
             std::cerr << "was expecting `" 
                 << std::string(ts.begin(), ts.end()) 
                 << "` but found `" << char(input.peek()) << "`" << std::endl;
+            SHOULD_NOT_HAPPEN();
         }
-        throw std::runtime_error("user exception");
+        
     }
     input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
 
