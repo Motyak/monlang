@@ -41,7 +41,7 @@ std::optional<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixS
 
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
         ProgramWord rightPart = consumeProgramWord(input);
         return new Association{leftPart, rightPart};
     }
@@ -53,7 +53,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
     if (!peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
-    input.ignore(ParenthesesGroup::INITIATOR_SEQUENCE.size()); // consume initiator characters
+    input.ignore(sequenceLen(ParenthesesGroup::INITIATOR_SEQUENCE)); // consume initiator characters
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while entering a square brackets group" << std::endl;
@@ -63,7 +63,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
     std::vector<Term> terms;
 
     if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(ParenthesesGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+        input.ignore(sequenceLen(ParenthesesGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
         return new ParenthesesGroup{terms}; // empty
     }
 
@@ -85,7 +85,7 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
                 << " but got " << str(input.peek()) << std::endl;
         throw std::runtime_error("user exception");
     }
-    input.ignore(ParenthesesGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+    input.ignore(sequenceLen(ParenthesesGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
 
     return new ParenthesesGroup{terms};
 }

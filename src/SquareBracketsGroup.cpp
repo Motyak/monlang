@@ -42,7 +42,7 @@ std::optional<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, Postf
 
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
         ProgramWord rightPart = consumeProgramWord(input);
         return new Association{leftPart, rightPart};
     }
@@ -54,7 +54,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     if (!peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
-    input.ignore(SquareBracketsGroup::INITIATOR_SEQUENCE.size()); // consume initiator characters
+    input.ignore(sequenceLen(SquareBracketsGroup::INITIATOR_SEQUENCE)); // consume initiator characters
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while entering a square brackets group" << std::endl;
@@ -64,7 +64,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     std::vector<Term> terms;
 
     if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+        input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
         return new SquareBracketsGroup{terms}; // empty
     }
 
@@ -103,7 +103,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
         throw std::runtime_error("user exception");
         
     }
-    input.ignore(SquareBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+    input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
 
     return new SquareBracketsGroup{terms};
 }

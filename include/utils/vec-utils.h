@@ -7,6 +7,14 @@
 #include <set>
 
 template <typename T>
+std::vector<T> vec_concat(const std::vector<T>& vecA, const std::vector<T>& vecB) {
+    std::vector<T> res;
+    res.insert(res.end(), vecA.begin(), vecA.end());
+    res.insert(res.end(), vecB.begin(), vecB.end());
+    return res;
+}
+
+template <typename T>
 std::vector<T> vec_union(const std::initializer_list<std::vector<T>>& vecs) {
     std::vector<T> res;
     for (auto vec: vecs) {

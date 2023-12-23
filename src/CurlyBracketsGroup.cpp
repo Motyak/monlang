@@ -42,7 +42,7 @@ std::optional<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, Postfi
 
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
         ProgramWord rightPart = consumeProgramWord(input);
         return new Association{leftPart, rightPart};
     }
@@ -56,7 +56,7 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::ist
     if (!peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
-    input.ignore(CurlyBracketsGroup::INITIATOR_SEQUENCE.size()); // consume initiator characters
+    input.ignore(sequenceLen(CurlyBracketsGroup::INITIATOR_SEQUENCE)); // consume initiator characters
 
     if (input.peek() == EOF) {
         std::cerr << "unexpected EOF while entering a curly brackets group" << std::endl;
@@ -66,7 +66,7 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::ist
     std::vector<ProgramSentence> sentences;
 
     if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(CurlyBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+        input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
         return new CurlyBracketsGroup{sentences}; // empty
     }
 
@@ -101,7 +101,7 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::ist
         throw std::runtime_error("user exception");
         
     }
-    input.ignore(CurlyBracketsGroup::TERMINATOR_SEQUENCE.size()); // consume terminator characters
+    input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
 
     return new CurlyBracketsGroup{sentences};
 }

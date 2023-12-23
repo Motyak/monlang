@@ -17,6 +17,7 @@ struct CharacterAppearance {
 };
 
 char firstChar(std::vector<CharacterAppearance>);
+size_t sequenceLen(std::vector<CharacterAppearance>);
 
 void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);
 bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);

@@ -33,7 +33,7 @@ std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBrackets
 
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-        input.ignore(Association::SEPARATOR_SEQUENCE.size()); // consume association separator characters
+        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
         ProgramWord rightPart = consumeProgramWord(input);
         return new Association{leftPart, rightPart};
     }

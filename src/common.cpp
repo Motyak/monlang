@@ -25,6 +25,14 @@ char firstChar(std::vector<CharacterAppearance> sequence) {
     return -1;
 }
 
+size_t sequenceLen(std::vector<CharacterAppearance> sequence) {
+    size_t len = 0;
+    for (auto charAppearance: sequence) {
+        len += charAppearance.ntimes;
+    }
+    return len;
+}
+
 void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {
@@ -51,10 +59,11 @@ bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&
     // save stream position
     std::streampos initialPosition = input.tellg();
 
-    // peek, check, consume      in a loop
     for (auto charAppearance: sequence) {
        if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
+                // restore stream position
+                input.seekg(initialPosition);
                 return false;
             }
             continue;
@@ -62,6 +71,8 @@ bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&
 
         for (unsigned i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
+                // restore stream position
+                input.seekg(initialPosition);
                 return false;
             }
             input.ignore(1);
