@@ -7,7 +7,7 @@
 const std::vector<CharacterAppearance> Term::CONTINUATOR_SEQUENCE = { SPACE };
 
 const std::vector<char> Term::RESERVED_CHARACTERS = {
-    Term::CONTINUATOR_SEQUENCE[0]
+    firstChar(CONTINUATOR_SEQUENCE)
 };
 
 Term consumeTerm(std::istringstream& input, const std::vector<char>& terminatorCharacters) {

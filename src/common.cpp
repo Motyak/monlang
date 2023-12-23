@@ -16,6 +16,15 @@ CharacterAppearance::operator char() const {
     return this->c;
 }
 
+char firstChar(std::vector<CharacterAppearance> sequence) {
+    for (auto charAppearance: sequence) {
+        if (charAppearance.ntimes > 0) {
+            return charAppearance.c;
+        }
+    }
+    return -1;
+}
+
 void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {

@@ -4,12 +4,12 @@
 const std::vector<CharacterAppearance> ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
 
 const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
-    ProgramSentence::TERMINATOR_SEQUENCE[0]
+    firstChar(TERMINATOR_SEQUENCE)
 };
 
 ProgramSentence consumeProgramSentence(std::istringstream& input) {
     std::vector<char> terminatorCharacters = {
-        ProgramSentence::TERMINATOR_SEQUENCE[0]
+        firstChar(ProgramSentence::TERMINATOR_SEQUENCE)
     };
     auto term = consumeTerm(input, terminatorCharacters);
     consumeSequence({NEWLINE}, input);

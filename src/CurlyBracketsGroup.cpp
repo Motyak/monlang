@@ -108,7 +108,7 @@ std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::ist
 
 CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
     std::vector<char> terminatorCharacters = {
-        CurlyBracketsGroup::TERMINATOR_SEQUENCE[0]
+        firstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE)
     };
     Term term;
     try {

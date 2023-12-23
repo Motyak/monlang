@@ -16,6 +16,8 @@ struct CharacterAppearance {
     operator char() const;
 };
 
+char firstChar(std::vector<CharacterAppearance>);
+
 void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);
 bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);
 
