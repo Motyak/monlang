@@ -44,7 +44,7 @@ release: bin/release/monlang
 debug: bin/debug/monlang
 
 test: $(TEST_BINS)
-	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f || exit $$?; done
+	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f --allow-running-no-tests || exit $$?; done
 
 clean:
 	$(RM) $(RELEASE_OBJS) $(DEBUG_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS) \

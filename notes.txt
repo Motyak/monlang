@@ -1,4 +1,30 @@
 
 TODO:
 
-- Exiger une proper tabulation dans les curly brackets group (1 '\t' par niveau d'indentation)
+- Exiger une proper tabulation dans les curly brackets group (1 '\t' par niveau d'indentation), et pour les multiline strings
+- Faire une whitelist au lieu d'une blacklist pour les Atom ?
+
+struct CharacterAppearance {
+    char c;
+    unsigned ntimes = 1;
+    implicit CharacterAppearance(char c) : CharacterAppearance{c}{}
+};
+
+std::vector<CharacterAppearance>;
+{ {'\', 0}, '"' }
+
+{ {'\', 0}, {'`', 3} }
+
+
+fds = "'fds'"
+fds = "\"fds\""
+fds = "`fds`"
+fds = "\\"" # `\"`
+
+fds = ```
+    'fds'
+    "fds"
+    `fds`
+    \```fds\```
+    \\``` # '\```'
+```

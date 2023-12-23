@@ -9,7 +9,7 @@ struct Association {
     ProgramWordWithoutAssociation leftPart;
     ProgramWord rightPart;
 
-    static const std::vector<char> SEPARATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> SEPARATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };

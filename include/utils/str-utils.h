@@ -23,13 +23,15 @@ inline std::string str(char c) {
     return "`" + std::string(1, c) + "`";
 }
 
-inline std::string str(std::vector<char> seq) {
+inline std::string str(std::vector<CharacterAppearance> seq) {
     std::string res("{");
     for (size_t i = 0; i < seq.size() - 1; ++i) {
-        res += str(seq[i]) + ", ";
+        res += std::to_string(seq[i].ntimes) + " * ";
+        res += str(seq[i].c) + ", ";
     }
     if (seq.size() != 0) {
-        res += str(seq[seq.size() - 1]);
+        res += std::to_string(seq[seq.size() - 1].ntimes) + " * ";
+        res += str(seq[seq.size() - 1].c);
     }
     res += "}";
     return res;

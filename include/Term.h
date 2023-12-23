@@ -9,7 +9,7 @@
 struct Term {
     std::vector<ProgramWord> words;
 
-    static const std::vector<char> CONTINUATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> CONTINUATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };

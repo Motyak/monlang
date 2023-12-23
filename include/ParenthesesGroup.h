@@ -11,9 +11,9 @@
 struct ParenthesesGroup {
     std::vector<Term> terms;
 
-    static const std::vector<char> INITIATOR_SEQUENCE;
-    static const std::vector<char> CONTINUATOR_SEQUENCE;
-    static const std::vector<char> TERMINATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> INITIATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> CONTINUATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> TERMINATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };

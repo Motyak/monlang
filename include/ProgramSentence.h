@@ -9,7 +9,7 @@
 struct ProgramSentence {
     Term term;
 
-    static const std::vector<char> TERMINATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> TERMINATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };

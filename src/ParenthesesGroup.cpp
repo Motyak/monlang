@@ -9,14 +9,14 @@
 
 #include <iostream>
 
-const std::vector<char> ParenthesesGroup::INITIATOR_SEQUENCE = { '(' };
-const std::vector<char> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
-const std::vector<char> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
+const std::vector<CharacterAppearance> ParenthesesGroup::INITIATOR_SEQUENCE = { '(' };
+const std::vector<CharacterAppearance> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const std::vector<CharacterAppearance> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
 
 const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
-    ParenthesesGroup::INITIATOR_SEQUENCE[0],
-    ParenthesesGroup::CONTINUATOR_SEQUENCE[0],
-    ParenthesesGroup::TERMINATOR_SEQUENCE[0],
+    ParenthesesGroup::INITIATOR_SEQUENCE[0].c,
+    ParenthesesGroup::CONTINUATOR_SEQUENCE[0].c,
+    ParenthesesGroup::TERMINATOR_SEQUENCE[0].c,
 };
 
 std::optional<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeParenthesesGroup(std::istringstream& input) {
@@ -68,8 +68,8 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
     }
 
     auto terminatorSequences = {
-        ParenthesesGroup::CONTINUATOR_SEQUENCE[0],
-        ParenthesesGroup::TERMINATOR_SEQUENCE[0]
+        ParenthesesGroup::CONTINUATOR_SEQUENCE[0].c,
+        ParenthesesGroup::TERMINATOR_SEQUENCE[0].c
     };
     auto currentTerm = consumeTerm(input, terminatorSequences);
     terms.push_back(currentTerm);

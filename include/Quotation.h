@@ -2,6 +2,7 @@
 #define QUOTATION_H
 
 #include <Quoted.h>
+#include <common.h>
 
 #include <vector>
 #include <string>
@@ -15,10 +16,10 @@ struct Quotation {
     Quoted quoted;
     QuotedFormat quotedFormat = "";
 
-    static const std::vector<char> INITIATOR_SEQUENCE;
-    static const std::vector<char> TERMINATOR_SEQUENCE;
-    static const std::vector<char> ALT_INITIATOR_SEQUENCE;
-    static const std::vector<char> ALT_TERMINATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> INITIATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> TERMINATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> ALT_INITIATOR_SEQUENCE;
+    static const std::vector<CharacterAppearance> ALT_TERMINATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };
