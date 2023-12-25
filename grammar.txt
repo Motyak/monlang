@@ -32,3 +32,9 @@ CURLY-BRACKETS-GROUP := '{' TERM? | (NEWLINE PROGRAM-SENTENCE+) '}'
 
 QUOTATION := ('"' QUOTED '"') | ('```' QUOTED-FORMAT? NEWLINE QUOTED NEWLINE '```')
 // note: should be /(?!\)"/ rather than /"/, otherwise escaped double quote can be misinterpreted
+
+====================================================================================
+
+# External rules
+- comments (will be removed before scanning)
+- proper tabulation in curly brackets groups and multiline quotations (will be enforced/checked before scanning)

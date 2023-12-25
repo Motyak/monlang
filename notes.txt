@@ -25,6 +25,14 @@ fds = ```
     'fds'
     "fds"
     `fds`
-    \```fds\```
-    \\``` # '\```'
+```
+
+fds = ```monlang
+    fds = ```json
+        {
+            name: "fds",
+            age: 13,
+            major: false
+        }
+    ```
 ```

@@ -11,6 +11,7 @@ struct Quoted {
     std::string value;
 };
 
-Quoted consumeQuoted(std::istringstream&, const std::vector<CharacterAppearance>& terminatorSequences);
+Quoted consumeOnelineQuoted(std::istringstream&);
+Quoted consumeMultilineQuoted(std::istringstream&);
 
 #endif // QUOTED_H
