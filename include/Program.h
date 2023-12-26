@@ -18,6 +18,6 @@ struct Program {
 };
 
 Program consumeProgram(std::istringstream&);
-ProgramSentence consumeProgramSentence(std::istringstream&);
+ProgramSentence consumeProgramSentence(std::istringstream&, const std::vector<char>& terminatorCharacters={});
 
 #endif // PROGRAM_H

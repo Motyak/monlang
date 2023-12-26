@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+unsigned g_currentNestedLevel = 0;
+
+unsigned currentNestedLevel() {
+    return g_currentNestedLevel;
+}
+
 CharacterAppearance::CharacterAppearance(char c, unsigned ntimes) {
     this->c = c;
     this->ntimes = ntimes;
