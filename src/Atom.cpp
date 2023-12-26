@@ -1,5 +1,5 @@
 #include <Atom.h>
-#include <ProgramSentence.h>
+#include <Program.h>
 #include <Term.h>
 #include <Association.h>
 #include <PostfixParenthesesGroup.h>
@@ -44,7 +44,7 @@ std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBrackets
 
 Atom consumeAtomStrictly(std::istringstream& input) {
     static const std::vector<char> TERMINATOR_CHARACTERS = vec_union({
-        ProgramSentence::RESERVED_CHARACTERS,
+        Program::RESERVED_CHARACTERS,
         Term::RESERVED_CHARACTERS,
         Association::RESERVED_CHARACTERS,
         ParenthesesGroup::RESERVED_CHARACTERS,

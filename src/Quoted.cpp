@@ -1,5 +1,5 @@
 #include <Quoted.h>
-#include <ProgramSentence.h>
+#include <Program.h>
 #include <common.h>
 #include <utils/vec-utils.h>
 #include <utils/str-utils.h>
@@ -9,7 +9,7 @@
 
 Quoted consumeOnelineQuoted(std::istringstream& input) {
     static const std::vector<std::vector<CharacterAppearance>> TERMINATOR_SEQUENCES = {
-        ProgramSentence::TERMINATOR_SEQUENCE,
+        Program::CONTINUATOR_SEQUENCE,
         Quotation::TERMINATOR_SEQUENCE
     };
     static const std::vector<CharacterAppearance> ESCAPED_SEQUENCE = vec_concat({BACKSLASH}, Quotation::TERMINATOR_SEQUENCE);

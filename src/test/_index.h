@@ -1,7 +1,5 @@
 #include "Program.cpp" 
 
-#include "ProgramSentence.cpp"
-
 #include "Term.cpp"
 
 #include "ProgramWord.cpp"

@@ -1,5 +1,5 @@
 #include <CurlyBracketsGroup.h>
-#include <ProgramSentence.h>
+#include <Program.h>
 #include <ParenthesesGroup.h>
 #include <SquareBracketsGroup.h>
 #include <PostfixParenthesesGroup.h>

@@ -64,8 +64,8 @@ TEST_CASE("oneline term")
     std::istringstream iss("{fds}");
     auto res = std::get<CurlyBracketsGroup*>(*tryConsumeCurlyBracketsGroup(iss));
     REQUIRE (res->sentences.size() == 1);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
-    auto word1 = std::get<Atom>(res->sentences[0].term.words[0]);
+    REQUIRE (res->sentences[0].words.size() == 1);
+    auto word1 = std::get<Atom>(res->sentences[0].words[0]);
     REQUIRE (word1.value == "fds");
 }
 
@@ -76,8 +76,8 @@ TEST_CASE("one sentence")
             + "}");
     auto res = std::get<CurlyBracketsGroup*>(*tryConsumeCurlyBracketsGroup(iss));
     REQUIRE (res->sentences.size() == 1);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
-    auto word1 = std::get<Atom>(res->sentences[0].term.words[0]);
+    REQUIRE (res->sentences[0].words.size() == 1);
+    auto word1 = std::get<Atom>(res->sentences[0].words[0]);
     REQUIRE (word1.value == "fds");
 }
 
@@ -89,11 +89,11 @@ TEST_CASE("two sentences with terms")
             + "}");
     auto res = std::get<CurlyBracketsGroup*>(*tryConsumeCurlyBracketsGroup(iss));
     REQUIRE (res->sentences.size() == 2);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
-    REQUIRE (res->sentences[1].term.words.size() == 2);
-    auto sentence1_term1_word1 = std::get<Atom>(res->sentences[0].term.words[0]);
-    auto sentence2_term1_word1 = std::get<Atom>(res->sentences[1].term.words[0]);
-    auto sentence2_term1_word2 = std::get<Atom>(res->sentences[1].term.words[1]);
+    REQUIRE (res->sentences[0].words.size() == 1);
+    REQUIRE (res->sentences[1].words.size() == 2);
+    auto sentence1_term1_word1 = std::get<Atom>(res->sentences[0].words[0]);
+    auto sentence2_term1_word1 = std::get<Atom>(res->sentences[1].words[0]);
+    auto sentence2_term1_word2 = std::get<Atom>(res->sentences[1].words[1]);
     REQUIRE (sentence1_term1_word1.value == "fds");
     REQUIRE (sentence2_term1_word1.value == "foo");
     REQUIRE (sentence2_term1_word2.value == "bar");
@@ -107,10 +107,10 @@ TEST_CASE("parentheses group and square brackets group")
             + "}");
     auto res = std::get<CurlyBracketsGroup*>(*tryConsumeCurlyBracketsGroup(iss));
     REQUIRE (res->sentences.size() == 2);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
-    REQUIRE (res->sentences[1].term.words.size() == 1);
+    REQUIRE (res->sentences[0].words.size() == 1);
+    REQUIRE (res->sentences[1].words.size() == 1);
 
-    auto sentence1_word1 = std::get<ParenthesesGroup*>(res->sentences[0].term.words[0]);
+    auto sentence1_word1 = std::get<ParenthesesGroup*>(res->sentences[0].words[0]);
     auto sentence1_word1_term1_word1 = std::get<Atom>(sentence1_word1->terms[0].words[0]);
     auto sentence1_word1_term1_word2 = std::get<Atom>(sentence1_word1->terms[0].words[1]);
     auto sentence1_word1_term1_word3 = std::get<Atom>(sentence1_word1->terms[0].words[2]);
@@ -122,7 +122,7 @@ TEST_CASE("parentheses group and square brackets group")
     REQUIRE (sentence1_word1_term1_word3.value == "2");
     REQUIRE (sentence1_word1_term2_word1.value == "3");
 
-    auto sentence2_word1 = std::get<SquareBracketsGroup*>(res->sentences[1].term.words[0]);
+    auto sentence2_word1 = std::get<SquareBracketsGroup*>(res->sentences[1].words[0]);
     auto sentence2_word1_word1 = std::get<Atom>(sentence2_word1->terms[0].words[0]);
     auto sentence2_word1_word2 = std::get<Atom>(sentence2_word1->terms[1].words[0]);
     REQUIRE (sentence2_word1->terms[0].words.size() == 1);
@@ -140,12 +140,12 @@ TEST_CASE("nested curly brackets group")
             + "}");
     auto res = std::get<CurlyBracketsGroup*>(*tryConsumeCurlyBracketsGroup(iss));
     REQUIRE (res->sentences.size() == 1);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
+    REQUIRE (res->sentences[0].words.size() == 1);
 
-    auto word1 = std::get<CurlyBracketsGroup*>(res->sentences[0].term.words[0]);
+    auto word1 = std::get<CurlyBracketsGroup*>(res->sentences[0].words[0]);
     REQUIRE (res->sentences.size() == 1);
-    REQUIRE (res->sentences[0].term.words.size() == 1);
-    auto word1_word1 = std::get<Atom>(word1->sentences[0].term.words[0]);
+    REQUIRE (res->sentences[0].words.size() == 1);
+    auto word1_word1 = std::get<Atom>(word1->sentences[0].words[0]);
     REQUIRE (word1_word1.value == "fds");
 }
 
@@ -157,8 +157,8 @@ TEST_CASE("postfix parentheses group")
     auto rightPart = res->rightPart;
 
     REQUIRE (leftPart->sentences.size() == 1);
-    REQUIRE (leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_sentence1_word1 = std::get<Atom>(leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart->sentences[0].words.size() == 1);
+    auto leftPart_sentence1_word1 = std::get<Atom>(leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_sentence1_word1.value == "fds");
 
     REQUIRE (rightPart->terms.size() == 1);
@@ -190,8 +190,8 @@ TEST_CASE("chained postfix parentheses group")
 
     /* >{a}<(b)(c) */
     REQUIRE (leftPart_leftPart->sentences.size() == 1);
-    REQUIRE (leftPart_leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_leftPart_atom = std::get<Atom>(leftPart_leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart_leftPart->sentences[0].words.size() == 1);
+    auto leftPart_leftPart_atom = std::get<Atom>(leftPart_leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_leftPart_atom.value == "a");
 }
 
@@ -203,8 +203,8 @@ TEST_CASE("postfix square brackets group")
     auto rightPart = res->rightPart;
 
     REQUIRE (leftPart->sentences.size() == 1);
-    REQUIRE (leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_sentence1_word1 = std::get<Atom>(leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart->sentences[0].words.size() == 1);
+    auto leftPart_sentence1_word1 = std::get<Atom>(leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_sentence1_word1.value == "fds");
 
     REQUIRE (rightPart->terms.size() == 1);
@@ -236,8 +236,8 @@ TEST_CASE("chained postfix square brackets group")
 
     /* >{a}<[b][c] */
     REQUIRE (leftPart_leftPart->sentences.size() == 1);
-    REQUIRE (leftPart_leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_leftPart_atom = std::get<Atom>(leftPart_leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart_leftPart->sentences[0].words.size() == 1);
+    auto leftPart_leftPart_atom = std::get<Atom>(leftPart_leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_leftPart_atom.value == "a");
 }
 
@@ -249,8 +249,8 @@ TEST_CASE("association")
     auto rightPart = std::get<Atom>(res->rightPart);
 
     REQUIRE (leftPart->sentences.size() == 1);
-    REQUIRE (leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_word1 = std::get<Atom>(leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart->sentences[0].words.size() == 1);
+    auto leftPart_word1 = std::get<Atom>(leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_word1.value == "fds");
 
     REQUIRE (rightPart.value == "sdf");
@@ -267,19 +267,19 @@ TEST_CASE("chained association")
 
     /* {a}:{b}:>{c}< */
     REQUIRE (leftPart->sentences.size() == 1);
-    REQUIRE (leftPart->sentences[0].term.words.size() == 1);
-    auto leftPart_word1 = std::get<Atom>(leftPart->sentences[0].term.words[0]);
+    REQUIRE (leftPart->sentences[0].words.size() == 1);
+    auto leftPart_word1 = std::get<Atom>(leftPart->sentences[0].words[0]);
     REQUIRE (leftPart_word1.value == "a");
 
     /* {a}:>{b}<:{c} */
     REQUIRE (rightPart_leftPart->sentences.size() == 1);
-    REQUIRE (rightPart_leftPart->sentences[0].term.words.size() == 1);
-    auto rightPart_leftPart_word1 = std::get<Atom>(rightPart_leftPart->sentences[0].term.words[0]);
+    REQUIRE (rightPart_leftPart->sentences[0].words.size() == 1);
+    auto rightPart_leftPart_word1 = std::get<Atom>(rightPart_leftPart->sentences[0].words[0]);
     REQUIRE (rightPart_leftPart_word1.value == "b");
 
     /* >{a}<:{b}:{c} */
     REQUIRE (rightPart_rightPart->sentences.size() == 1);
-    REQUIRE (rightPart_rightPart->sentences[0].term.words.size() == 1);
-    auto rightPart_rightPart_word1 = std::get<Atom>(rightPart_rightPart->sentences[0].term.words[0]);
+    REQUIRE (rightPart_rightPart->sentences[0].words.size() == 1);
+    auto rightPart_rightPart_word1 = std::get<Atom>(rightPart_rightPart->sentences[0].words[0]);
     REQUIRE (rightPart_rightPart_word1.value == "c");
 }

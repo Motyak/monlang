@@ -18,7 +18,6 @@ ParenthesesGroup \
 PostfixParenthesesGroup \
 PostfixSquareBracketsGroup \
 Program \
-ProgramSentence \
 ProgramWord \
 Quotation \
 Quoted \

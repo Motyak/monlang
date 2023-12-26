@@ -1,7 +1,7 @@
 #ifndef CURLY_BRACKETS_GROUP_H
 #define CURLY_BRACKETS_GROUP_H
 
-#include <ProgramSentence.h>
+#include <Program.h>
 
 #include <vector>
 #include <optional>
