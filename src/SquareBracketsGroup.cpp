@@ -68,13 +68,13 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
         return new SquareBracketsGroup{terms}; // empty
     }
 
-    std::vector<char> terminatorCharacters = {
-        firstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE),
-        firstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE)
+    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
+        SquareBracketsGroup::CONTINUATOR_SEQUENCE,
+        SquareBracketsGroup::TERMINATOR_SEQUENCE
     };
     Term currentTerm;
     try {
-        currentTerm = consumeTerm(input, terminatorCharacters);
+        currentTerm = consumeTerm(input, terminatorSequences);
     } catch (std::runtime_error& e) {
         std::cerr << "was expecting end of square brackets group" 
                 << " but got " << str(input.peek()) << std::endl;
@@ -88,7 +88,7 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
             throw std::runtime_error("user exception");
         }
         try {
-            currentTerm = consumeTerm(input, terminatorCharacters);
+            currentTerm = consumeTerm(input, terminatorSequences);
         } catch (std::runtime_error& e) {
             std::cerr << "was expecting end of square brackets group" << std::endl;
             throw new std::runtime_error("user exception");

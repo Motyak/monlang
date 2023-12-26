@@ -67,15 +67,15 @@ std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istring
         return new ParenthesesGroup{terms}; // empty
     }
 
-    std::vector<char> terminatorCharacters = {
-        firstChar(ParenthesesGroup::CONTINUATOR_SEQUENCE),
-        firstChar(ParenthesesGroup::TERMINATOR_SEQUENCE)
+    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
+        ParenthesesGroup::CONTINUATOR_SEQUENCE,
+        ParenthesesGroup::TERMINATOR_SEQUENCE
     };
-    auto currentTerm = consumeTerm(input, terminatorCharacters);
+    auto currentTerm = consumeTerm(input, terminatorSequences);
     terms.push_back(currentTerm);
     while (input.peek() != EOF && !peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input);
-        currentTerm = consumeTerm(input, terminatorCharacters);
+        currentTerm = consumeTerm(input, terminatorSequences);
         terms.push_back(currentTerm);
     }
 

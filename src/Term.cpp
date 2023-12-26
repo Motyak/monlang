@@ -10,7 +10,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
     firstChar(CONTINUATOR_SEQUENCE)
 };
 
-Term consumeTerm(std::istringstream& input, const std::vector<char>& terminatorCharacters) {
+Term consumeTerm(std::istringstream& input, const std::vector<std::vector<CharacterAppearance>>& terminatorSequences) {
     if (input.peek() == EOF) {
         std::cerr << "was expecting at least one word in Term, found none" << std::endl;
         throw std::runtime_error("user exception");
@@ -19,9 +19,9 @@ Term consumeTerm(std::istringstream& input, const std::vector<char>& terminatorC
     auto currentWord = consumeProgramWord(input);
     words.push_back(currentWord);
     while (input.peek() != EOF && std::all_of(
-                terminatorCharacters.begin(),
-                terminatorCharacters.end(), 
-                [&input](auto terminatorChar){return input.peek() != terminatorChar;})) {
+                terminatorSequences.begin(),
+                terminatorSequences.end(), 
+                [&input](auto seq){return !peekSequence(seq, input);})) {
         consumeSequence(Term::CONTINUATOR_SEQUENCE, input);
         currentWord = consumeProgramWord(input);
         words.push_back(currentWord);

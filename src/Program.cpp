@@ -8,8 +8,8 @@ const std::vector<char> Program::RESERVED_CHARACTERS = {
 };
 
 ProgramSentence consumeProgramSentence(std::istringstream& input) {
-    std::vector<char> terminatorCharacters = {firstChar(Program::CONTINUATOR_SEQUENCE)};
-    auto term = consumeTerm(input, terminatorCharacters);
+    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {Program::CONTINUATOR_SEQUENCE};
+    auto term = consumeTerm(input, terminatorSequences);
     return ProgramSentence{term};
 }
 

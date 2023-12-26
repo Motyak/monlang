@@ -82,12 +82,12 @@ CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
         return new CurlyBracketsGroup{}; // empty
     }
 
-    std::vector<char> terminatorCharacters = {
-        firstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE)
+    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
+        CurlyBracketsGroup::TERMINATOR_SEQUENCE
     };
     ProgramSentence sentence;
     try {
-        sentence = consumeTerm(input, terminatorCharacters);
+        sentence = consumeTerm(input, terminatorSequences);
     } catch (std::runtime_error& e) {
         std::cerr << "was expecting end of curly brackets group" 
                 << " but got " << str(input.peek()) << std::endl;
@@ -107,6 +107,7 @@ CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
 }
 
 CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
+    std::cout << "DEBUG " << sequenceLen(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE) << std::endl;
     input.ignore(sequenceLen(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE)); // consume initiator characters
     g_currentNestedLevel++; // add one nesting level
 
@@ -122,13 +123,13 @@ CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
         return new CurlyBracketsGroup{sentences}; // empty
     }
 
-    std::vector<char> terminatorCharacters = {
-        firstChar(CurlyBracketsGroup::CONTINUATOR_SEQUENCE),
-        firstChar(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)
+    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
+        CurlyBracketsGroup::CONTINUATOR_SEQUENCE,
+        CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE
     };
     ProgramSentence currentSentence;
     try {
-        currentSentence = consumeTerm(input, terminatorCharacters);
+        currentSentence = consumeTerm(input, terminatorSequences);
     } catch (std::runtime_error& e) {
         std::cerr << "was expecting end of curly brackets group" 
                 << " but got " << str(input.peek()) << std::endl;
@@ -142,7 +143,7 @@ CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
             throw std::runtime_error("user exception");
         }
         try {
-            currentSentence = consumeTerm(input, terminatorCharacters);
+            currentSentence = consumeTerm(input, terminatorSequences);
         } catch (std::runtime_error& e) {
             std::cerr << "was expecting end of curly brackets group" << std::endl;
             throw new std::runtime_error("user exception");
