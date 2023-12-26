@@ -36,3 +36,19 @@ fds = ```monlang
         }
     ```
 ```
+
+fds = {
+    ```json
+        {
+            name: "fds",
+            age: 13,
+            major: false
+        }
+    ```
+}
+
+=======================================================
+
+src/test/Association.cpp
+  -> faire des #include "..." de chaque sous-tests Association (ex: ParenthesesGroupAssociation.cpp, ...)
+    -> faire des tags comme pour le oneline/multiline du src/test/Quotation.cpp

@@ -1,8 +1,8 @@
-PROGRAM := PROGRAM-SENTENCE*
+PROGRAM := (PROGRAM-SENTENCE NEWLINE)*
 
 ---
 
-PROGRAM-SENTENCE := TERM NEWLINE
+PROGRAM-SENTENCE = TERM
 
 ---
 
@@ -15,6 +15,7 @@ PROGRAM-WORD :=  ASSOCIATION
         | PARENTHESES-GROUP | SQUARE-BRACKETS-GROUP | CURLY-BRACKETS-GROUP
         | QUOTATION
         | ATOM
+// note: ATOM takes all character until hitting one reserved by one of the word above
 
 ---
 
@@ -28,13 +29,14 @@ PARENTHESES-GROUP := '(' (TERM (',' SPACE TERM)*)? ')'
 
 SQUARE-BRACKETS-GROUP := '[' (TERM (',' SPACE TERM)*)? ']'
 
-CURLY-BRACKETS-GROUP := '{' TERM? | (NEWLINE PROGRAM-SENTENCE+) '}'
+CURLY-BRACKETS-GROUP := '{' PROGRAM-SENTENCE? | ((NEWLINE <TAB(S)+1> PROGRAM-SENTENCE?)+ NEWLINE <TAB(S)>) '}'
+// note: <TAB(S)> is a as many TAB as nested levels (starting from 0, 1, ..)
 
-QUOTATION := ('"' QUOTED '"') | ('```' QUOTED-FORMAT? NEWLINE QUOTED NEWLINE '```')
+QUOTATION := ('"' QUOTED-LINE? '"') | ('```' QUOTED-FORMAT? (NEWLINE <TAB(S)+1> QUOTED-LINE?)+ NEWLINE <TAB(S)> '```')
 // note: should be /(?!\)"/ rather than /"/, otherwise escaped double quote can be misinterpreted
+// note2: <TAB(S)> is a as many TAB as nested levels (starting from 0, 1, ..)
 
 ====================================================================================
 
 # External rules
 - comments (will be removed before scanning)
-- proper tabulation in curly brackets groups and multiline quotations (will be enforced/checked before scanning)
