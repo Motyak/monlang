@@ -5,9 +5,10 @@
 
 unsigned g_currentNestedLevel = 0;
 
-unsigned currentNestedLevel() {
-    return g_currentNestedLevel;
-}
+/* sentinel values to retrieve certain values at runtime */
+const CharacterAppearance TABS = CharacterAppearance{-128, 0};
+const CharacterAppearance TABS_PLUS_1 = CharacterAppearance{-128, 1};
+const CharacterAppearance TABS_MINUS_1 = CharacterAppearance{-128, 2};
 
 CharacterAppearance::CharacterAppearance(char c, unsigned ntimes) {
     this->c = c;
@@ -22,7 +23,7 @@ CharacterAppearance::operator char() const {
     return this->c;
 }
 
-char firstChar(std::vector<CharacterAppearance> sequence) {
+char firstChar(const std::vector<CharacterAppearance>& sequence) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes > 0) {
             return charAppearance.c;
@@ -31,7 +32,7 @@ char firstChar(std::vector<CharacterAppearance> sequence) {
     return -1;
 }
 
-size_t sequenceLen(std::vector<CharacterAppearance> sequence) {
+size_t sequenceLen(const std::vector<CharacterAppearance>& sequence) {
     size_t len = 0;
     for (auto charAppearance: sequence) {
         len += charAppearance.ntimes;
@@ -39,8 +40,13 @@ size_t sequenceLen(std::vector<CharacterAppearance> sequence) {
     return len;
 }
 
-void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream& input) {
+// for values that needs to be retrieved at runtime
+static void evalSpecialCharAppearance(CharacterAppearance&);
+
+void consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
+        evalSpecialCharAppearance(charAppearance);
+
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
                 std::cerr << "was expecting ZERO times character "
@@ -61,12 +67,14 @@ void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstre
     }
 }
 
-bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream& input) {
+bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
     // save stream position
     std::streampos initialPosition = input.tellg();
 
     for (auto charAppearance: sequence) {
-       if (charAppearance.ntimes == 0) {
+        evalSpecialCharAppearance(charAppearance);
+
+        if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
                 // restore stream position
                 input.seekg(initialPosition);
@@ -88,4 +96,19 @@ bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&
     // restore stream position
     input.seekg(initialPosition);
     return true;
+}
+
+static void evalSpecialCharAppearance(CharacterAppearance& charAppearance) {
+    if (charAppearance == TABS) {
+        charAppearance.c = TAB;
+        charAppearance.ntimes = g_currentNestedLevel;
+    }
+    else if (charAppearance == TABS_PLUS_1) {
+        charAppearance.c = TAB;
+        charAppearance.ntimes = g_currentNestedLevel + 1;
+    }
+    else if (charAppearance == TABS_MINUS_1) {
+        charAppearance.c = TAB;
+        charAppearance.ntimes = g_currentNestedLevel - 1;
+    }
 }

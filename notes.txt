@@ -50,5 +50,5 @@ fds = {
 =======================================================
 
 src/test/Association.cpp
-  -> faire des #include "..." de chaque sous-tests Association (ex: ParenthesesGroupAssociation.cpp, ...)
+  -> faire des #include "..." de chaque sous-tests Association (ex: AssociationParenthesesGroup.cpp, ...)
     -> faire des tags comme pour le oneline/multiline du src/test/Quotation.cpp

@@ -3,17 +3,14 @@
 
 #include <vector>
 #include <sstream>
+#include <functional>
 
 #define SPACE (char(32))
 #define NEWLINE (char(10))
 #define TAB (char(9))
 #define BACKSLASH (char(92))
 
-#define TABS CharacterAppearance{TAB, currentNestedLevel()}
-#define TABS_PLUS_1 CharacterAppearance{TAB, currentNestedLevel() + 1}
-
 extern unsigned g_currentNestedLevel;
-unsigned currentNestedLevel();
 
 struct CharacterAppearance {
     char c;
@@ -22,12 +19,15 @@ struct CharacterAppearance {
     CharacterAppearance(char c);
     operator char() const;
 };
+extern const CharacterAppearance TABS;
+extern const CharacterAppearance TABS_PLUS_1;
+extern const CharacterAppearance TABS_MINUS_1;
 
-char firstChar(std::vector<CharacterAppearance>);
-size_t sequenceLen(std::vector<CharacterAppearance>);
+char firstChar(const std::vector<CharacterAppearance>&);
+size_t sequenceLen(const std::vector<CharacterAppearance>&);
 
-void consumeSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);
-bool peekSequence(std::vector<CharacterAppearance> sequence, std::istringstream&);
+void consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream&);
+bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream&);
 
 #endif // COMMON_H
 

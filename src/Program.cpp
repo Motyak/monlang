@@ -7,12 +7,9 @@ const std::vector<char> Program::RESERVED_CHARACTERS = {
     firstChar(CONTINUATOR_SEQUENCE)
 };
 
-ProgramSentence consumeProgramSentence(std::istringstream& input, const std::vector<char>& terminatorCharacters) {
-    auto allTermChars = vec_union({
-        terminatorCharacters,
-        {firstChar(Program::CONTINUATOR_SEQUENCE)}
-    });
-    auto term = consumeTerm(input, allTermChars);
+ProgramSentence consumeProgramSentence(std::istringstream& input) {
+    std::vector<char> terminatorCharacters = {firstChar(Program::CONTINUATOR_SEQUENCE)};
+    auto term = consumeTerm(input, terminatorCharacters);
     return ProgramSentence{term};
 }
 

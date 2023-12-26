@@ -13,8 +13,8 @@ const std::vector<CharacterAppearance> CurlyBracketsGroup::INITIATOR_SEQUENCE = 
 const std::vector<CharacterAppearance> CurlyBracketsGroup::TERMINATOR_SEQUENCE = { '}', {NEWLINE, 0} };
 
 const std::vector<CharacterAppearance> CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE = { '{', NEWLINE, TABS_PLUS_1 };
-const std::vector<CharacterAppearance> CurlyBracketsGroup::CONTINUATOR_SEQUENCE = { NEWLINE, TABS_PLUS_1 };
-const std::vector<CharacterAppearance> CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE = { NEWLINE, TABS, '}' };
+const std::vector<CharacterAppearance> CurlyBracketsGroup::CONTINUATOR_SEQUENCE = { NEWLINE, TABS };
+const std::vector<CharacterAppearance> CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE = { NEWLINE, TABS_MINUS_1, '}' };
 
 const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
     firstChar(INITIATOR_SEQUENCE),
@@ -77,12 +77,17 @@ CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
         throw std::runtime_error("user exception");
     }
 
+    if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+        input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
+        return new CurlyBracketsGroup{}; // empty
+    }
+
     std::vector<char> terminatorCharacters = {
         firstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE)
     };
     ProgramSentence sentence;
     try {
-        sentence = consumeProgramSentence(input, terminatorCharacters);
+        sentence = consumeTerm(input, terminatorCharacters);
     } catch (std::runtime_error& e) {
         std::cerr << "was expecting end of curly brackets group" 
                 << " but got " << str(input.peek()) << std::endl;
@@ -123,7 +128,7 @@ CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
     };
     ProgramSentence currentSentence;
     try {
-        currentSentence = consumeProgramSentence(input, terminatorCharacters);
+        currentSentence = consumeTerm(input, terminatorCharacters);
     } catch (std::runtime_error& e) {
         std::cerr << "was expecting end of curly brackets group" 
                 << " but got " << str(input.peek()) << std::endl;
@@ -137,7 +142,7 @@ CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
             throw std::runtime_error("user exception");
         }
         try {
-            currentSentence = consumeProgramSentence(input, terminatorCharacters);
+            currentSentence = consumeTerm(input, terminatorCharacters);
         } catch (std::runtime_error& e) {
             std::cerr << "was expecting end of curly brackets group" << std::endl;
             throw new std::runtime_error("user exception");
