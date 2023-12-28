@@ -9,19 +9,12 @@
 
 #include <iostream>
 
-const std::vector<CharacterAppearance> CurlyBracketsGroup::INITIATOR_SEQUENCE = { '{', {NEWLINE, 0} };
-const std::vector<CharacterAppearance> CurlyBracketsGroup::TERMINATOR_SEQUENCE = { '}', {NEWLINE, 0} };
-
-const std::vector<CharacterAppearance> CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE = { '{', NEWLINE, TABS_PLUS_1 };
-const std::vector<CharacterAppearance> CurlyBracketsGroup::CONTINUATOR_SEQUENCE = { NEWLINE, TABS };
-const std::vector<CharacterAppearance> CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE = { NEWLINE, TABS_MINUS_1, '}' };
+const std::vector<CharacterAppearance> CurlyBracketsGroup::INITIATOR_SEQUENCE = { '{' };
+const std::vector<CharacterAppearance> CurlyBracketsGroup::TERMINATOR_SEQUENCE = { '}' };
 
 const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
     firstChar(INITIATOR_SEQUENCE),
-    firstChar(TERMINATOR_SEQUENCE),
-    firstChar(ALT_INITIATOR_SEQUENCE),
-    firstChar(CONTINUATOR_SEQUENCE),
-    firstChar(ALT_TERMINATOR_SEQUENCE)
+    firstChar(TERMINATOR_SEQUENCE)
 };
 
 std::optional<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeCurlyBracketsGroup(std::istringstream& input) {
@@ -58,109 +51,108 @@ static CurlyBracketsGroup* consumeOnelineGroup(std::istringstream&);
 static CurlyBracketsGroup* consumeMultilineGroup(std::istringstream&);
 
 std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::istringstream& input) {
-    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return consumeOnelineGroup(input);
-    }
+    // if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+    //     return consumeOnelineGroup(input);
+    // }
 
-    if (peekSequence(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE, input)) {
-        return consumeMultilineGroup(input);
-    }
+    // if (peekSequence(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE, input)) {
+    //     return consumeMultilineGroup(input);
+    // }
 
-    return {};
+    // return {};
 }
 
 CurlyBracketsGroup* consumeOnelineGroup(std::istringstream& input) {
-    input.ignore(sequenceLen(CurlyBracketsGroup::INITIATOR_SEQUENCE)); // consume initiator characters
+    // input.ignore(sequenceLen(CurlyBracketsGroup::INITIATOR_SEQUENCE)); // consume initiator characters
 
-    if (input.peek() == EOF) {
-        std::cerr << "unexpected EOF while entering a oneline curly brackets group" << std::endl;
-        throw std::runtime_error("user exception");
-    }
+    // if (input.peek() == EOF) {
+    //     std::cerr << "unexpected EOF while entering a oneline curly brackets group" << std::endl;
+    //     throw std::runtime_error("user exception");
+    // }
 
-    if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
-        return new CurlyBracketsGroup{}; // empty
-    }
+    // if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+    //     input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
+    //     return new CurlyBracketsGroup{}; // empty
+    // }
 
-    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
-        CurlyBracketsGroup::TERMINATOR_SEQUENCE
-    };
-    ProgramSentence sentence;
-    try {
-        sentence = consumeTerm(input, terminatorSequences);
-    } catch (std::runtime_error& e) {
-        std::cerr << "was expecting end of curly brackets group" 
-                << " but got " << str(input.peek()) << std::endl;
-        throw std::runtime_error("user exception");
-    }
+    // std::vector<char> terminatorCharacters = {
+    //     firstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE)
+    // };
+    // ProgramSentence sentence;
+    // try {
+    //     sentence = consumeTerm(input, terminatorCharacters);
+    // } catch (std::runtime_error& e) {
+    //     std::cerr << "was expecting end of curly brackets group" 
+    //             << " but got " << str(input.peek()) << std::endl;
+    //     throw std::runtime_error("user exception");
+    // }
 
-    if (!peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        auto& ts = CurlyBracketsGroup::TERMINATOR_SEQUENCE;
-        std::cerr << "was expecting " << str(ts)
-                << " but got " << str(input.peek()) << std::endl;
-        throw std::runtime_error("user exception");
-    }
+    // if (!peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+    //     auto& ts = CurlyBracketsGroup::TERMINATOR_SEQUENCE;
+    //     std::cerr << "was expecting " << str(ts)
+    //             << " but got " << str(input.peek()) << std::endl;
+    //     throw std::runtime_error("user exception");
+    // }
 
-    input.ignore(1); // consume end of curly brackets group characters sequence
+    // input.ignore(1); // consume end of curly brackets group characters sequence
 
-    return new CurlyBracketsGroup{{sentence}}; // 1-length vector
+    // return new CurlyBracketsGroup{{sentence}}; // 1-length vector
 }
 
 CurlyBracketsGroup* consumeMultilineGroup(std::istringstream& input) {
-    std::cout << "DEBUG " << sequenceLen(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE) << std::endl;
-    input.ignore(sequenceLen(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE)); // consume initiator characters
-    g_currentNestedLevel++; // add one nesting level
+    // input.ignore(sequenceLen(CurlyBracketsGroup::ALT_INITIATOR_SEQUENCE)); // consume initiator characters
+    // g_currentNestedLevel++; // add one nesting level
 
-    if (input.peek() == EOF) {
-        std::cerr << "unexpected EOF while entering a multiline curly brackets group" << std::endl;
-        throw std::runtime_error("user exception");
-    }
+    // if (input.peek() == EOF) {
+    //     std::cerr << "unexpected EOF while entering a multiline curly brackets group" << std::endl;
+    //     throw std::runtime_error("user exception");
+    // }
 
-    std::vector<ProgramSentence> sentences;
+    // std::vector<ProgramSentence> sentences;
 
-    if (peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
-        input.ignore(sequenceLen(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)); // consume terminator characters
-        return new CurlyBracketsGroup{sentences}; // empty
-    }
+    // if (peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
+    //     input.ignore(sequenceLen(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)); // consume terminator characters
+    //     return new CurlyBracketsGroup{sentences}; // empty
+    // }
 
-    std::vector<std::vector<CharacterAppearance>> terminatorSequences = {
-        CurlyBracketsGroup::CONTINUATOR_SEQUENCE,
-        CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE
-    };
-    ProgramSentence currentSentence;
-    try {
-        currentSentence = consumeTerm(input, terminatorSequences);
-    } catch (std::runtime_error& e) {
-        std::cerr << "was expecting end of curly brackets group" 
-                << " but got " << str(input.peek()) << std::endl;
-        throw new std::runtime_error("user exception");
-    }
-    sentences.push_back(currentSentence);
-    while (input.peek() != EOF && !peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
-        consumeSequence(CurlyBracketsGroup::CONTINUATOR_SEQUENCE, input);
-        if (peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
-            std::cerr << "was expecting another sentence" << std::endl;
-            throw std::runtime_error("user exception");
-        }
-        try {
-            currentSentence = consumeTerm(input, terminatorSequences);
-        } catch (std::runtime_error& e) {
-            std::cerr << "was expecting end of curly brackets group" << std::endl;
-            throw new std::runtime_error("user exception");
-        }
-        sentences.push_back(currentSentence);
-    }
+    // std::vector<char> terminatorCharacters = {
+    //     firstChar(CurlyBracketsGroup::CONTINUATOR_SEQUENCE),
+    //     firstChar(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)
+    // };
+    // ProgramSentence currentSentence;
+    // try {
+    //     currentSentence = consumeTerm(input, terminatorCharacters);
+    // } catch (std::runtime_error& e) {
+    //     std::cerr << "was expecting end of curly brackets group" 
+    //             << " but got " << str(input.peek()) << std::endl;
+    //     throw new std::runtime_error("user exception");
+    // }
+    // sentences.push_back(currentSentence);
+    // while (input.peek() != EOF && !peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
+    //     consumeSequence(CurlyBracketsGroup::CONTINUATOR_SEQUENCE, input);
+    //     if (peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
+    //         std::cerr << "was expecting another sentence" << std::endl;
+    //         throw std::runtime_error("user exception");
+    //     }
+    //     try {
+    //         currentSentence = consumeTerm(input, terminatorCharacters);
+    //     } catch (std::runtime_error& e) {
+    //         std::cerr << "was expecting end of curly brackets group" << std::endl;
+    //         throw new std::runtime_error("user exception");
+    //     }
+    //     sentences.push_back(currentSentence);
+    // }
 
-    if (!peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
-        auto& ts = CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE;
-        std::cerr << "was expecting " << str(ts)
-                << " but got " << str(input.peek()) << std::endl;
-        throw std::runtime_error("user exception");
+    // if (!peekSequence(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE, input)) {
+    //     auto& ts = CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE;
+    //     std::cerr << "was expecting " << str(ts)
+    //             << " but got " << str(input.peek()) << std::endl;
+    //     throw std::runtime_error("user exception");
         
-    }
+    // }
 
-    input.ignore(sequenceLen(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)); // consume terminator characters
-    g_currentNestedLevel--; // remove one nested level
+    // input.ignore(sequenceLen(CurlyBracketsGroup::ALT_TERMINATOR_SEQUENCE)); // consume terminator characters
+    // g_currentNestedLevel--; // remove one nested level
 
-    return new CurlyBracketsGroup{sentences};
+    // return new CurlyBracketsGroup{sentences};
 }

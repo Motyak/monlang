@@ -14,10 +14,6 @@ struct CurlyBracketsGroup {
     static const std::vector<CharacterAppearance> INITIATOR_SEQUENCE;
     static const std::vector<CharacterAppearance> TERMINATOR_SEQUENCE;
 
-    static const std::vector<CharacterAppearance> ALT_INITIATOR_SEQUENCE;
-    static const std::vector<CharacterAppearance> CONTINUATOR_SEQUENCE;
-    static const std::vector<CharacterAppearance> ALT_TERMINATOR_SEQUENCE;
-
     static const std::vector<char> RESERVED_CHARACTERS;
 };
 

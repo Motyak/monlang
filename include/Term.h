@@ -14,6 +14,6 @@ struct Term {
     static const std::vector<char> RESERVED_CHARACTERS;
 };
 
-Term consumeTerm(std::istringstream&, const std::vector<std::vector<CharacterAppearance>>& terminatorSequences);
+Term consumeTerm(std::istringstream&, const std::vector<char>& terminatorCharacters);
 
 #endif // TERM_H

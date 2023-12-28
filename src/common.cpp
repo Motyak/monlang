@@ -18,12 +18,8 @@ CharacterAppearance::operator char() const {
     return this->c;
 }
 
-// for values that needs to be retrieved at runtime
-static void evalSpecialCharAppearance(CharacterAppearance&);
-
 char firstChar(const std::vector<CharacterAppearance>& sequence) {
     for (auto charAppearance: sequence) {
-        evalSpecialCharAppearance(charAppearance);
         if (charAppearance.ntimes > 0) {
             return charAppearance.c;
         }
@@ -34,7 +30,7 @@ char firstChar(const std::vector<CharacterAppearance>& sequence) {
 size_t sequenceLen(const std::vector<CharacterAppearance>& sequence) {
     size_t len = 0;
     for (auto charAppearance: sequence) {
-        evalSpecialCharAppearance(charAppearance);
+        
         len += charAppearance.ntimes;
     }
     return len;
@@ -42,7 +38,7 @@ size_t sequenceLen(const std::vector<CharacterAppearance>& sequence) {
 
 void consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
-        evalSpecialCharAppearance(charAppearance);
+        
 
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
@@ -69,7 +65,7 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     std::streampos initialPosition = input.tellg();
 
     for (auto charAppearance: sequence) {
-        evalSpecialCharAppearance(charAppearance);
+        
 
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
@@ -93,19 +89,4 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     // restore stream position
     input.seekg(initialPosition);
     return true;
-}
-
-static void evalSpecialCharAppearance(CharacterAppearance& charAppearance) {
-    if (charAppearance == TABS) {
-        charAppearance.c = TAB;
-        charAppearance.ntimes = g_currentNestedLevel;
-    }
-    else if (charAppearance == TABS_PLUS_1) {
-        charAppearance.c = TAB;
-        charAppearance.ntimes = g_currentNestedLevel + 1;
-    }
-    else if (charAppearance == TABS_MINUS_1) {
-        charAppearance.c = TAB;
-        charAppearance.ntimes = g_currentNestedLevel - 1;
-    }
 }
