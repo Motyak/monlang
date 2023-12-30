@@ -59,3 +59,30 @@ common:
 
     118
     was expecting an *Atom* but hit a reserved character
+
+    ------------------------------------------------------
+    --- ParenthesesGroup
+
+    119
+    was expecting a valid strict *ParenthesesGroup* in *ParenthesesGroup* postfix
+
+    120
+    was expecting a valid strict *SquareBracketsGroup* in *ParenthesesGroup* postfix
+
+    121
+    was expecting a *ProgramWord* in a *ParenthesesGroup*-lefted association
+
+    122
+    premature EOF after *ParenthesesGroup*'s initiator
+
+    123
+    was expecting a valid *Term* in *ParenthesesGroup*
+
+    124
+    was expecting *ParenthesesGroup*'s continuator
+
+    125
+    was expecting another *ProgramWord* after *ParenthesesGroup*'s continuator
+
+    126
+    was expecting *ParenthesesGroup*'s terminator

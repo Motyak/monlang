@@ -189,36 +189,36 @@ TEST_CASE("nested square brackets group", "[test-1011][strictly]")
 
 }
 
-// TEST_CASE("parentheses group", "[test-1012][strictly]")
-// {
-//     std::istringstream iss(
-//         "[(a, b, c)]"
-//     );
+TEST_CASE("parentheses group", "[test-1012][strictly]")
+{
+    std::istringstream iss(
+        "[(a, b, c)]"
+    );
 
-//     auto ret = tryConsumeSquareBracketsGroup(iss);
-//     REQUIRE (ret);
-//     REQUIRE (*ret);
+    auto ret = tryConsumeSquareBracketsGroup(iss);
+    REQUIRE (ret);
+    REQUIRE (*ret);
 
-//     auto sbg = std::get<SquareBracketsGroup*>(**ret);
-//     REQUIRE (sbg->terms.size() == 1);
+    auto sbg = std::get<SquareBracketsGroup*>(**ret);
+    REQUIRE (sbg->terms.size() == 1);
 
-//     auto term1 = sbg->terms[0];
-//     REQUIRE (term1.words.size() == 1);
+    auto term1 = sbg->terms[0];
+    REQUIRE (term1.words.size() == 1);
 
-//     auto term1_word1 = std::get<ParenthesesGroup*>(term1.words[0]);
-//     REQUIRE (term1_word1->terms.size() == 3);
+    auto term1_word1 = std::get<ParenthesesGroup*>(term1.words[0]);
+    REQUIRE (term1_word1->terms.size() == 3);
 
-//     auto term1_word1_term1 = term1_word1->terms[0];
-//     REQUIRE (term1_word1_term1.words.size() == 1);
-//     auto term1_word1_term2 = term1_word1->terms[1];
-//     REQUIRE (term1_word1_term2.words.size() == 1);
-//     auto term1_word1_term3 = term1_word1->terms[2];
-//     REQUIRE (term1_word1_term3.words.size() == 1);
+    auto term1_word1_term1 = term1_word1->terms[0];
+    REQUIRE (term1_word1_term1.words.size() == 1);
+    auto term1_word1_term2 = term1_word1->terms[1];
+    REQUIRE (term1_word1_term2.words.size() == 1);
+    auto term1_word1_term3 = term1_word1->terms[2];
+    REQUIRE (term1_word1_term3.words.size() == 1);
 
-//     auto term1_word1_term1_word1 = std::get<Atom>(term1_word1_term1.words[0]);
-//     REQUIRE (term1_word1_term1_word1.value == "a");
-//     auto term1_word1_term2_word1 = std::get<Atom>(term1_word1_term2.words[0]);
-//     REQUIRE (term1_word1_term2_word1.value == "b");
-//     auto term1_word1_term3_word1 = std::get<Atom>(term1_word1_term3.words[0]);
-//     REQUIRE (term1_word1_term3_word1.value == "c");
-// }
+    auto term1_word1_term1_word1 = std::get<Atom>(term1_word1_term1.words[0]);
+    REQUIRE (term1_word1_term1_word1.value == "a");
+    auto term1_word1_term2_word1 = std::get<Atom>(term1_word1_term2.words[0]);
+    REQUIRE (term1_word1_term2_word1.value == "b");
+    auto term1_word1_term3_word1 = std::get<Atom>(term1_word1_term3.words[0]);
+    REQUIRE (term1_word1_term3_word1.value == "c");
+}

@@ -2,6 +2,7 @@
 #define PARENTHESES_GROUP_H
 
 #include <Term.h>
+#include <common.h>
 
 #include <vector>
 #include <optional>

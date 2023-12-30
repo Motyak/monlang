@@ -8,12 +8,12 @@
 #include <iostream>
 
 MayFail<ProgramWord> consumeProgramWord(std::istringstream& input) {
-    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-    //     if (!*potentialParenthesesGroup) {
-    //         return std::unexpected(Error{110, new Error{potentialParenthesesGroup->error()}});
-    //     }
-    //     return variant_cast(**potentialParenthesesGroup);
-    // }
+    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
+        if (!*potentialParenthesesGroup) {
+            return std::unexpected(Error{110, new Error{potentialParenthesesGroup->error()}});
+        }
+        return variant_cast(**potentialParenthesesGroup);
+    }
     if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
         if (!*potentialSquareBracketsGroup) {
             return std::unexpected(Error{111, new Error{potentialSquareBracketsGroup->error()}});

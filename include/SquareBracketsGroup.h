@@ -12,9 +12,9 @@
 struct SquareBracketsGroup {
     std::vector<Term> terms;
 
-    static const std::vector<CharacterAppearance> INITIATOR_SEQUENCE;
-    static const std::vector<CharacterAppearance> CONTINUATOR_SEQUENCE;
-    static const std::vector<CharacterAppearance> TERMINATOR_SEQUENCE;
+    static const Sequence INITIATOR_SEQUENCE;
+    static const Sequence CONTINUATOR_SEQUENCE;
+    static const Sequence TERMINATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };

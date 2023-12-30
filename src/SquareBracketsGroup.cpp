@@ -1,8 +1,8 @@
 #include <SquareBracketsGroup.h>
-// #include <ParenthesesGroup.h>
-// #include <PostfixParenthesesGroup.h>
-// #include <PostfixSquareBracketsGroup.h>
-// #include <Association.h>
+#include <ParenthesesGroup.h>
+#include <PostfixParenthesesGroup.h>
+#include <PostfixSquareBracketsGroup.h>
+#include <Association.h>
 #include <common.h>
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
@@ -10,9 +10,9 @@
 
 #include <iostream>
 
-const std::vector<CharacterAppearance> SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
-const std::vector<CharacterAppearance> SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
-const std::vector<CharacterAppearance> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
+const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = { '[' };
+const Sequence SquareBracketsGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const Sequence SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
 
 const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(INITIATOR_SEQUENCE).value(),
@@ -36,32 +36,32 @@ MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSqua
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = squareBracketsGroup;
 
-    // BEGIN:
-    // if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
-    //     if (!*postfixParenthesesGroup) {
-    //         return std::unexpected(Error{102, new Error{postfixParenthesesGroup->error()}});
-    //     }
-    //     accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), **postfixParenthesesGroup};
-    //     goto BEGIN;
-    // }
+    BEGIN:
+    if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
+        if (!*postfixParenthesesGroup) {
+            return std::unexpected(Error{102, new Error{postfixParenthesesGroup->error()}});
+        }
+        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), **postfixParenthesesGroup};
+        goto BEGIN;
+    }
 
-    // if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
-    //     if (!*postfixSquareBracketsGroup) {
-    //         return std::unexpected(Error{103, new Error{postfixSquareBracketsGroup->error()}});
-    //     }
-    //     accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), **postfixSquareBracketsGroup};
-    //     goto BEGIN;
-    // }
+    if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
+        if (!*postfixSquareBracketsGroup) {
+            return std::unexpected(Error{103, new Error{postfixSquareBracketsGroup->error()}});
+        }
+        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), **postfixSquareBracketsGroup};
+        goto BEGIN;
+    }
 
-    // if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
-    //     ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-    //     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
-    //     if (auto rightPart = consumeProgramWord(input); !rightPart) {
-    //         return std::unexpected(Error{104, new Error{rightPart.error()}});
-    //     } else {
-    //         return new Association{leftPart, *rightPart};
-    //     }
-    // }
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
+        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
+        if (auto rightPart = consumeProgramWord(input); !rightPart) {
+            return std::unexpected(Error{104, new Error{rightPart.error()}});
+        } else {
+            return new Association{leftPart, *rightPart};
+        }
+    }
 
     return variant_cast(accumulatedPostfixLeftPart);
 }
@@ -109,7 +109,7 @@ std::optional<MayFail<SquareBracketsGroup*>> tryConsumeSquareBracketsGroupStrict
     }
 
     if (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Error{109});        
+        return std::unexpected(Error{109});
     }
     input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
 
