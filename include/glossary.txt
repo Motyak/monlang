@@ -1,0 +1,2 @@
+Sequence:
+    A sequence of expected *CharacterAppearance*s in a row

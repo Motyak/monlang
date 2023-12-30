@@ -15,50 +15,65 @@ const std::vector<CharacterAppearance> SquareBracketsGroup::CONTINUATOR_SEQUENCE
 const std::vector<CharacterAppearance> SquareBracketsGroup::TERMINATOR_SEQUENCE = { ']' };
 
 const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
-    firstChar(INITIATOR_SEQUENCE),
-    firstChar(CONTINUATOR_SEQUENCE),
-    firstChar(TERMINATOR_SEQUENCE),
+    sequenceFirstChar(INITIATOR_SEQUENCE).value(),
+    sequenceFirstChar(CONTINUATOR_SEQUENCE).value(),
+    sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-std::optional<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeSquareBracketsGroup(std::istringstream& input) {
+static MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> lookBehind(SquareBracketsGroup*, std::istringstream&);
+
+std::optional<MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>>> tryConsumeSquareBracketsGroup(std::istringstream& input) {
     auto squareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input);
+
     if (!squareBracketsGroup) {
         return {};
     }
 
+    return squareBracketsGroup->and_then(lookBehind);
+}
+
+MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> lookBehind(SquareBracketsGroup* squareBracketsGroup, std::istringstream& input) {
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = *squareBracketsGroup;
+    PostfixLeftPart accumulatedPostfixLeftPart = squareBracketsGroup;
 
     BEGIN:
     if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
-        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), *postfixParenthesesGroup};
+        if (!*postfixParenthesesGroup) {
+            return std::unexpected(Error{102, new Error{postfixParenthesesGroup->error()}});
+        }
+        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), **postfixParenthesesGroup};
         goto BEGIN;
     }
 
     if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
-        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), *postfixSquareBracketsGroup};
+        if (!*postfixSquareBracketsGroup) {
+            return std::unexpected(Error{103, new Error{postfixSquareBracketsGroup->error()}});
+        }
+        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), **postfixSquareBracketsGroup};
         goto BEGIN;
     }
 
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
         input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
-        ProgramWord rightPart = consumeProgramWord(input);
-        return new Association{leftPart, rightPart};
+        if (auto rightPart = consumeProgramWord(input); !rightPart) {
+            return std::unexpected(Error{104, new Error{rightPart.error()}});
+        } else {
+            return new Association{leftPart, *rightPart};
+        }
     }
 
     return variant_cast(accumulatedPostfixLeftPart);
 }
 
-std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::istringstream& input) {
+std::optional<MayFail<SquareBracketsGroup*>> tryConsumeSquareBracketsGroupStrictly(std::istringstream& input) {
     if (!peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return {};
     }
     input.ignore(sequenceLen(SquareBracketsGroup::INITIATOR_SEQUENCE)); // consume initiator characters
 
     if (input.peek() == EOF) {
-        std::cerr << "unexpected EOF while entering a square brackets group" << std::endl;
-        throw std::runtime_error("user exception");
+        return std::unexpected(Error{105});
     }
 
     std::vector<Term> terms;
@@ -69,39 +84,31 @@ std::optional<SquareBracketsGroup*> tryConsumeSquareBracketsGroupStrictly(std::i
     }
 
     std::vector<char> terminatorCharacters = {
-        firstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE),
-        firstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE)
+        sequenceFirstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE).value(),
+        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
-    Term currentTerm;
-    try {
-        currentTerm = consumeTerm(input, terminatorCharacters);
-    } catch (std::runtime_error& e) {
-        std::cerr << "was expecting end of square brackets group" 
-                << " but got " << str(input.peek()) << std::endl;
-        throw new std::runtime_error("user exception");
+
+    if (auto currentTerm = consumeTerm(input, terminatorCharacters); !currentTerm) {
+        return std::unexpected(Error{106, new Error{currentTerm.error()}});
+    } else {
+        terms.push_back(*currentTerm);
     }
-    terms.push_back(currentTerm);
     while (input.peek() != EOF && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input);
+        if (auto err = consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
+            return std::unexpected(Error{107, new Error{err.error()}});
+        }
         if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-            std::cerr << "was expecting another word" << std::endl;
-            throw std::runtime_error("user exception");
+            return std::unexpected(Error{108});
         }
-        try {
-            currentTerm = consumeTerm(input, terminatorCharacters);
-        } catch (std::runtime_error& e) {
-            std::cerr << "was expecting end of square brackets group" << std::endl;
-            throw new std::runtime_error("user exception");
+        if (auto currentTerm = consumeTerm(input, terminatorCharacters); !currentTerm) {
+            return std::unexpected(Error{106, new Error{currentTerm.error()}});
+        } else {
+            terms.push_back(*currentTerm);
         }
-        terms.push_back(currentTerm);
     }
 
     if (!peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        auto& ts = SquareBracketsGroup::TERMINATOR_SEQUENCE;
-        std::cerr << "was expecting " << str(ts)
-                << " but got " << str(input.peek()) << std::endl;
-        throw std::runtime_error("user exception");
-        
+        return std::unexpected(Error{109});        
     }
     input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE)); // consume terminator characters
 

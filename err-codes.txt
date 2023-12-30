@@ -1,0 +1,45 @@
+common:
+    100
+    was expecting *zero* time a character in a sequence to consume
+
+    101
+    was expecting *n* times a character in a sequence to consume
+
+    102
+    was expecting a valid strict *ParenthesesGroup* in *SquareBracketsGroup* postfix
+
+    103
+    was expecting a valid strict *SquareBracketsGroup* in *SquareBracketsGroup* postfix
+
+    104
+    was expecting a *ProgramWord* in a *SquareBracketsGroup*-lefted association
+
+    105
+    premature EOF after *SquareBracketsGroup*'s initiator
+
+    106
+    was expecting a valid *Term* in *SquareBracketsGroup*
+
+    107
+    was expecting *SquareBracketsGroup*'s continuator
+
+    108
+    was expecting another *ProgramWord* after *SquareBracketsGroup*'s continuator
+
+    109
+    was expecting *SquareBracketsGroup*'s terminator
+
+    110
+    was expecting a valid *ParenthesesGroup* while consuming a *ProgramWord*
+
+    111
+    was expecting a valid *SquareBracketsGroup* while consuming a *ProgramWord*
+
+    112
+    was expecting a valid *CurlyBracketsGroup* while consuming a *ProgramWord*
+
+    113
+    was expecting a valid *Quotation* while consuming a *ProgramWord*
+
+    113
+    was expecting a valid *Atom* while consuming a *ProgramWord*

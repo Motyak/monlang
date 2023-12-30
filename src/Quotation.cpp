@@ -16,7 +16,7 @@ const std::vector<char> Quotation::RESERVED_CHARACTERS = {
     firstChar(ALT_TERMINATOR_SEQUENCE),
 };
 
-std::optional<std::variant<Quotation*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeQuotation(std::istringstream& input) {
+std::optional<MayFail<std::variant<Quotation*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>>> tryConsumeQuotation(std::istringstream& input) {
     //TODO: 
 
     auto quotation = tryConsumeQuotationStrictly(input);
@@ -30,7 +30,7 @@ std::optional<std::variant<Quotation*, PostfixParenthesesGroup*, PostfixSquareBr
 static Quotation* consumeOnelineQuotation(std::istringstream&);
 static Quotation* consumeMultilineQuotation(std::istringstream&);
 
-std::optional<Quotation*> tryConsumeQuotationStrictly(std::istringstream& input) {
+std::optional<MayFail<Quotation*>> tryConsumeQuotationStrictly(std::istringstream& input) {
     if (peekSequence(Quotation::INITIATOR_SEQUENCE, input)) {
         return consumeOnelineQuotation(input);
     }

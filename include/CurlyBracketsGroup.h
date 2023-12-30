@@ -21,8 +21,8 @@ struct CurlyBracketsGroup {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-std::optional<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeCurlyBracketsGroup(std::istringstream&);
+std::optional<MayFail<std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>>> tryConsumeCurlyBracketsGroup(std::istringstream&);
 
-std::optional<CurlyBracketsGroup*> tryConsumeCurlyBracketsGroupStrictly(std::istringstream&);
+std::optional<MayFail<CurlyBracketsGroup*>> tryConsumeCurlyBracketsGroupStrictly(std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

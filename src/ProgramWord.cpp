@@ -7,26 +7,35 @@
 
 #include <iostream>
 
-ProgramWord consumeProgramWord(std::istringstream& input) {
-    if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
-        return variant_cast(*potentialParenthesesGroup);
-    }
-    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
-        return variant_cast(*potentialSquareBracketsGroup);
-    }
-    if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
-        return variant_cast(*potentialCurlyBracketsGroup);
-    }
-    // if (auto potentialQuotation = tryConsumeQuotation(input)) {
-    //     return *potentialQuotation;
+MayFail<ProgramWord> consumeProgramWord(std::istringstream& input) {
+    // if (auto potentialParenthesesGroup = tryConsumeParenthesesGroup(input)) {
+    //     if (!*potentialParenthesesGroup) {
+    //         return std::unexpected(Error{110, new Error{potentialParenthesesGroup->error()}});
+    //     }
+    //     return variant_cast(**potentialParenthesesGroup);
     // }
-
-    std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*> atom;
-    try {
-        atom = consumeAtom(input);
-    } catch (std::runtime_error& e) {
-        std::cerr << "expected a word" << std::endl;
-        throw std::runtime_error("user exception");
-    };
-    return variant_cast(atom);
+    if (auto potentialSquareBracketsGroup = tryConsumeSquareBracketsGroup(input)) {
+        if (!*potentialSquareBracketsGroup) {
+            return std::unexpected(Error{111, new Error{potentialSquareBracketsGroup->error()}});
+        }
+        return variant_cast(**potentialSquareBracketsGroup);
+    }
+    // if (auto potentialCurlyBracketsGroup = tryConsumeCurlyBracketsGroup(input)) {
+    //     if (!*potentialCurlyBracketsGroup) {
+    //         return std::unexpected(Error{112, new Error{potentialCurlyBracketsGroup->error()}});
+    //     }
+    //     return variant_cast(**potentialCurlyBracketsGroup);
+    // }
+    // if (auto potentialQuotation = tryConsumeQuotation(input)) {
+    //     if (!*potentialQuotation) {
+    //         return std::unexpected(Error{113, new Error{potentialQuotation->error()}});
+    //     }
+    //     return variant_cast(**potentialQuotation);
+    // }
+    
+    if (auto atom = consumeAtom(input); !atom) {
+        return std::unexpected(Error{114, new Error{atom.error()}});
+    } else {
+        return variant_cast(*atom);
+    }
 }

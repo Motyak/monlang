@@ -10,7 +10,9 @@
 
 TEST_CASE("ERROR unexpected EOF while entering a curly brackets group")
 {
-    std::istringstream iss("{");
+    std::istringstream iss(
+        "{"
+    );
     REQUIRE_THROWS(tryConsumeCurlyBracketsGroup(iss));
 }
 

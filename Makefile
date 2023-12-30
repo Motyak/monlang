@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS_RELEASE := --std=c++17 -Wall -Wextra -O0 -I include -I lib
-CXXFLAGS_DEBUG := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
-CXXFLAGS_TEST := --std=c++17 -Wall -Wextra -Og -g -I include -I lib
+CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -O0 -I include -I lib
+CXXFLAGS_DEBUG := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
+CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rvs
@@ -29,7 +29,7 @@ DEBUG_OBJS := $(ENTITIES:%=obj/debug/%.o)
 TEST_OBJS := $(ENTITIES:%=obj/test/%.o)
 TEST_BINS := $(ENTITIES:%=bin/test/%)
 
-DEPS := $(ENTITIES:%=.deps/%.d)
+DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 TEST_DEPS := $(ENTITIES:%=.deps/test/%.d)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning

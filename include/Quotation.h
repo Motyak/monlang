@@ -27,8 +27,8 @@ struct Quotation {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-std::optional<std::variant<Quotation*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeQuotation(std::istringstream&);
+std::optional<MayFail<std::variant<Quotation*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>>> tryConsumeQuotation(std::istringstream&);
 
-std::optional<Quotation*> tryConsumeQuotationStrictly(std::istringstream&);
+std::optional<MayFail<Quotation*>> tryConsumeQuotationStrictly(std::istringstream&);
 
 #endif // QUOTATION_H

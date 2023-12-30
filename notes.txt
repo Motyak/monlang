@@ -52,3 +52,11 @@ fds = {
 src/test/Association.cpp
   -> faire des #include "..." de chaque sous-tests Association (ex: ParenthesesGroupAssociation.cpp, ...)
     -> faire des tags comme pour le oneline/multiline du src/test/Quotation.cpp
+
+
+=======================================================
+
+- Faire un glossaire (e.g.: a sequence is a vector of CharacterAppearance, a CharacterAppearance is a certain character expected to appear a certain number of times in a row)
+  -> s'inspirer du site ``
+- Faire un fichier `err-codes.txt` qui associe à chaque error code l'error message
+

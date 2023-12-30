@@ -21,8 +21,8 @@ struct ParenthesesGroup {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-std::optional<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeParenthesesGroup(std::istringstream&);
+std::optional<MayFail<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>>> tryConsumeParenthesesGroup(std::istringstream&);
 
-std::optional<ParenthesesGroup*> tryConsumeParenthesesGroupStrictly(std::istringstream&);
+std::optional<MayFail<ParenthesesGroup*>> tryConsumeParenthesesGroupStrictly(std::istringstream&);
 
 #endif // PARENTHESES_GROUP_H
