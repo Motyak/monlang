@@ -24,7 +24,7 @@ CharacterAppearance::operator char() const {
     return this->c;
 }
 
-std::optional<char> firstChar(const std::vector<CharacterAppearance>& sequence) {
+std::optional<char> sequenceFirstChar(const std::vector<CharacterAppearance>& sequence) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes > 0) {
             return charAppearance.c;

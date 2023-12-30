@@ -43,3 +43,19 @@ common:
 
     113
     was expecting a valid *Atom* while consuming a *ProgramWord*
+
+    114
+    was expecting at least one *ProgramWord* in *Term*
+    invalid *ProgramWord*
+
+    115
+    was expecting a valid *ProgramWord* in *Term*
+
+    116
+    was expecting *Term*'s continuator
+
+    117
+    premature EOF when about to consume an *Atom*
+
+    118
+    was expecting an *Atom* but hit a reserved character

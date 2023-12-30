@@ -1,8 +1,8 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <string>
-#include <optional>
+#include <common.h>
+
 #include <variant>
 #include <sstream>
 
@@ -13,7 +13,7 @@ struct Atom {
 struct Association;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
-MayFail<std::variant<Atom, Association*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>> consumeAtom(std::istringstream&);
+MayFail<std::variant<Atom, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> consumeAtom(std::istringstream&);
 
 MayFail<Atom> consumeAtomStrictly(std::istringstream&);
 

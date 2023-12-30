@@ -1,23 +1,23 @@
-// #include <ParenthesesGroup.h>
-// #include <SquareBracketsGroup.h>
-// #include <PostfixParenthesesGroup.h>
-// #include <PostfixSquareBracketsGroup.h>
-// #include <Association.h>
-// #include <common.h>
-// #include <utils/variant-utils.h>
-// #include <utils/str-utils.h>
+#include <ParenthesesGroup.h>
+#include <SquareBracketsGroup.h>
+#include <PostfixParenthesesGroup.h>
+#include <PostfixSquareBracketsGroup.h>
+#include <Association.h>
+#include <common.h>
+#include <utils/variant-utils.h>
+#include <utils/str-utils.h>
 
-// #include <iostream>
+#include <iostream>
 
-// const std::vector<CharacterAppearance> ParenthesesGroup::INITIATOR_SEQUENCE = { '(' };
-// const std::vector<CharacterAppearance> ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
-// const std::vector<CharacterAppearance> ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
+const Sequence ParenthesesGroup::INITIATOR_SEQUENCE = { '(' };
+const Sequence ParenthesesGroup::CONTINUATOR_SEQUENCE = { ',', SPACE };
+const Sequence ParenthesesGroup::TERMINATOR_SEQUENCE = { ')' };
 
-// const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
-//     firstChar(INITIATOR_SEQUENCE),
-//     firstChar(CONTINUATOR_SEQUENCE),
-//     firstChar(TERMINATOR_SEQUENCE),
-// };
+const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
+    sequenceFirstChar(INITIATOR_SEQUENCE).value(),
+    sequenceFirstChar(CONTINUATOR_SEQUENCE).value(),
+    sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
+};
 
 // std::optional<std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> tryConsumeParenthesesGroup(std::istringstream& input) {
 //     auto parenthesesGroup = tryConsumeParenthesesGroupStrictly(input);

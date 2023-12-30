@@ -9,11 +9,11 @@
 struct Term {
     std::vector<ProgramWord> words;
 
-    static const std::vector<CharacterAppearance> CONTINUATOR_SEQUENCE;
+    static const Sequence CONTINUATOR_SEQUENCE;
 
     static const std::vector<char> RESERVED_CHARACTERS;
 };
 
-MayFail<Term> consumeTerm(std::istringstream&, const std::vector<char>& terminatorSequences);
+MayFail<Term> consumeTerm(std::istringstream&, const std::vector<char>& terminatorCharacters);
 
 #endif // TERM_H

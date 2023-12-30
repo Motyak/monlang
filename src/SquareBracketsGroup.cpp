@@ -1,8 +1,8 @@
 #include <SquareBracketsGroup.h>
-#include <ParenthesesGroup.h>
-#include <PostfixParenthesesGroup.h>
-#include <PostfixSquareBracketsGroup.h>
-#include <Association.h>
+// #include <ParenthesesGroup.h>
+// #include <PostfixParenthesesGroup.h>
+// #include <PostfixSquareBracketsGroup.h>
+// #include <Association.h>
 #include <common.h>
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
@@ -29,39 +29,39 @@ std::optional<MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup
         return {};
     }
 
-    return squareBracketsGroup->and_then(lookBehind);
+    return squareBracketsGroup->and_then([&input](auto sbg){return lookBehind(sbg, input);});
 }
 
 MayFail<std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*, Association*>> lookBehind(SquareBracketsGroup* squareBracketsGroup, std::istringstream& input) {
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = squareBracketsGroup;
 
-    BEGIN:
-    if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
-        if (!*postfixParenthesesGroup) {
-            return std::unexpected(Error{102, new Error{postfixParenthesesGroup->error()}});
-        }
-        accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), **postfixParenthesesGroup};
-        goto BEGIN;
-    }
+    // BEGIN:
+    // if (auto postfixParenthesesGroup = tryConsumeParenthesesGroupStrictly(input)) {
+    //     if (!*postfixParenthesesGroup) {
+    //         return std::unexpected(Error{102, new Error{postfixParenthesesGroup->error()}});
+    //     }
+    //     accumulatedPostfixLeftPart = new PostfixParenthesesGroup{variant_cast(accumulatedPostfixLeftPart), **postfixParenthesesGroup};
+    //     goto BEGIN;
+    // }
 
-    if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
-        if (!*postfixSquareBracketsGroup) {
-            return std::unexpected(Error{103, new Error{postfixSquareBracketsGroup->error()}});
-        }
-        accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), **postfixSquareBracketsGroup};
-        goto BEGIN;
-    }
+    // if (auto postfixSquareBracketsGroup = tryConsumeSquareBracketsGroupStrictly(input)) {
+    //     if (!*postfixSquareBracketsGroup) {
+    //         return std::unexpected(Error{103, new Error{postfixSquareBracketsGroup->error()}});
+    //     }
+    //     accumulatedPostfixLeftPart = new PostfixSquareBracketsGroup{variant_cast(accumulatedPostfixLeftPart), **postfixSquareBracketsGroup};
+    //     goto BEGIN;
+    // }
 
-    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
-        ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
-        input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
-        if (auto rightPart = consumeProgramWord(input); !rightPart) {
-            return std::unexpected(Error{104, new Error{rightPart.error()}});
-        } else {
-            return new Association{leftPart, *rightPart};
-        }
-    }
+    // if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+    //     ProgramWordWithoutAssociation leftPart = variant_cast(accumulatedPostfixLeftPart);
+    //     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE)); // consume association separator characters
+    //     if (auto rightPart = consumeProgramWord(input); !rightPart) {
+    //         return std::unexpected(Error{104, new Error{rightPart.error()}});
+    //     } else {
+    //         return new Association{leftPart, *rightPart};
+    //     }
+    // }
 
     return variant_cast(accumulatedPostfixLeftPart);
 }
@@ -83,27 +83,28 @@ std::optional<MayFail<SquareBracketsGroup*>> tryConsumeSquareBracketsGroupStrict
         return new SquareBracketsGroup{terms}; // empty
     }
 
-    std::vector<char> terminatorCharacters = {
+    static const std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE).value(),
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
 
-    if (auto currentTerm = consumeTerm(input, terminatorCharacters); !currentTerm) {
-        return std::unexpected(Error{106, new Error{currentTerm.error()}});
+    if (auto term = consumeTerm(input, terminatorCharacters); !term) {
+        return std::unexpected(Error{106, new Error{term.error()}});
     } else {
-        terms.push_back(*currentTerm);
+        terms.push_back(*term);
     }
+
     while (input.peek() != EOF && !peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        if (auto err = consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Error{107, new Error{err.error()}});
+        if (auto res = consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input); !res) {
+            return std::unexpected(Error{107, new Error{res.error()}});
         }
         if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Error{108});
         }
-        if (auto currentTerm = consumeTerm(input, terminatorCharacters); !currentTerm) {
-            return std::unexpected(Error{106, new Error{currentTerm.error()}});
+        if (auto term = consumeTerm(input, terminatorCharacters); !term) {
+            return std::unexpected(Error{106, new Error{term.error()}});
         } else {
-            terms.push_back(*currentTerm);
+            terms.push_back(*term);
         }
     }
 
