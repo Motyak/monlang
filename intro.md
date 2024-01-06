@@ -182,3 +182,31 @@ evaluate block expression
       -> leftPart: Atom: ```dispatch```
       -> rightPart: SquareBracketsGroup: ```[msg]```
     -> rightPart: ParenthesesGroup: ```(args)```
+
+
+
+
+---
+
+
+let PI 3.14
+let add (x, y):{x + y}
+
+let fds { # expression block => evaluated once, then result is bound to `fds`
+    let a add(1, 2)
+    let b PI
+
+    ```
+        ${a:___} # use Rust string/int directives for text, template string used in format! macro
+        ${b}
+        91
+    ```
+}
+
+#~
+prints:
+```3
+3.14
+91```
+~#
+
