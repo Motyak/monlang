@@ -60,6 +60,9 @@ inline std::vector<std::string> split(const std::string& input, const std::strin
         }
     }
     res.push_back(token);
+    if (res.size() == 1 && res[0] == "") {
+        return {};
+    }
     return res;
 }
 
