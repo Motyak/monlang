@@ -66,7 +66,7 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     std::streampos initialPosition = input.tellg();
 
     for (auto charAppearance: sequence) {
-       if (charAppearance.ntimes == 0) {
+        if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
                 // restore stream position
                 input.seekg(initialPosition);

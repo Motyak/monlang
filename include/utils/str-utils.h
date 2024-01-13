@@ -1,6 +1,8 @@
 #ifndef STR_UTILS_H
 #define STR_UTILS_H
 
+#include "tommystring.h"
+
 #include <vector>
 #include <string>
 #include <sstream>
@@ -64,5 +66,8 @@ inline std::vector<std::string> split(const std::string& input, const std::strin
 inline std::string peekRemainingCharacters(std::istringstream& iss) {
     return iss.str().substr(iss.tellg());
 }
+
+#define DEBUG(n) \
+    std::cout << "[" << n << "] DEBUG: `" << peekRemainingCharacters(input) << "`" << std::endl;
 
 #endif //STR_UTILS_H
