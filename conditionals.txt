@@ -1,0 +1,261 @@
+
+# if, else if, else
+
+```c++
+if (a == b) {
+
+}
+else if (b == c) {
+
+}
+else /* if (a != b && b != c) */ {
+
+}
+```
+
+```bash
+if [ a == b ]; then
+    # ...
+elif [ b == c ]; then
+    # ...
+else
+    # ...
+fi
+```
+
+```monlang
+if [ a == b ] {
+
+}
+elif [ b == c ] {
+
+}
+else #~ if [ a != b && b != c ] ~# {
+
+}
+```
+
+# ternary operator
+
+```c++
+auto res = a == b? 13 : 37
+```
+
+````bash
+[ a == b ] && res=13 || res=37
+```
+
+```monlang
+var res [ a == b ] 13 || 37
+```
+
+# if..then
+
+```c++
+if (a == b) {
+    do_something()
+}
+```
+
+```bash
+[ a == b ] && do_something
+```
+
+```monlang
+if [ a == b ] {
+    do_something()
+}
+```
+
+# unless..then
+
+```c++
+if (!(a == b)) {
+    do_something()
+}
+```
+
+```bash
+[ a == b ] || do_something
+```
+
+```monlang
+if [ !(a == b) ] {
+    do_something()
+}
+```
+
+# assertions / runtime exception
+
+```c++
+ASSERT (a == b, "error");
+```
+
+```bash
+[ a == b ] || fail "error"
+```
+
+```monlang
+[ a == b ] || "error"
+```
+
+---
+
+# foobar challenge
+
+```monlang
+var res []
+foreach 1...200 {
+    var next-item ""
+    if [ $1 % 5 == 0 ] {
+        next-item += "Foo"
+    }
+    if [ $1 % 7 == 0 ] {
+        next-item += "Bar"
+    }
+    if [ next-item == "" ] {
+        next-item += "${1}"
+    }
+    res += [next-item]
+}
+res
+```
+
+---
+
+# prefer..over
+
+## prefer..over 1
+
+prefer..
+```monlang
+{
+    [ is_A ]
+    do_A()
+    [ is_B ]
+    do_B()
+    [ is_C ]
+    do_C()
+}
+```
+over..
+```monlang
+if [ is_A ] {
+    do_A()
+    if [ is_B ] {
+        do_B()
+        if [ is_C ] {
+            do_C()
+        }
+    }
+}
+```
+
+## prefer..over 2
+
+prefer..
+```monlang
+if [ $1 % 5 == 0 ] {
+    next-item += "Foo"
+}
+if [ $1 % 7 == 0 ] {
+    next-item += "Bar"
+}
+if [ next-item == "" ] {
+    next-item += "${1}"
+}
+```
+over..
+```monlang
+{
+    [ $1 % 5 == 0 ]
+    next-item += "Foo"
+}
+{
+    [ $1 % 7 == 0 ]
+    next-item += "Bar"
+}
+{
+    [ next-item == "" ]
+    next-item += "${1}"
+}
+```
+
+## prefer..over 3
+
+prefer..
+```monlang
+[ len(str) == 2 ] || error("invalid str: `${str}`")
+[ i in 0..<10 ] || error("invalid i: `${i}`")
+# happy path code
+# ...
+```
+over..
+```monlang
+if [ len(str) != 2) ] {
+    error("invalid str: `${str}`")
+}
+if [ !(i in 0..<10) ] {
+    error("invalid i: `${i}`")
+}
+# happy path code
+# ...
+```
+
+---
+
+# tommystr.cpp in monlang ?
+
+```monlang
+let tommy-str (filename, lineno, raw-str):{
+    [ filename != "" ] || error("empty filename")
+    [ lineno >= 1 ] || error("invalid line number: `${lineno}`")
+
+    let TAB char(9)
+    let SPACE char(32)
+
+    var indentation-level 0
+    bool is-indented-with-tabs _
+    {
+        var ifs std::ifstream(filename)
+        let skip-line() ifs.ignore(std::numeric_limits<std::streamsize>::max(),'\n')
+        foreach 1..<lineno {
+            skip-line()
+        }
+        var first-char ifs.peek()
+        [ first-char in [TAB, SPACE] ]
+        is-indented-with-tabs <- first-char == TAB
+        if [ is-indented-with-tabs ] {
+            do {
+                ifs.ignore()
+                indentation-level += 1
+            }
+            while [ ifs.peek() == TAB ]
+        }
+        else {
+            var spaces 0
+            do {
+                ifs.ignore()
+                spaces += 1
+                if [ spaces % 4 == 0 ] {
+                    indentation-level += 1
+                }
+            }
+            while [ ifs.peek() == SPACE ]
+        }
+    }
+
+    var res ""
+    var iss std::istringstream(raw-str)
+    iss.ignore() # initial newline
+
+    var cur-line _
+    let indentation-length [ is-indented-with-tabs ] 1 || 4
+    while [ std::getline(iss, cur_line) && len(cur_line) > indentation-level * indentation-length ] {
+        let start (indentation-level + 1) * indentation-length
+        res += cur_line[start:] + "\n"
+    }
+
+    res[:-1] # remove trailing newline
+}
+```
