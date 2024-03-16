@@ -29,7 +29,7 @@ PARENTHESES-GROUP := '(' (TERM (',' SPACE TERM)*)? ')'
 
 SQUARE-BRACKETS-GROUP := '[' (TERM (',' SPACE TERM)*)? ']'
 
-CURLY-BRACKETS-GROUP := '{' PROGRAM-SENTENCE? | ((NEWLINE <TAB(S)+1> PROGRAM-SENTENCE?)+ NEWLINE <TAB(S)>) '}'
+CURLY-BRACKETS-GROUP := '{' TERM? | ((NEWLINE <TAB(S)+1> PROGRAM-SENTENCE?)+ NEWLINE <TAB(S)>) '}'
 // note: <TAB(S)> is a as many TAB as nested levels (starting from 0, 1, ..)
 
 QUOTATION := ('"' QUOTED-LINE? '"') | ('```' QUOTED-FORMAT? (NEWLINE <TAB(S)+1> QUOTED-LINE?)+ NEWLINE <TAB(S)> '```')
