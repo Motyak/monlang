@@ -8,6 +8,6 @@
 
 using ProgramWord = Word;
 
-ProgramWord consumeProgramWord(std::istringstream&);
+MayFail<ProgramWord> consumeProgramWord(std::istringstream&);
 
 #endif // PROGRAM_WORD_H

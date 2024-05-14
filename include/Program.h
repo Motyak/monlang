@@ -14,6 +14,6 @@ struct Program {
     std::vector<ProgramSentence> sentences;
 };
 
-Program consumeProgram(std::istringstream&);
+MayFail<Program> consumeProgram(std::istringstream&);
 
 #endif // PROGRAM_H

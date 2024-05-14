@@ -8,6 +8,6 @@
 
 using ProgramSentence = Term;
 
-ProgramSentence consumeProgramSentence(std::istringstream&);
+MayFail<ProgramSentence> consumeProgramSentence(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // PROGRAM_SENTENCE_H

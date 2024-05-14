@@ -12,7 +12,6 @@ constexpr char BACKSLASH = 92;
 
 struct ErrorCode {
     unsigned code;
-    ErrorCode(unsigned);
     operator unsigned() const;
 };
 

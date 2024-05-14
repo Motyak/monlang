@@ -13,6 +13,6 @@ struct Term {
     std::vector<Word> words;
 };
 
-Term consumeTerm(std::istringstream&);
+MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // TERM_H
