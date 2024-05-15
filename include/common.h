@@ -10,21 +10,28 @@ constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
 constexpr char BACKSLASH = 92;
 
-struct ErrorCode {
+struct Error {
     unsigned code;
     operator unsigned() const;
 };
 
-struct Error {
-    ErrorCode code;
-    // ...
-    std::optional<Error*> cause = {};
+#define ok() return std::expected<void, Error>()
+
+template <typename T>
+struct Malformed {
+    static_assert(!std::is_void_v<T>);
+    T val;
+    Error err;
 };
 
 template <typename T>
-using MayFail = std::expected<T, Error>;
+using MayFail = std::expected<T, Malformed<T>>;
 
-#define ok() return MayFail<void>()
+template <typename R>
+MayFail<R> mayfail_cast(auto inputMayfail) {
+    return inputMayfail.transform([](auto t){return R{t};})
+            .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+}
 
 struct CharacterAppearance {
     char c;
@@ -39,7 +46,7 @@ using Sequence = std::vector<CharacterAppearance>;
 std::optional<char> sequenceFirstChar(const Sequence&);
 size_t sequenceLen(const Sequence&);
 
-MayFail<void> consumeSequence(const Sequence&, std::istringstream&);
+std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 
 #endif // COMMON_H

@@ -1,14 +1,6 @@
 #include <common.h>
-#include <utils/str-utils.h>
-#include <utils/assert-utils.h>
 
-#include <iostream>
-
-ErrorCode::ErrorCode(unsigned code) : code(code) {
-    ASSERT (code >= 100 && code <= 999);
-}
-
-ErrorCode::operator unsigned() const {
+Error::operator unsigned() const {
     return this->code;
 }
 
@@ -41,7 +33,7 @@ size_t sequenceLen(const std::vector<CharacterAppearance>& sequence) {
     return len;
 }
 
-MayFail<void> consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
+std::expected<void, Error> consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {

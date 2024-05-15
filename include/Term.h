@@ -10,7 +10,7 @@ struct Term {
     static const Sequence SEPARATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<Word> words;
+    std::vector<MayFail<Word>> words;
 };
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);

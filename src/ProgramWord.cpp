@@ -1,5 +1,5 @@
 #include <ProgramWord.h>
 
-ProgramWord consumeProgramWord(std::istringstream& input) {
-    return consumeWord(input);
+MayFail<ProgramWord> consumeProgramWord(std::istringstream& input) {
+    return mayfail_cast<ProgramWord>(consumeWord(input));
 }

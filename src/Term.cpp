@@ -1,20 +1,33 @@
 #include <Term.h>
 
-#define SPACE char(32)
+#include <algorithm>
+
+#define until(x) while(!(x))
 
 const Sequence Term::SEPARATOR_SEQUENCE = { SPACE };
 
 const std::vector<char> Term::RESERVED_CHARACTERS = {
-    firstChar(SEPARATOR_SEQUENCE)
+    sequenceFirstChar(SEPARATOR_SEQUENCE).value()
 };
 
-Term consumeTerm(std::istringstream& input) {
-    std::vector<Word> words;
-    Word currentWord;
-    while (input.peek() != EOF) {
-        currentWord = consumeWord(input);
-        consumeSequence(Term::SEPARATOR_SEQUENCE, input);
-        words.push_back(currentWord);
+MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+    if (input.peek() == EOF) {
+        return std::unexpected(Malformed(Term{}, Error{117}));
     }
+
+    std::vector<MayFail<Word>> words;
+
+    words.push_back(consumeWord(input));
+
+    until (input.peek() == EOF || std::any_of(
+            terminatorCharacters.begin(),
+            terminatorCharacters.end(),
+            [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
+        if (!consumeSequence(Term::SEPARATOR_SEQUENCE, input)) {
+            return std::unexpected(Malformed(Term{words}, Error{116}));
+        }
+        words.push_back(consumeWord(input));
+    }
+
     return Term{words};
 }

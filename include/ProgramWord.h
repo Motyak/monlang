@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 
-using ProgramWord = Word;
+struct ProgramWord : public Word {};
 
 MayFail<ProgramWord> consumeProgramWord(std::istringstream&);
 

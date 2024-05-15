@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 
-using ProgramSentence = Term;
+struct ProgramSentence : public Term {};
 
 MayFail<ProgramSentence> consumeProgramSentence(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
