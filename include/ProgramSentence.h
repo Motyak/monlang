@@ -8,6 +8,6 @@
 
 struct ProgramSentence : public Term {};
 
-MayFail<ProgramSentence> consumeProgramSentence(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input);
 
 #endif // PROGRAM_SENTENCE_H
