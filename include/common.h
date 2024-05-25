@@ -15,7 +15,7 @@ struct Error {
     operator unsigned() const;
 };
 
-#define ok() return std::expected<void, Error>()
+#define OK() return std::expected<void, Error>()
 
 template <typename T>
 struct Malformed {

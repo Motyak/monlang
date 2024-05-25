@@ -50,7 +50,7 @@ std::expected<void, Error> consumeSequence(const std::vector<CharacterAppearance
         }
     }
 
-    ok();
+    OK();
 }
 
 bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {

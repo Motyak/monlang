@@ -1,3 +1,5 @@
 .vscode
 .deps
+bin
 obj
+lib
