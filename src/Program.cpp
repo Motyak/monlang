@@ -1,4 +1,4 @@
-#include <Program.h>
+#include <monlang/Program.h>
 
 const Sequence Program::SEPARATOR_SEQUENCE = { NEWLINE };
 

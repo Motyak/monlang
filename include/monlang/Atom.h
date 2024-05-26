@@ -1,7 +1,7 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <common.h>
+#include <monlang/common.h>
 
 struct Atom {
     std::string value;

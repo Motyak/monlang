@@ -1,7 +1,7 @@
 #ifndef PROGRAM_WORD_H
 #define PROGRAM_WORD_H
 
-#include <Word.h>
+#include <monlang/Word.h>
 
 #include <vector>
 #include <sstream>

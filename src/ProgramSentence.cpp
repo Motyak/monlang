@@ -1,5 +1,5 @@
-#include <ProgramSentence.h>
-#include <Program.h>
+#include <monlang/ProgramSentence.h>
+#include <monlang/Program.h>
 
 #include <algorithm>
 

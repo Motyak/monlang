@@ -1,7 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
-#include <Atom.h>
+#include <monlang/Atom.h>
 
 #include <sstream>
 #include <variant>

@@ -1,8 +1,8 @@
-#include <Word.h>
+#include <monlang/Word.h>
 
-#include <common.h>
-#include <Program.h>
-#include <ProgramSentence.h>
+#include <monlang/common.h>
+#include <monlang/Program.h>
+#include <monlang/ProgramSentence.h>
 
 #include <utils/vec-utils.h>
 

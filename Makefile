@@ -3,7 +3,7 @@ RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -g -I include
 CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
-DEPFLAGS_TEST = -MMD -MP -MF .deps/$(notdir $*.d)
+DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rvs
 
 ###########################################################
@@ -23,7 +23,7 @@ TEST_FILENAMES := $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cp
 
 TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
-TEST_BINS := $(TEST_FILENAMES:%=bin/test/%)
+TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
@@ -33,8 +33,8 @@ all: main
 
 main: $(OBJS)
 
-test: $(TEST_BINS)
-	for f in bin/test/*; do [ -x "$$f" ] || continue; echo "$$f:"; ./$$f --allow-running-no-tests; done
+test: bin/test/all.elf
+	bin/test/all.elf
 
 clean:
 	$(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
@@ -53,7 +53,7 @@ $(OBJS): obj/%.o: src/%.cpp
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
-$(TEST_BINS): bin/test/%: obj/test/%.o $(OBJS) lib/test-libs.a
+$(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 -include $(DEPS) $(TEST_DEPS)
@@ -76,6 +76,11 @@ lib/test-libs.a: $$(test_lib_objects)
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/catch2/catch_amalgamated.hpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/catch2
+
+# compiles our own lib used for testing (montree) #
+test_lib_objects += lib/montree/obj/montree.o
+lib/montree/obj/montree.o: $(wildcard lib/montree/src/*.cpp)
+	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/montree
 
 ###########################################################
 
