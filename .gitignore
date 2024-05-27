@@ -2,4 +2,6 @@
 .deps
 bin
 obj
-lib
+lib/libs.a
+lib/test-libs.a
+lib/*/obj
