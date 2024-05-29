@@ -5,7 +5,7 @@ DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 
 ###########################################################
 
-SRC_NAMES := $(foreach file,$(wildcard src/*.cpp),$(file:src/%.cpp=%))
+SRC_NAMES := montree
 OBJS := $(SRC_NAMES:%=obj/%.o)
 DEPS := $(SRC_NAMES:%=.deps/%.d)
 
@@ -16,7 +16,7 @@ all: build
 build: $(OBJS)
 
 clean:
-	$(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
+	$(RM) $(OBJS) $(DEPS)
 
 mrproper:
 	$(RM) obj .deps

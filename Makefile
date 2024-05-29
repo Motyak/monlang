@@ -29,7 +29,7 @@ LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
 ###########################################################
 
-all: main
+all: build_sub_makes main
 
 main: $(OBJS)
 
@@ -41,7 +41,6 @@ clean:
 
 mrproper:
 	$(RM) bin obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
-
 
 .PHONY: all main test clean mrproper
 
@@ -77,12 +76,17 @@ test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/catch2/catch_amalgamated.hpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/catch2
 
-# compiles our own lib used for testing (montree) #
+# add as a make dependency our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
-lib/montree/obj/montree.o: $(wildcard lib/montree/src/*.cpp)
-	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/montree
+sub_makes += lib/montree
 
 ###########################################################
+
+# require to be after `sub_makes` is populated, so basically in the end part #
+.PHONY: build_sub_makes $(sub_makes)
+build_sub_makes: $(sub_makes)
+$(sub_makes):
+	$(MAKE) -C $@
 
 # will create all necessary directories after the Makefile is parsed #
 $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
