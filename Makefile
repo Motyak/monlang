@@ -29,7 +29,7 @@ LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 
 ###########################################################
 
-all: build_sub_makes main
+all: main
 
 main: $(OBJS)
 
@@ -67,26 +67,39 @@ lib/libs.a: $$(lib_objects)
 	$(AR) $(ARFLAGS) $@ $^
 
 # aggregate all test lib objects into one static test lib #
+should_repackage_test_libs := # default value
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
-	$(AR) $(ARFLAGS) $@ $^
+	$(if $(should_repackage_test_libs), $(AR) $(ARFLAGS) $@ $^)
 
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/catch2/catch_amalgamated.hpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/catch2
+	$(eval should_repackage_test_libs += true)
 
-# add as a make dependency our own lib used for testing (montree) #
+# buildmake: function that builds a target dir Makefile if necessary
+# $(1): path of target dir containing the Makefile to build
+# returns: true if a rebuild is necessary, empty string otherwise. ..
+# .. assign make exit status to variable .BUILDMAKESTATUS
+define buildmake
+	$(shell \
+		if ! $(MAKE) -qsC $(1); then \
+			echo -n true; \
+			>&2 $(MAKE) -C $(1); \
+		fi \
+	)
+	$(eval .BUILDMAKESTATUS := $(.SHELLSTATUS))
+endef
+
+# compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
-sub_makes += lib/montree
+.PHONY: lib/montree/obj/montree.o
+lib/montree/obj/montree.o:
+	$(eval should_repackage_test_libs += $(call buildmake, lib/montree))
+	$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS))
 
 ###########################################################
-
-# require to be after `sub_makes` is populated, so basically in the end part #
-.PHONY: build_sub_makes $(sub_makes)
-build_sub_makes: $(sub_makes)
-$(sub_makes):
-	$(MAKE) -C $@
 
 # will create all necessary directories after the Makefile is parsed #
 $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
