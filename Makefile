@@ -71,7 +71,10 @@ lib/libs.a: $$(lib_objects)
 # aggregate all test lib objects into one static test lib #
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
-	$(if $(should_repackage_test_libs), $(AR) $(ARFLAGS) $@ $^)
+# we always enter the recipe because out-of-source info comes from a sub-makefile,..
+# .. so the logic for deciding if we should repackage is inside the recipe itself
+	$(if $(or $(call missingfile, $@), $(should_repackage_test_libs)), \
+		$(AR) $(ARFLAGS) $@ $^)
 
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
@@ -90,3 +93,6 @@ lib/montree/obj/montree.o:
 
 # will create all necessary directories after the Makefile is parsed #
 $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
+
+.DELETE_ON_ERROR:
+.SUFFIXES:
