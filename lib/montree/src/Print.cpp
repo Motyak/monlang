@@ -6,7 +6,7 @@
 #include <monlang/Atom.h>
 
 #include <utils/str-utils.h>
-#include <regex>
+#include <utils/nb-utils.h>
 
 void Print::operator()(const MayFail<Program>& program) {
     // TODO: use std::expected monadic operations
@@ -22,12 +22,19 @@ void Print::operator()(const MayFail<Program>& program) {
     if (prog.sentences.size() > 0) {
         currentTabulation++;
     }
+
     if (prog.sentences.size() > 1) {
-        programSentencesNumbering = 1;
+        for (int n : range(prog.sentences.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
     }
+
     for (auto programSentence : prog.sentences) {
         operator()(programSentence);
     }
+    
     if (prog.sentences.size() > 0) {
         currentTabulation--;
     }
@@ -42,23 +49,31 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         progSentence = programSentence.error().val;
         output("~> ");
     }
-    if (!!programSentencesNumbering) {
-        outputLine(std::string() + "ProgramSentence #" + std::to_string(programSentencesNumbering++));
-    } else {
+
+    if (int n = numbering.top(); n == NO_NUMBERING) {
         outputLine(std::string() + "ProgramSentence");
+    } else {
+        outputLine(std::string() + "ProgramSentence #" + std::to_string(n));
     }
-    
+    numbering.pop();
+
     if (progSentence.programWords.size() > 0) {
         currentTabulation++;
     }
+
     if (progSentence.programWords.size() > 1) {
-        programWordsNumbering = 1;
+        for (int n : range(progSentence.programWords.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
     }
+
     for (auto programWord: progSentence.programWords) {
         areProgramWords = true;
         operator()(mayfail_cast<Word>(programWord));
     }
-    programWordsNumbering = 0;
+
     if (progSentence.programWords.size() > 0) {
         currentTabulation--;
     }
@@ -75,9 +90,10 @@ void Print::operator()(const MayFail<Word>& word) {
     }
 
     output(std::string() + (areProgramWords? "ProgramWord" : "Word"));
-    if (!!programWordsNumbering) {
-        output(std::string() + " #" + std::to_string(programWordsNumbering++));
+    if (int n = numbering.top(); n != NO_NUMBERING) {
+        output(std::string() + " #" + std::to_string(n));
     }
+    numbering.pop();
     output(": ");
 
     visitWord(wordVisitor, word_);

@@ -8,6 +8,7 @@
 #include <monlang/Atom.h>
 
 #include <monlang/visitors/visitor.h> // interface only
+#include <stack>
 
 class Print : public AstVisitor<void> {
   public:
@@ -18,12 +19,12 @@ class Print : public AstVisitor<void> {
 
   private:
     static constexpr int TAB_SIZE = 2;
+    static constexpr int NO_NUMBERING = -1;
 
     void output(const std::string&);
     void outputLine(const std::string&);
 
-    int programSentencesNumbering = 0;
-    int programWordsNumbering = 0;
+    std::stack<int> numbering;
     bool startOfNewLine = true;
     unsigned currentTabulation = 0;
     bool areProgramWords = false;
