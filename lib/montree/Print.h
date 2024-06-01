@@ -22,6 +22,8 @@ class Print : public AstVisitor<void> {
     void output(const std::string&);
     void outputLine(const std::string&);
 
+    int programSentencesNumbering = 0;
+    int programWordsNumbering = 0;
     bool startOfNewLine = true;
     unsigned currentTabulation = 0;
     bool areProgramWords = false;

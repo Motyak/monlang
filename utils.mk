@@ -6,7 +6,7 @@ define buildmake
 $(shell \
 	if ! $(MAKE) -qsC $(1); then \
 		echo -n true; \
-		>&2 $(MAKE) -$(MAKEFLAGS) -C $(1); \
+		>&2 $(MAKE) -C $(1) -$(MAKEFLAGS); \
 	fi \
 )
 $(eval .BUILDMAKESTATUS := $(.SHELLSTATUS))
