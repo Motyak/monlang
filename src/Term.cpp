@@ -1,4 +1,6 @@
 #include <monlang/Term.h>
+#include <monlang/common.h>
+#include <monlang/Word.h>
 
 #include <algorithm>
 

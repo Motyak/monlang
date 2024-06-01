@@ -1,6 +1,8 @@
 #include <monlang/Word.h>
-
 #include <monlang/common.h>
+#include <monlang/Atom.h>
+
+/* in impl only */
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 

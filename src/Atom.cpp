@@ -1,4 +1,5 @@
 #include <monlang/Atom.h>
+#include <monlang/common.h>
 
 #include <algorithm>
 

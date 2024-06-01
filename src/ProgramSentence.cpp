@@ -1,5 +1,8 @@
 #include <monlang/ProgramSentence.h>
-#include <monlang/Program.h>
+#include <monlang/common.h>
+#include <monlang/ProgramWord.h>
+
+#include <monlang/Program.h> // in impl only
 
 #include <algorithm>
 

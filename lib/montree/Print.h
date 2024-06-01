@@ -2,6 +2,11 @@
 #define PRINT_H
 
 #include <monlang/visitors/visitor.h>
+#include <monlang/common.h>
+#include <monlang/Program.h>
+#include <monlang/ProgramSentence.h>
+#include <monlang/Word.h>
+#include <monlang/Atom.h>
 
 class Print : public AstVisitor<void> {
   public:

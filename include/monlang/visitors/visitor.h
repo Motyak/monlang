@@ -1,7 +1,11 @@
 #ifndef VISITOR_H
 #define VISITOR_H
 
+#include <monlang/common.h>
 #include <monlang/Program.h>
+#include <monlang/ProgramSentence.h>
+#include <monlang/Word.h>
+#include <monlang/Atom.h>
 
 using Ast = std::variant<MayFail<Program>, MayFail<ProgramSentence>, MayFail<Word>>;
 

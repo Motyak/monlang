@@ -1,6 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include <monlang/common.h>
 #include <monlang/Atom.h>
 
 #include <sstream>
