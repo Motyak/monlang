@@ -11,7 +11,7 @@ struct ProgramSentence {
     static const Sequence SEPARATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<MayFail<ProgramWord>> words;
+    std::vector<MayFail<ProgramWord>> programWords;
 };
 
 MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input);

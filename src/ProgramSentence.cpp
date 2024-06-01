@@ -23,19 +23,19 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{117}));
     }
 
-    std::vector<MayFail<ProgramWord>> words;
+    std::vector<MayFail<ProgramWord>> programWords;
 
-    words.push_back(consumeProgramWord(input));
+    programWords.push_back(consumeProgramWord(input));
 
     until (input.peek() == EOF || std::any_of(
             terminatorCharacters.begin(),
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         if (!consumeSequence(ProgramSentence::SEPARATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(ProgramSentence{words}, Error{116}));
+            return std::unexpected(Malformed(ProgramSentence{programWords}, Error{116}));
         }
-        words.push_back(consumeProgramWord(input));
+        programWords.push_back(consumeProgramWord(input));
     }
 
-    return ProgramSentence{words};
+    return ProgramSentence{programWords};
 }

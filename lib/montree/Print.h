@@ -1,12 +1,13 @@
 #ifndef PRINT_H
 #define PRINT_H
 
-#include <monlang/visitors/visitor.h>
 #include <monlang/common.h>
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
 #include <monlang/Atom.h>
+
+#include <monlang/visitors/visitor.h> // interface only
 
 class Print : public AstVisitor<void> {
   public:
@@ -16,16 +17,24 @@ class Print : public AstVisitor<void> {
     void operator()(const MayFail<Word>&);
 
   private:
+    static constexpr int TAB_SIZE = 2;
+
+    void output(const std::string&);
     void outputLine(const std::string&);
 
-    bool firstLine;
-    unsigned currentTabulation;
+    bool startOfNewLine = true;
+    unsigned currentTabulation = 0;
+    bool areProgramWords = false;
     std::ostream& out;
 
-    struct _WordVisitor : public WordVisitor<void> {
+    class _WordVisitor : public WordVisitor<void> {
+      public:
         std::ostream& out;
         _WordVisitor(std::ostream&);
         void operator()(const Atom&);
+
+      private:
+        std::string escapeTabsAndNewlines(const std::string&);
     } wordVisitor;
 };
 

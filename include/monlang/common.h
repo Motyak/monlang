@@ -8,6 +8,7 @@
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
+constexpr char TAB = 9;
 constexpr char BACKSLASH = 92;
 
 struct Error {
