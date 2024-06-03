@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS := --std=c++23 -Wall -Wextra -Og -g -I .
+CXXFLAGS += --std=c++23 -Wall -Wextra -Og -g -I .
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 
 ###########################################################
