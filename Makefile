@@ -2,11 +2,11 @@ include utils.mk # buildmake
 
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS += --std=c++23 -Wall -Wextra -Og -g -I include
-CXXFLAGS_TEST += --std=c++23 -Wall -Wextra -Og -g -I include -I lib
+CXXFLAGS := --std=c++23 -Wall -Wextra -Og -g -I include
+CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
-ARFLAGS += rvs
+ARFLAGS := rcsv
 
 ###########################################################
 

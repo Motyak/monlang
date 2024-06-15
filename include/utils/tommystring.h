@@ -12,6 +12,7 @@ inline std::string (tommy_str)(std::string filename, int lineno, std::string raw
 
     constexpr char TAB = 9;
     constexpr char SPACE = 32;
+    constexpr char VER_BAR = 124;
 
     unsigned indentation_level = 0;
     bool is_indented_with_tabs = false; // could have left it uninitialized, doesn't matter
@@ -37,7 +38,7 @@ inline std::string (tommy_str)(std::string filename, int lineno, std::string raw
                 if ((++spaces % 4) == 0) {
                     indentation_level++;
                 }
-            } while (ifs.peek() == SPACE);
+            } while (ifs.peek() == SPACE || ifs.peek() == VER_BAR);
         }
 
         END_OF_BLOCK:
