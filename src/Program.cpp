@@ -8,6 +8,9 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
     while (input.peek() != EOF) {
         currentSentence = consumeProgramSentence(input);
         sentences.push_back(currentSentence);
+        if (!currentSentence.has_value()) {
+            return std::unexpected(Malformed(Program{sentences}, Error{199}));
+        }
     }
     return Program{sentences};
 }

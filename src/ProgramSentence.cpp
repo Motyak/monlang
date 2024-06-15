@@ -23,6 +23,10 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
 
     std::vector<MayFail<ProgramWord>> programWords;
 
+    if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{192}));
+    }
+
     programWords.push_back(consumeProgramWord(input));
 
     until (input.peek() == EOF || std::any_of(
@@ -33,10 +37,6 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{116}));
         }
         programWords.push_back(consumeProgramWord(input));
-    }
-
-    if (input.peek() == EOF) {
-        return std::unexpected(Malformed(ProgramSentence{}, Error{100}));
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {

@@ -106,41 +106,42 @@ TEST_CASE ("two two-program-words sentences", "[test-1115][base]") {
     REQUIRE (output_str == expect);
 }
 
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("single newline character ERR prog sentence cannot be empty", "[test-1116][base][err]") {
+    auto input = tommy_str(R"EOF(
+       |
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> Program
+       |  ~> ProgramSentence
+       |    ~> ERR-192
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
 // ////////////////////////////////////////////////////////////////
 
-// TEST_CASE ("one program sentence ERR empty word", "[test-1116][base][err]") {
-//     auto input = tommy_str(R"EOF(
-//        |
-//        |
-//     )EOF");
+TEST_CASE ("one program sentence ERR missing terminator", "[test-1117][base][err]") {
+    auto input = tommy_str(R"EOF(
+       |fds
+    )EOF");
 
-//     auto expect = tommy_str(R"EOF(
-//        |~> Program
-//        |  ~> ProgramSentence
-//        |    ~> ERR-100
-//     )EOF");
+    auto expect = tommy_str(R"EOF(
+       |~> Program
+       |  ~> ProgramSentence
+       |    -> ProgramWord: Atom: `fds`
+       |    ~> ERR-191
+    )EOF");
 
-//     auto input_iss = std::istringstream(input);
-//     auto output = consumeProgram(input_iss);
-//     auto output_str = montree::astToString(output);
-//     REQUIRE (output_str == expect);
-// }
-
-// ////////////////////////////////////////////////////////////////
-
-// TEST_CASE ("one program sentence ERR missing terminator", "[test-1117][base][err]") {
-//     auto input = tommy_str(R"EOF(
-//        |fds
-//     )EOF");
-
-//     auto expect = tommy_str(R"EOF(
-//        |~> Program
-//        |  ~> ProgramSentence
-//        |    ~> ERR-100
-//     )EOF");
-
-//     auto input_iss = std::istringstream(input);
-//     auto output = consumeProgram(input_iss);
-//     auto output_str = montree::astToString(output);
-//     REQUIRE (output_str == expect);
-// }
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
