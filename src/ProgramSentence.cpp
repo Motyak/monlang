@@ -24,7 +24,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
     std::vector<MayFail<ProgramWord>> programWords;
 
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{192}));
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{121}));
     }
 
     programWords.push_back(consumeProgramWord(input));
@@ -34,13 +34,13 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(ProgramSentence{programWords}, Error{116}));
+            return std::unexpected(Malformed(ProgramSentence{programWords}, Error{122}));
         }
         programWords.push_back(consumeProgramWord(input));
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{191}));
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{120}));
     }
 
     return ProgramSentence{programWords};

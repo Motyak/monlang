@@ -14,7 +14,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Term{}, Error{117}));
+        return std::unexpected(Malformed(Term{}, Error{131}));
     }
 
     std::vector<MayFail<Word>> words;
@@ -26,7 +26,7 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(Term{words}, Error{116}));
+            return std::unexpected(Malformed(Term{words}, Error{103}));
         }
         words.push_back(consumeWord(input));
     }

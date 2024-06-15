@@ -117,7 +117,7 @@ TEST_CASE ("single newline character ERR prog sentence cannot be empty", "[test-
     auto expect = tommy_str(R"EOF(
        |~> Program
        |  ~> ProgramSentence
-       |    ~> ERR-192
+       |    ~> ERR-121
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -137,7 +137,7 @@ TEST_CASE ("one program sentence ERR missing terminator", "[test-1117][base][err
        |~> Program
        |  ~> ProgramSentence
        |    -> ProgramWord: Atom: `fds`
-       |    ~> ERR-191
+       |    ~> ERR-120
     )EOF");
 
     auto input_iss = std::istringstream(input);

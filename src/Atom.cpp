@@ -7,7 +7,7 @@
 
 MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Atom{}, Error{117}));
+        return std::unexpected(Malformed(Atom{}, Error{991}));
     }
 
     std::string value;
@@ -21,7 +21,7 @@ MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::is
     }
 
     if (value.size() == 0) {
-        return std::unexpected(Malformed(Atom{}, Error{118}));
+        return std::unexpected(Malformed(Atom{}, Error{992}));
     }
 
     return Atom{value};
