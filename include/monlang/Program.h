@@ -8,9 +8,6 @@
 #include <sstream>
 
 struct Program {
-    static const Sequence SEPARATOR_SEQUENCE;
-    static const std::vector<char> RESERVED_CHARACTERS;
-
     std::vector<MayFail<ProgramSentence>> sentences;
 };
 

@@ -6,10 +6,10 @@
 
 #define until(x) while(!(x))
 
-const Sequence Term::SEPARATOR_SEQUENCE = { SPACE };
+const Sequence Term::CONTINUATOR_SEQUENCE = { SPACE };
 
 const std::vector<char> Term::RESERVED_CHARACTERS = {
-    sequenceFirstChar(SEPARATOR_SEQUENCE).value()
+    sequenceFirstChar(CONTINUATOR_SEQUENCE).value()
 };
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
@@ -25,7 +25,7 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             terminatorCharacters.begin(),
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
-        if (!consumeSequence(Term::SEPARATOR_SEQUENCE, input)) {
+        if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(Term{words}, Error{116}));
         }
         words.push_back(consumeWord(input));

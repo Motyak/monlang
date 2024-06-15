@@ -22,14 +22,14 @@ TEST_CASE ("empty program", "[test-1111][base]") {
 
 TEST_CASE ("one program sentence", "[test-1112][base]") {
     auto input = tommy_str(R"EOF(
-        fds
-        
+       |fds
+       |
     )EOF");
 
     auto expect = tommy_str(R"EOF(
-        -> Program
-          -> ProgramSentence
-            -> ProgramWord: Atom: `fds`
+       |-> Program
+       |  -> ProgramSentence
+       |    -> ProgramWord: Atom: `fds`
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -42,15 +42,15 @@ TEST_CASE ("one program sentence", "[test-1112][base]") {
 
 TEST_CASE ("two program words", "[test-1113][base]") {
     auto input = tommy_str(R"EOF(
-        fds sdf
-        
+       |fds sdf
+       |
     )EOF");
 
     auto expect = tommy_str(R"EOF(
-        -> Program
-          -> ProgramSentence
-            -> ProgramWord #1: Atom: `fds`
-            -> ProgramWord #2: Atom: `sdf`
+       |-> Program
+       |  -> ProgramSentence
+       |    -> ProgramWord #1: Atom: `fds`
+       |    -> ProgramWord #2: Atom: `sdf`
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -62,17 +62,17 @@ TEST_CASE ("two program words", "[test-1113][base]") {
 
 TEST_CASE ("two program sentences", "[test-1114][base]") {
     auto input = tommy_str(R"EOF(
-        fds
-        sdf
-        
+       |fds
+       |sdf
+       |
     )EOF");
 
     auto expect = tommy_str(R"EOF(
-        -> Program
-          -> ProgramSentence #1
-            -> ProgramWord: Atom: `fds`
-          -> ProgramSentence #2
-            -> ProgramWord: Atom: `sdf`
+       |-> Program
+       |  -> ProgramSentence #1
+       |    -> ProgramWord: Atom: `fds`
+       |  -> ProgramSentence #2
+       |    -> ProgramWord: Atom: `sdf`
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -85,19 +85,19 @@ TEST_CASE ("two program sentences", "[test-1114][base]") {
 
 TEST_CASE ("two two-program-words sentences", "[test-1115][base]") {
     auto input = tommy_str(R"EOF(
-        fds sdf
-        dfs dsf
-        
+       |fds sdf
+       |dfs dsf
+       |
     )EOF");
 
     auto expect = tommy_str(R"EOF(
-        -> Program
-          -> ProgramSentence #1
-            -> ProgramWord #1: Atom: `fds`
-            -> ProgramWord #2: Atom: `sdf`
-          -> ProgramSentence #2
-            -> ProgramWord #1: Atom: `dfs`
-            -> ProgramWord #2: Atom: `dsf`
+       |-> Program
+       |  -> ProgramSentence #1
+       |    -> ProgramWord #1: Atom: `fds`
+       |    -> ProgramWord #2: Atom: `sdf`
+       |  -> ProgramSentence #2
+       |    -> ProgramWord #1: Atom: `dfs`
+       |    -> ProgramWord #2: Atom: `dsf`
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -105,3 +105,42 @@ TEST_CASE ("two two-program-words sentences", "[test-1115][base]") {
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
+
+// ////////////////////////////////////////////////////////////////
+
+// TEST_CASE ("one program sentence ERR empty word", "[test-1116][base][err]") {
+//     auto input = tommy_str(R"EOF(
+//        |
+//        |
+//     )EOF");
+
+//     auto expect = tommy_str(R"EOF(
+//        |~> Program
+//        |  ~> ProgramSentence
+//        |    ~> ERR-100
+//     )EOF");
+
+//     auto input_iss = std::istringstream(input);
+//     auto output = consumeProgram(input_iss);
+//     auto output_str = montree::astToString(output);
+//     REQUIRE (output_str == expect);
+// }
+
+// ////////////////////////////////////////////////////////////////
+
+// TEST_CASE ("one program sentence ERR missing terminator", "[test-1117][base][err]") {
+//     auto input = tommy_str(R"EOF(
+//        |fds
+//     )EOF");
+
+//     auto expect = tommy_str(R"EOF(
+//        |~> Program
+//        |  ~> ProgramSentence
+//        |    ~> ERR-100
+//     )EOF");
+
+//     auto input_iss = std::istringstream(input);
+//     auto output = consumeProgram(input_iss);
+//     auto output_str = montree::astToString(output);
+//     REQUIRE (output_str == expect);
+// }

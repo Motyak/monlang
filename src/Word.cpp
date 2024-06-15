@@ -10,7 +10,6 @@
 
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters = vec_union({
-        Program::RESERVED_CHARACTERS,
         ProgramSentence::RESERVED_CHARACTERS
     });
 

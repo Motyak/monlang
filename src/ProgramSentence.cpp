@@ -8,20 +8,18 @@
 
 #define until(x) while(!(x))
 
-const Sequence ProgramSentence::SEPARATOR_SEQUENCE = { SPACE };
+const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = { SPACE };
+const Sequence ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
 
 const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
-    sequenceFirstChar(SEPARATOR_SEQUENCE).value()
+    sequenceFirstChar(CONTINUATOR_SEQUENCE).value(),
+    sequenceFirstChar(TERMINATOR_SEQUENCE).value()
 };
 
 MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
     std::vector<char> terminatorCharacters = {
-        sequenceFirstChar(Program::SEPARATOR_SEQUENCE).value()
+        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
-
-    if (input.peek() == EOF) {
-        return std::unexpected(Malformed(ProgramSentence{}, Error{117}));
-    }
 
     std::vector<MayFail<ProgramWord>> programWords;
 
@@ -31,10 +29,18 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
             terminatorCharacters.begin(),
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
-        if (!consumeSequence(ProgramSentence::SEPARATOR_SEQUENCE, input)) {
+        if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{116}));
         }
         programWords.push_back(consumeProgramWord(input));
+    }
+
+    if (input.peek() == EOF) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{100}));
+    }
+
+    if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{191}));
     }
 
     return ProgramSentence{programWords};

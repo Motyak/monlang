@@ -57,7 +57,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
     numbering.pop();
 
-    if (progSentence.programWords.size() > 0) {
+    if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
         currentTabulation++;
     }
 
@@ -74,7 +74,11 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         operator()(mayfail_cast<Word>(programWord));
     }
 
-    if (progSentence.programWords.size() > 0) {
+    if (!programSentence.has_value()) {
+        outputLine(std::string() + "~> ERR-" + std::to_string(programSentence.error().err.code));
+    }
+
+    if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
         currentTabulation--;
     }
 }

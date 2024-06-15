@@ -8,7 +8,7 @@
 #include <sstream>
 
 struct Term {
-    static const Sequence SEPARATOR_SEQUENCE;
+    static const Sequence CONTINUATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<MayFail<Word>> words;
