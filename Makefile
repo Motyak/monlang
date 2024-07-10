@@ -8,7 +8,7 @@ DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
 
-BUILD_LIBS_ONCE ?=
+BUILD_LIBS_ONCE ?= y
 
 ###########################################################
 
@@ -86,7 +86,7 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
-ifeq (,$(BUILD_LIBS_ONCE))
+ifeq (,$(BUILD_LIBS_ONCE)) # if not set
 $(call ifnotmakeflag, q, .PHONY: lib/montree/obj/montree.o)
 endif
 lib/montree/obj/montree.o:

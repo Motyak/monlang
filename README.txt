@@ -37,8 +37,8 @@ otherwise -> custom error (refer to manual)
 
 === MAKEFILE DESIGN ===
 
-Each lib should have its own auto build mechanism (whether it's a Makefile or something else), we don't want to check ourselves if the lib is up-to-date because we are not supposed to know the details.
+Each lib should have its own build system (whether it's a Makefile or something else), we don't want to check ourselves if a lib is up-to-date, we want to use its build system instead.
 
-We're systematically going to recheck and potentially rebuild each lib if they are out-of-date (by questioning each lib auto build mechanism and re-running it says it's necessary). However, when the 'q' make flag is passed to our Makefile, it will not systematically return 1, it will only do so if the libs were not build at least once (even if it's out-of-date).
-
-This behavior is configurable through environment variables.
+By default the libs are built only once, even if their code changes afterward.
+You can toggle a variable in order to track libs code changes, by doing so we're systematically going to recheck and potentially rebuild each lib if they are out-of-date (by questioning each lib build system and re-running it if it says it's necessary).
+However, keep in mind that when answering the 'q' make flag, our Makefile will only be able to detect if a lib is missing, not if it's out-of-date.
