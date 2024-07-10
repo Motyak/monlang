@@ -80,9 +80,9 @@ lib/test-libs.a: $$(test_lib_objects)
 
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
-lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/catch2/catch_amalgamated.hpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS) -I lib/catch2
-	$(eval should_repackage_test_libs += true)
+lib/catch2/obj/catch_amalgamated.o:
+	@$(call buildmake, lib/catch2)
+	$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS))
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
