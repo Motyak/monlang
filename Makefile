@@ -1,4 +1,4 @@
-include utils.mk # buildmake
+include utils.mk # buildmake, missingfile, ifnotmakeflag
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -7,6 +7,8 @@ CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
+
+BUILD_LIBS_ONCE ?=
 
 ###########################################################
 
@@ -84,7 +86,9 @@ lib/catch2/obj/catch_amalgamated.o: lib/catch2/src/catch_amalgamated.cpp lib/cat
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
-.PHONY: lib/montree/obj/montree.o
+ifeq (,$(BUILD_LIBS_ONCE))
+$(call ifnotmakeflag, q, .PHONY: lib/montree/obj/montree.o)
+endif
 lib/montree/obj/montree.o:
 	$(eval should_repackage_test_libs += $(call buildmake, lib/montree))
 	$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS))

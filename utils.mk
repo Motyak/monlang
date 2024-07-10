@@ -12,7 +12,7 @@ $(shell \
 $(eval .BUILDMAKESTATUS := $(.SHELLSTATUS))
 endef
 
-# fileexists: function that check whether or not a file is missing
+# missingfile: function that check whether or not a file is missing
 # $(1): path of the file to check
 # returns: true if the file is missing, empty string otherwise
 define missingfile
@@ -21,4 +21,12 @@ $(shell \
 		echo -n true; \
 	fi \
 )
+endef
+
+# ifnotmakeflag: similar as $(if) but checks for a make flag absence
+# $(1): make flag to check
+# $(2): output str
+# returns: the output str if the make flag is NOT set, the empty str if it is set
+define ifnotmakeflag
+$(if $(findstring $(strip $(1)), $(firstword -$(MAKEFLAGS))),, $(2))
 endef
