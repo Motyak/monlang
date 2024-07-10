@@ -81,8 +81,9 @@ lib/test-libs.a: $$(test_lib_objects)
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-	@$(call buildmake, lib/catch2)
-	$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS))
+	$(call ifnotmakeflag, q, \
+		@$(call buildmake, lib/catch2) \
+		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
@@ -90,8 +91,9 @@ ifeq (,$(BUILD_LIBS_ONCE)) # if not set
 $(call ifnotmakeflag, q, .PHONY: lib/montree/obj/montree.o)
 endif
 lib/montree/obj/montree.o:
-	$(eval should_repackage_test_libs += $(call buildmake, lib/montree))
-	$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS))
+	$(call ifnotmakeflag, q, \
+		$(eval should_repackage_test_libs += $(call buildmake, lib/montree)) \
+		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
 
 ###########################################################
 
