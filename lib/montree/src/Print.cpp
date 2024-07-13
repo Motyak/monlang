@@ -50,12 +50,16 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         output("~> ");
     }
 
-    if (int n = numbering.top(); n == NO_NUMBERING) {
+    if (numbering.empty()) {
         outputLine(std::string() + "ProgramSentence");
     } else {
-        outputLine(std::string() + "ProgramSentence #" + std::to_string(n));
+        if (int n = numbering.top(); n == NO_NUMBERING) {
+            outputLine(std::string() + "ProgramSentence");
+        } else {
+            outputLine(std::string() + "ProgramSentence #" + std::to_string(n));
+        }
+        numbering.pop();
     }
-    numbering.pop();
 
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
         currentTabulation++;

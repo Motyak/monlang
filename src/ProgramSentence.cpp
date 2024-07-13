@@ -2,7 +2,9 @@
 #include <monlang/common.h>
 #include <monlang/ProgramWord.h>
 
-#include <monlang/Program.h> // in impl only
+/* in impl only */
+#include <monlang/Program.h>
+#include <utils/assert-util.h>
 
 #include <algorithm>
 
@@ -23,8 +25,13 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
 
     std::vector<MayFail<ProgramWord>> programWords;
 
-    if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+    if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(ProgramSentence{programWords}, Error{121}));
+    }
+
+    // ProgramSentence cannot be empty (special "group" grammar entity)
+    if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{124}));
     }
 
     programWords.push_back(consumeProgramWord(input));
@@ -33,9 +40,15 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
             terminatorCharacters.begin(),
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
+        
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
+            SHOULD_NOT_HAPPEN(); // how could this happen, will see
+        }
+
+        if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{122}));
         }
+
         programWords.push_back(consumeProgramWord(input));
     }
 

@@ -23,6 +23,7 @@
 
 ---
 
+123 -> reserved (serve as a dummy, for debug, ..)
 0xy -> missing initiator
 x0y -> missing continuator
 xy0 -> missing terminator
@@ -31,8 +32,9 @@ xyz -> custom error (refer to manual)
 
 ---
 
-121 ProgramSentence cannot be empty (leading terminator met)
+121 ProgramSentence can't start with a continuator (leading continuator met)
 122 ProgramSentence continuator must precede a word (trailing continuator met)
+124 ProgramSentence cannot be empty (leading terminator met)
 
 
 === MAKEFILE DESIGN ===

@@ -5,6 +5,10 @@
 
 namespace montree {
     std::string astToString(Ast);
+
+    namespace debug {
+        std::string astToString(Ast);
+    }
 } // montree
 
 #endif // MONTREE_H

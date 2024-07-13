@@ -117,6 +117,26 @@ TEST_CASE ("single newline character ERR prog sentence cannot be empty", "[test-
     auto expect = tommy_str(R"EOF(
        |~> Program
        |  ~> ProgramSentence
+       |    ~> ERR-124
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("one program sentence ERR leading continuator", "[test-1117][base][err]") {
+    auto input = tommy_str(R"EOF(
+       |\sfoo
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> Program
+       |  ~> ProgramSentence
        |    ~> ERR-121
     )EOF");
 
@@ -126,9 +146,30 @@ TEST_CASE ("single newline character ERR prog sentence cannot be empty", "[test-
     REQUIRE (output_str == expect);
 }
 
-// ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
-TEST_CASE ("one program sentence ERR missing terminator", "[test-1117][base][err]") {
+TEST_CASE ("one program sentence ERR trailing continuator", "[test-1118][base][err]") {
+    auto input = tommy_str(R"EOF(
+       |foo\s
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> Program
+       |  ~> ProgramSentence
+       |    -> ProgramWord: Atom: `foo`
+       |    ~> ERR-122
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("one program sentence ERR missing terminator", "[test-1119][base][err]") {
     auto input = tommy_str(R"EOF(
        |fds
     )EOF");

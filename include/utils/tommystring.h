@@ -1,10 +1,14 @@
 #ifndef TOMMYSTRING_H
 #define TOMMYSTRING_H
 
+#include <utils/str-utils.h>
+
 #include <iostream>
 #include <fstream>
 #include <limits>
 #include <sstream>
+
+static std::string interpret_escape_sequences(std::string);
 
 #define tommy_str(raw_str) tommy_str(__FILE__, __LINE__, raw_str)
 inline std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
@@ -56,11 +60,21 @@ inline std::string (tommy_str)(std::string filename, int lineno, std::string raw
         }
     } else {
         while (std::getline(iss, cur_line) && cur_line.size() > indentation_level * 4) {
-            res += cur_line.substr((indentation_level + 1) * 4) + "\n";
+            auto actual_content = cur_line.substr((indentation_level + 1) * 4);
+            actual_content = interpret_escape_sequences(actual_content);
+            res += actual_content + "\n";
         }
     }
 
     return res.substr(0, res.size() - 1);
+}
+
+// /!\ will wrongly interpret escaped escape sequences (e.g.: '\\s' => '\SPACE instead of '\s')
+std::string interpret_escape_sequences(std::string str) {
+    const char SPACE = ' ';
+    auto from = R"(\s)";
+    auto to = std::string(1, SPACE);
+    return replace_all(str, from, to);
 }
 
 #ifdef TOMMYSTRING_H_MAIN
