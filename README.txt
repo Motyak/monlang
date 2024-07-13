@@ -27,7 +27,7 @@
 x0y -> missing continuator
 xy0 -> missing terminator
 xy9 -> malformed sub-element
-otherwise -> custom error (refer to manual)
+xyz -> custom error (refer to manual)
 
 ---
 
