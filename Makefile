@@ -42,7 +42,7 @@ test: bin/test/all.elf
 
 # able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
-	@true
+	@# $@ DONE
 $(call clean, $(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
 
 mrproper:
@@ -84,14 +84,14 @@ lib/test-libs.a: $$(test_lib_objects)
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 	$(call ifnotmakeflag, q, \
-		@$(call buildmake, lib/catch2) \
+		$(eval should_repackage_test_libs += $(call buildmake, lib/catch2)) \
 		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
-ifeq (,$(BUILD_LIBS_ONCE)) # if not set
-$(call ifnotmakeflag, q, .PHONY: lib/montree/obj/montree.o)
-endif
+$(if $(BUILD_LIBS_ONCE),, \
+	$(call ifnotmakeflag, q, \
+		.PHONY: lib/montree/obj/montree.o))
 lib/montree/obj/montree.o:
 	$(call ifnotmakeflag, q, \
 		$(eval should_repackage_test_libs += $(call buildmake, lib/montree)) \

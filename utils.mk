@@ -5,8 +5,8 @@
 define buildmake
 $(shell \
 	if ! $(MAKE) -qsC $(1); then \
-		echo -n true; \
-		>&2 $(MAKE) -C $(1) -$(MAKEFLAGS); \
+		echo true; \
+		>&2 $(MAKE) -C $(1); \
 	fi \
 )
 $(eval .BUILDMAKESTATUS := $(.SHELLSTATUS))
@@ -18,7 +18,7 @@ endef
 define missingfile
 $(shell \
 	if [ ! -e $(1) ]; then \
-		echo -n true; \
+		echo true; \
 	fi \
 )
 endef
@@ -31,9 +31,14 @@ define ifnotmakeflag
 $(if $(findstring $(strip $(1)), $(firstword -$(MAKEFLAGS))),, $(2))
 endef
 
-# clean: run 'clean' target recipe in a verbose shell
+# clean: run 'clean' target recipe in a verbose shell, support dry run as well
 # $(1): shell command
 # returns: nothing
 define clean
-$(if $(filter clean,$(MAKECMDGOALS)), $(shell $(SHELL) -vc '$(1)'))
+$(if $(filter clean,$(MAKECMDGOALS)), \
+	$(if $(findstring n, $(firstword -$(MAKEFLAGS))), \
+		$(shell $(SHELL) -vnc '$(1)'), \
+		$(shell $(SHELL) -vc '$(1)')
+	)
+)
 endef
