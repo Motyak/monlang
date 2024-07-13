@@ -30,3 +30,10 @@ endef
 define ifnotmakeflag
 $(if $(findstring $(strip $(1)), $(firstword -$(MAKEFLAGS))),, $(2))
 endef
+
+# clean: run 'clean' target recipe in a verbose shell
+# $(1): shell command
+# returns: nothing
+define clean
+$(if $(filter clean,$(MAKECMDGOALS)), $(shell $(SHELL) -vc '$(1)'))
+endef

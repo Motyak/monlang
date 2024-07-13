@@ -18,5 +18,6 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     //     ..
     // });
 
+    // Atom is the "fall-through" Word
     return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
 }

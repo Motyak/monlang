@@ -1,4 +1,4 @@
-include utils.mk # buildmake, missingfile, ifnotmakeflag
+include utils.mk # buildmake, missingfile, ifnotmakeflag, clean
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -40,8 +40,10 @@ main: $(OBJS)
 test: bin/test/all.elf
 	bin/test/all.elf
 
+# able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
-	$(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
+	@true
+$(call clean, $(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
 
 mrproper:
 	$(RM) bin obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
