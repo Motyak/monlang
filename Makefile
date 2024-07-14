@@ -77,7 +77,13 @@ lib/libs.a: $$(lib_objects)
 lib/test-libs.a: $$(test_lib_objects)
 # (in 'BUILD_LIBS_ONCE= ' mode) we always enter the recipe..
 # .. to check if libs are outdated (by questioning their make)
+ifeq (,$(BUILD_LIBS_ONCE)) # if not set
 ifeq (,$(call checkmakeflags, n q)) # if not set
+	$(if $(call shouldrebuild, $@, $^), \
+		$(AR) $(ARFLAGS) $@ $^)
+endif
+endif
+ifneq (,$(BUILD_LIBS_ONCE)) # if set
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 endif
