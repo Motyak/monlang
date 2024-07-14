@@ -75,27 +75,28 @@ lib/libs.a: $$(lib_objects)
 # aggregate all test lib objects into one static test lib #
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
-# we always enter the recipe because out-of-source info comes from a sub-makefile,..
-# .. so the logic for deciding if we should repackage is inside the recipe itself
+# (in 'BUILD_LIBS_ONCE= ' mode) we always enter the recipe..
+# .. to check if libs are outdated (by questioning their make)
+ifeq (,$(call checkmakeflags, n q)) # if not set
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
+endif
 
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 	$(if $(call buildmake, lib/catch2), \
-		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)) \
-		@# $@ DONE)
+		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
+	@# $@ DONE
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(BUILD_LIBS_ONCE),, \
-	$(call ifnotmakeflag, q n, \
-		.PHONY: lib/montree/obj/montree.o))
+	.PHONY: lib/montree/obj/montree.o)
 lib/montree/obj/montree.o:
 	$(if $(call buildmake, lib/montree), \
 		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)) \
-		@# $@ DONE)
+		$(if $(BUILD_LIBS_ONCE),, @# $@ DONE))
 
 ###########################################################
 
