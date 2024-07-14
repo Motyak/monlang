@@ -1,4 +1,4 @@
-include utils.mk # buildmake, missingfile, ifnotmakeflag, clean
+include utils.mk # buildmake, clean, not, checkmakeflags, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -77,13 +77,8 @@ lib/libs.a: $$(lib_objects)
 lib/test-libs.a: $$(test_lib_objects)
 # (in 'BUILD_LIBS_ONCE= ' mode) we always enter the recipe..
 # .. to check if libs are outdated (by questioning their make)
-ifeq (,$(BUILD_LIBS_ONCE)) # if not set
-ifeq (,$(call checkmakeflags, n q)) # if not set
-	$(if $(call shouldrebuild, $@, $^), \
-		$(AR) $(ARFLAGS) $@ $^)
-endif
-endif
-ifneq (,$(BUILD_LIBS_ONCE)) # if set
+ifneq (,$(or $(BUILD_LIBS_ONCE), \
+			 $(call not, $(BUILD_LIBS_ONCE) $(call checkmakeflags, n q))))
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 endif
