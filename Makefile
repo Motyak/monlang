@@ -96,7 +96,7 @@ $(if $(BUILD_LIBS_ONCE),, \
 lib/montree/obj/montree.o:
 	$(if $(call buildmake, lib/montree), \
 		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)) \
-		$(if $(BUILD_LIBS_ONCE),, @# $@ DONE))
+		@# $@ DONE)
 
 ###########################################################
 
