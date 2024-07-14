@@ -8,19 +8,15 @@ $(shell \
 		echo true; \
 		>&2 $(MAKE) -C $(1); \
 	fi \
+	$(eval .BUILDMAKESTATUS := $(.SHELLSTATUS)) \
 )
-$(eval .BUILDMAKESTATUS := $(.SHELLSTATUS))
 endef
 
 # missingfile: function that check whether or not a file is missing
 # $(1): path of the file to check
 # returns: true if the file is missing, empty string otherwise
 define missingfile
-$(shell \
-	if [ ! -e $(1) ]; then \
-		echo true; \
-	fi \
-)
+$(shell [ ! -e $(1) ] && echo true)
 endef
 
 # ifnotmakeflag: similar as $(if) but checks for a make flag absence
@@ -41,4 +37,12 @@ $(if $(filter clean,$(MAKECMDGOALS)), \
 		$(shell $(SHELL) -vc '$(1)')
 	)
 )
+endef
+
+define shouldrebuild
+$(shell \
+	[ ! -e $(1) ] && { echo true; exit 0; }; \
+	for lib in $(2); do \
+		[ '$$lib' -nt $(1) ] && { echo true; exit 0; }; \
+	done)
 endef

@@ -1,3 +1,31 @@
+Pour reproduire le bug:
+source env.sh
+make mrproper
+
+make bin/test/all.elf
+make -n bin/test/all.elf
+make -q bin/test/all.elf; echo $?
+
+rm lib/catch2/obj/catch_amalgamated.o
+make -n lib/catch2/obj/catch_amalgamated.o
+make -q lib/catch2/obj/catch_amalgamated.o; echo $?
+make lib/catch2/obj/catch_amalgamated.o
+make -n lib/catch2/obj/catch_amalgamated.o
+make -q lib/catch2/obj/catch_amalgamated.o; echo $?
+
+rm lib/montree/obj/montree.o
+make -n lib/montree/obj/montree.o
+make -q lib/montree/obj/montree.o; echo $?
+make lib/montree/obj/montree.o
+make -n lib/montree/obj/montree.o
+make -q lib/montree/obj/montree.o; echo $?
+
+make -n bin/test/all.elf
+make -q bin/test/all.elf; echo $?
+make bin/test/all.elf
+
+Avec ce makefile:
+==================================================================================================
 include utils.mk # buildmake, missingfile, ifnotmakeflag, clean
 
 SHELL := /bin/bash
@@ -104,3 +132,5 @@ $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
 
 .DELETE_ON_ERROR:
 .SUFFIXES:
+
+==================================================================================================
