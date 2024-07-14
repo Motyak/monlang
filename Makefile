@@ -83,17 +83,17 @@ lib/test-libs.a: $$(test_lib_objects)
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-	$(call ifnotmakeflag, q, \
+	$(call ifnotmakeflag, q n, \
 		$(eval should_repackage_test_libs += $(call buildmake, lib/catch2)) \
 		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(BUILD_LIBS_ONCE),, \
-	$(call ifnotmakeflag, q, \
+	$(call ifnotmakeflag, q n, \
 		.PHONY: lib/montree/obj/montree.o))
 lib/montree/obj/montree.o:
-	$(call ifnotmakeflag, q, \
+	$(call ifnotmakeflag, q n, \
 		$(eval should_repackage_test_libs += $(call buildmake, lib/montree)) \
 		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
 

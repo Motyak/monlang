@@ -24,11 +24,11 @@ $(shell \
 endef
 
 # ifnotmakeflag: similar as $(if) but checks for a make flag absence
-# $(1): make flag to check
+# $(1): make flags to check (separated by space)
 # $(2): output str
-# returns: the output str if the make flag is NOT set, the empty str if it is set
+# returns: the output str if all make flags aren't set, the empty str if any is
 define ifnotmakeflag
-$(if $(findstring $(strip $(1)), $(firstword -$(MAKEFLAGS))),, $(2))
+$(if $(strip $(foreach flag,$(1),$(findstring $(flag),$(firstword -$(MAKEFLAGS))))),,$(2))
 endef
 
 # clean: run 'clean' target recipe in a verbose shell, support dry run as well
