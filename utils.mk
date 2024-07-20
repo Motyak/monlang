@@ -12,6 +12,9 @@ define checkmakeflags
 $(strip $(foreach flag,$(1),$(findstring $(flag),$(firstword -$(MAKEFLAGS)))))
 endef
 
+# askmake: invoke make -q for a target dir
+# $(1): target dir
+# returns: true if the target needs to be rebuild, false otherwise
 define askmake
 $(shell \
 	if ! $(MAKE) -qsC $(1); then \
@@ -19,6 +22,9 @@ $(shell \
 	fi)
 endef
 
+# buildmake: generate the commands to make the target
+# $(1): target dir
+# returns: the commands to make the target
 define buildmake
 $(MAKE) -C $(1); exitcode=$$?; \
 if [ $$exitcode -ne 0 ]; then exit $$exitcode; fi
