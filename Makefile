@@ -86,18 +86,18 @@ endif
 # compiles lib used for testing (catch2) #
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-	$(if $(call buildmake, lib/catch2), \
-		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)))
-	@# $@ DONE
+ifneq (,$(call askmake, lib/catch2))
+	$(call buildmake, lib/catch2)
+endif
 
 # compiles our own lib used for testing (montree) #
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(BUILD_LIBS_ONCE),, \
 	.PHONY: lib/montree/obj/montree.o)
 lib/montree/obj/montree.o:
-	$(if $(call buildmake, lib/montree), \
-		$(if $(.BUILDMAKESTATUS:0=), @exit $(.BUILDMAKESTATUS)) \
-		@# $@ DONE)
+ifneq (,$(call askmake, lib/montree))
+	$(call buildmake, lib/montree)
+endif
 
 ###########################################################
 

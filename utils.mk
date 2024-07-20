@@ -12,18 +12,16 @@ define checkmakeflags
 $(strip $(foreach flag,$(1),$(findstring $(flag),$(firstword -$(MAKEFLAGS)))))
 endef
 
-# buildmake: function that builds a target dir Makefile if necessary
-# $(1): path of target dir containing the Makefile to build
-# returns: true if a rebuild is necessary, empty string otherwise. ..
-# .. assign make exit status to variable .BUILDMAKESTATUS
-define buildmake
+define askmake
 $(shell \
 	if ! $(MAKE) -qsC $(1); then \
 		echo true; \
-		>&2 $(MAKE) -C $(1); \
-	fi \
-	$(eval .BUILDMAKESTATUS := $(.SHELLSTATUS)) \
-)
+	fi)
+endef
+
+define buildmake
+$(MAKE) -C $(1); exitcode=$$?; \
+if [ $$exitcode -ne 0 ]; then exit $$exitcode; fi
 endef
 
 # shouldrebuild: check if target is missing or outdated based on dependencies
@@ -32,9 +30,10 @@ endef
 # returns true if target needs to be rebuilt, empty string otherwise
 define shouldrebuild
 $(shell \
-	[ ! -e $(1) ] && { echo true; exit 0; }; \
+	if [ ! -e $(1) ]; then { echo true; exit 0; }; fi; \
 	for lib in $(2); do \
-		[ $$lib -nt $(1) ] && { echo true; exit 0; }; \
+		if [ ! -e $$lib ]; then { echo true; exit 0; }; fi; \
+		if [ $$lib -nt $(1) ]; then { echo true; exit 0; }; fi; \
 	done)
 endef
 
