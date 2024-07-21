@@ -49,8 +49,8 @@ endef
 define clean
 $(if $(filter clean,$(MAKECMDGOALS)), \
 	$(if $(findstring n, $(firstword -$(MAKEFLAGS))), \
-		$(shell $(SHELL) -vnc '$(1)'), \
-		$(shell $(SHELL) -vc '$(1)')
+		$(shell $(SHELL) -vnc '$(strip $(1))'), \
+		$(shell $(SHELL) -vc '$(strip $(1))')
 	)
 )
 endef
