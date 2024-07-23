@@ -34,7 +34,12 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
         return std::unexpected(Malformed(ProgramSentence{programWords}, Error{124}));
     }
 
-    programWords.push_back(consumeProgramWord(input));
+    MayFail<ProgramWord> currentWord;
+    currentWord = consumeProgramWord(input);
+    programWords.push_back(currentWord);
+    if (!currentWord.has_value()) {
+        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{129}));
+    }
 
     until (input.peek() == EOF || std::any_of(
             terminatorCharacters.begin(),
@@ -49,7 +54,11 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{122}));
         }
 
-        programWords.push_back(consumeProgramWord(input));
+        currentWord = consumeProgramWord(input);
+        programWords.push_back(currentWord);
+        if (!currentWord.has_value()) {
+            return std::unexpected(Malformed(ProgramSentence{programWords}, Error{129}));
+        }
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
