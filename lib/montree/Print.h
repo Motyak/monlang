@@ -8,6 +8,7 @@
 #include <monlang/Atom.h>
 
 #include <monlang/visitors/visitor.h> // interface only
+
 #include <stack>
 
 class Print : public AstVisitor<void> {
@@ -34,6 +35,7 @@ class Print : public AstVisitor<void> {
       public:
         std::ostream& out;
         _WordVisitor(std::ostream&);
+        void operator()(const SquareBracketsGroup*);
         void operator()(const Atom&);
 
       private:

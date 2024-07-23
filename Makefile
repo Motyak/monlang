@@ -17,6 +17,7 @@ Atom \
 Program \
 ProgramSentence \
 ProgramWord \
+SquareBracketsGroup \
 Term \
 Word \
 

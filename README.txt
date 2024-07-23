@@ -23,7 +23,6 @@
 
 ---
 
-123 -> reserved (serve as a dummy, for debug, ..)
 0xy -> missing initiator
 x0y -> missing continuator
 xy0 -> missing terminator
@@ -35,7 +34,13 @@ xyz -> custom error (refer to manual)
 121 ProgramSentence can't start with a continuator (leading continuator met)
 122 ProgramSentence continuator must precede a word (trailing continuator met)
 124 ProgramSentence cannot be empty (leading terminator met)
+125 EOF encountered in ProgramSentence
 
+131 Term can't start with a continuator (leading continuator met)
+135 EOF encountered in Term
+
+431 SquareBracketsTerm can't start with a continuator (leading continuator met)
+432 SquareBracketsTerm continuator must precede a word (trailing continuator met)
 
 === MAKEFILE DESIGN ===
 

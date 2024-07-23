@@ -4,7 +4,6 @@
 #include <monlang/common.h>
 #include <monlang/Word.h>
 
-#include <vector>
 #include <sstream>
 
 struct ProgramWord : public Word {};

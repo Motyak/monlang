@@ -47,6 +47,8 @@ auto visitAst(T visitor, const Ast& tree) {
 // WordVisitor
 ////////////////////////////////////////////////////////////////
 
+struct SquareBracketsGroup;
+
 template <typename T>
 class WordVisitor;
 
@@ -55,6 +57,7 @@ class WordVisitor<void> {
   public:
     static constexpr bool returnsSomething = false;
 
+    virtual void operator()(const SquareBracketsGroup*) = 0;
     virtual void operator()(const Atom&) = 0;
 };
 

@@ -97,6 +97,12 @@ void Print::operator()(const MayFail<Word>& word) {
         output("~> ");
     }
 
+    if (numbering.empty()) {
+        /* then, it's a stand-alone word */
+        visitWord(wordVisitor, word_);
+        return;
+    }
+
     output(std::string() + (areProgramWords? "ProgramWord" : "Word"));
     if (int n = numbering.top(); n != NO_NUMBERING) {
         output(std::string() + " #" + std::to_string(n));
@@ -109,6 +115,10 @@ void Print::operator()(const MayFail<Word>& word) {
 }
 
 ///////////////////////////////////////////////////////////////
+
+void Print::_WordVisitor::operator()(const SquareBracketsGroup* sbg) {
+    out << "SquareBracketsGroup";
+}
 
 void Print::_WordVisitor::operator()(const Atom& atom) {
     out << "Atom: " << "`" << atom.value << "`";

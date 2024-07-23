@@ -23,18 +23,20 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
         sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
 
-    std::vector<MayFail<ProgramWord>> programWords;
-
-    if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{121}));
+    if (input.peek() == EOF) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{125}));
     }
-
+    if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{121}));
+    }
     // ProgramSentence cannot be empty (special "group" grammar entity)
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, Error{124}));
+        return std::unexpected(Malformed(ProgramSentence{}, Error{124}));
     }
 
+    std::vector<MayFail<ProgramWord>> programWords;
     MayFail<ProgramWord> currentWord;
+
     currentWord = consumeProgramWord(input);
     programWords.push_back(currentWord);
     if (!currentWord.has_value()) {
@@ -49,7 +51,6 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             SHOULD_NOT_HAPPEN(); // how could this happen, will see
         }
-
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{122}));
         }

@@ -16,6 +16,8 @@ std::string montree::astToString(Ast ast) {
     return res;
 }
 
+////////////////////////////////////////////////////////////////
+
 std::string montree::debug::astToString(Ast ast) {
     visitAst(Print(std::cout), ast);
     return "debug";

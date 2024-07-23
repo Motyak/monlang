@@ -1,2 +1,2 @@
 #include "base.cpp"
-#include "SquareBracketsGroup.cpp"
+#include "sbg.cpp"

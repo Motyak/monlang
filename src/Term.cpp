@@ -2,6 +2,9 @@
 #include <monlang/common.h>
 #include <monlang/Word.h>
 
+/* in impl only */
+#include <utils/assert-util.h>
+
 #include <algorithm>
 
 #define until(x) while(!(x))
@@ -14,21 +17,35 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     if (input.peek() == EOF) {
+        return std::unexpected(Malformed(Term{}, Error{135}));
+    }
+    if (peekSequence(Term::CONTINUATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(Term{}, Error{131}));
     }
 
     std::vector<MayFail<Word>> words;
+    MayFail<Word> currentWord;
 
-    words.push_back(consumeWord(input));
+    currentWord = consumeWord(input);
+    words.push_back(currentWord);
+    if (!currentWord.has_value()) {
+        return std::unexpected(Malformed(Term{words}, Error{139}));
+    }
 
     until (input.peek() == EOF || std::any_of(
             terminatorCharacters.begin(),
             terminatorCharacters.end(),
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
+        
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(Term{words}, Error{103}));
+            SHOULD_NOT_HAPPEN(); // how could this happen, will see
         }
-        words.push_back(consumeWord(input));
+
+        currentWord = consumeWord(input);
+        words.push_back(currentWord);
+        if (!currentWord.has_value()) {
+            return std::unexpected(Malformed(Term{words}, Error{139}));
+        }
     }
 
     return Term{words};
