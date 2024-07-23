@@ -1,6 +1,9 @@
+#ifndef STR_UTILS_H
+#define STR_UTILS_H
+
 #include <string>
 
-inline std::string replace_all(std::string str, const std::string& from, const std::string& to)
+std::string replace_all(std::string str, const std::string& from, const std::string& to)
 {
     size_t start_pos = 0;
     while ((start_pos = str.find(from, start_pos)) != std::string::npos)
@@ -10,3 +13,5 @@ inline std::string replace_all(std::string str, const std::string& from, const s
     }
     return str;
 }
+
+#endif // STR_UTILS_H

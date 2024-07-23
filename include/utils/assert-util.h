@@ -1,3 +1,6 @@
+#ifndef ASSERT_UTILS_H
+#define ASSERT_UTILS_H
+
 #include <iostream>
 
 #define ASSERT(condition, message) \
@@ -11,3 +14,5 @@
     std::cerr << "`Should not happen` raised in " << __FILE__ \
             << " line " << __LINE__ << std::endl; \
     std::terminate();
+
+#endif // ASSERT_UTILS_H

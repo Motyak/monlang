@@ -1,3 +1,6 @@
+#ifndef NB_UTILS_H
+#define NB_UTILS_H
+
 #include <vector>
 
 template <typename T, typename U>
@@ -18,3 +21,5 @@ std::vector<int> range(T from, U to) {
     }
     return res;
 }
+
+#endif // NB_UTILS_H

@@ -7,6 +7,7 @@
 #include <monlang/SquareBracketsGroup.h>
 
 #include <utils/vec-utils.h>
+#include <utils/mem-utils.h>
 
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters = vec_union({
@@ -19,7 +20,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     // });
 
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast(consumeSquareBracketsGroup(input));
+        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,

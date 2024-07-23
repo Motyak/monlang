@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <utils/mem-utils.h>
+
 #include <vector>
 #include <sstream>
 #include <optional>
@@ -32,6 +34,18 @@ template <typename R>
 MayFail<R> mayfail_cast(auto inputMayfail) {
     return inputMayfail.transform([](auto t){return R{t};})
             .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+}
+
+template <typename R>
+MayFail<R> mayfail_convert(auto inputMayfail) {
+    return inputMayfail.transform([](auto t){return R{move_to_heap(t)};})
+            .transform_error([](auto e){return Malformed(R{move_to_heap(e.val)}, e.err);});
+}
+
+template <typename R>
+MayFail<R> mayfail_convert(auto inputMayfail, auto converter) {
+    return inputMayfail.transform([&converter](auto t){return R{converter(t)};})
+            .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);});
 }
 
 struct CharacterAppearance {

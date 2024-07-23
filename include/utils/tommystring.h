@@ -10,7 +10,7 @@ static std::string interpret_escape_sequences(std::string);
 static std::string replace_all(std::string str, const std::string& from, const std::string& to);
 
 #define tommy_str(raw_str) tommy_str(__FILE__, __LINE__, raw_str)
-inline std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
+std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
     /* /!\ only support indentation using tabs or 4 spaces times n */
 
     constexpr char TAB = 9;
