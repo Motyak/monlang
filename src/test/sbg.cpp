@@ -8,10 +8,28 @@
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("empty square brackets group", "[test-4311][base]") {
+TEST_CASE ("empty square brackets group", "[test-4311][sbg]") {
     auto input = "[]";
     
     auto expect = "-> SquareBracketsGroup";
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("single element square brackets group", "[test-4312][sbg]") {
+    auto input = "[fds]";
+    
+    auto expect = tommy_str(R"EOF(
+       |-> SquareBracketsGroup
+       |  -> Term
+       |    -> Word: Atom: `fds`
+    )EOF");
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);

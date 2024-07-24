@@ -5,42 +5,37 @@
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
+
 #include <monlang/Atom.h>
+#include <monlang/Term.h>
 
-#include <monlang/visitors/visitor.h> // interface only
-
+/* interface only */
+#include <monlang/visitors/visitor.h>
 #include <stack>
 
 class Print : public AstVisitor<void> {
   public:
     Print(std::ostream&);
-    void operator()(const MayFail<Program>&);
-    void operator()(const MayFail<ProgramSentence>&);
-    void operator()(const MayFail<Word>&);
+    void operator()(const MayFail<Program>&) override;
+    void operator()(const MayFail<ProgramSentence>&) override;
+    void operator()(const MayFail<Word>&) override;
+
+    void operator()(const SquareBracketsGroup*);
+    void operator()(const Atom&);
 
   private:
     static constexpr int TAB_SIZE = 2;
     static constexpr int NO_NUMBERING = -1;
-
+    
+    void handleTerm(const MayFail<Term>&);
     void output(const std::string&);
     void outputLine(const std::string&);
 
+    std::ostream& out;
     std::stack<int> numbering;
     bool startOfNewLine = true;
     unsigned currentTabulation = 0;
     bool areProgramWords = false;
-    std::ostream& out;
-
-    class _WordVisitor : public WordVisitor<void> {
-      public:
-        std::ostream& out;
-        _WordVisitor(std::ostream&);
-        void operator()(const SquareBracketsGroup*);
-        void operator()(const Atom&);
-
-      private:
-        std::string escapeTabsAndNewlines(const std::string&);
-    } wordVisitor;
 };
 
 #endif // PRINT_H

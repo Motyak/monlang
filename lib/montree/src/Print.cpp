@@ -2,10 +2,12 @@
 #include <monlang/common.h>
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
+#include <monlang/Term.h>
 #include <monlang/Word.h>
 #include <monlang/Atom.h>
 
-#include <utils/str-utils.h>
+/* impl only */
+#include <monlang/SquareBracketsGroup.h>
 #include <utils/nb-utils.h>
 
 void Print::operator()(const MayFail<Program>& program) {
@@ -99,7 +101,7 @@ void Print::operator()(const MayFail<Word>& word) {
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
-        visitWord(wordVisitor, word_);
+        std::visit(*this, word_);
         return;
     }
 
@@ -110,25 +112,86 @@ void Print::operator()(const MayFail<Word>& word) {
     numbering.pop();
     output(": ");
 
-    visitWord(wordVisitor, word_);
+    std::visit(*this, word_);
     outputLine("");
 }
 
 ///////////////////////////////////////////////////////////////
 
-void Print::_WordVisitor::operator()(const SquareBracketsGroup* sbg) {
-    out << "SquareBracketsGroup";
+void Print::operator()(const SquareBracketsGroup* sbg) {
+    outputLine("SquareBracketsGroup");
+
+    if (sbg->terms.size() > 0) {
+        currentTabulation++;
+    }
+
+    if (sbg->terms.size() > 1) {
+        for (int n : range(sbg->terms.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
+    }
+
+    for (auto term : sbg->terms) {
+        handleTerm(term);
+    }
+    
+    if (sbg->terms.size() > 0) {
+        currentTabulation--;
+    }
 }
 
-void Print::_WordVisitor::operator()(const Atom& atom) {
+void Print::operator()(const Atom& atom) {
     out << "Atom: " << "`" << atom.value << "`";
 }
 
 ///////////////////////////////////////////////////////////////
 
-Print::Print(std::ostream& os) : out(os), wordVisitor(os){}
+Print::Print(std::ostream& os) : out(os){}
 
-Print::_WordVisitor::_WordVisitor(std::ostream& os) : out(os){}
+void Print::handleTerm(const MayFail<Term>& term) {
+    Term term_;
+    if (term.has_value()) {
+        term_ = term.value();
+        output("-> ");
+    } else {
+        term_ = term.error().val;
+        output("~> ");
+    }
+
+    if (numbering.empty()) {
+        outputLine(std::string() + "Term");
+    } else {
+        if (int n = numbering.top(); n == NO_NUMBERING) {
+            outputLine(std::string() + "Term");
+        } else {
+            outputLine(std::string() + "Term #" + std::to_string(n));
+        }
+        numbering.pop();
+    }
+
+    if (term_.words.size() > 0) {
+        currentTabulation++;
+    }
+
+    if (term_.words.size() > 1) {
+        for (int n : range(term_.words.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
+    }
+
+    for (auto word: term_.words) {
+        areProgramWords = false;
+        operator()(mayfail_cast<Word>(word));
+    }
+
+    if (term_.words.size() > 0) {
+        currentTabulation--;
+    }
+}
 
 void Print::output(const std::string& chars) {
     if (startOfNewLine) {
@@ -142,11 +205,4 @@ void Print::outputLine(const std::string& line = "") {
     output(line);
     out << std::endl;
     startOfNewLine = true;
-}
-
-std::string Print::_WordVisitor::escapeTabsAndNewlines(const std::string& input) {
-    auto res = input;
-    res = replace_all(res, std::string(1, TAB), "\t");
-    res = replace_all(res, std::string(1, NEWLINE), "\n");
-    return res;
 }
