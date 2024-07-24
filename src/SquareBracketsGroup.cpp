@@ -31,7 +31,11 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& inpu
     std::vector<MayFail<Term>> terms;
     MayFail<Term> currentTerm;
 
-    currentTerm = consumeTerm(terminatorCharacters, input);
+    std::vector<char> termTerminatorChars = {
+        sequenceFirstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE).value(),
+        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
+    };
+    currentTerm = consumeTerm(termTerminatorChars, input);
     terms.push_back(currentTerm);
     if (!currentTerm.has_value()) {
         return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{439}));
