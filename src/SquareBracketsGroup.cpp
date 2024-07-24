@@ -18,7 +18,7 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& inpu
     };
 
     if (!consumeSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{}, Error{043}));
+        return std::unexpected(Malformed(SquareBracketsGroup{}, Error{43}));
     }
     if (peekSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(SquareBracketsGroup{}, Error{431}));

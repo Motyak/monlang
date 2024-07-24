@@ -2,11 +2,13 @@
 #define COMMON_H
 
 #include <utils/mem-utils.h>
+#include <utils/assert-util.h>
 
 #include <vector>
 #include <sstream>
 #include <optional>
 #include <expected>
+#include <string>
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
@@ -46,6 +48,20 @@ template <typename R>
 MayFail<R> mayfail_convert(auto inputMayfail, auto converter) {
     return inputMayfail.transform([&converter](auto t){return R{converter(t)};})
             .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);});
+}
+
+// template <typename T>
+// T mayfail_unwrap(MayFail<T> inputMayfail) {
+//     return inputMayfail.has_value()? 
+//     		inputMayfail.value()
+//     		: inputMayfail.error().val;
+// }
+
+template <typename T>
+std::string serializeErrCode(MayFail<T> malformed) {
+    ASSERT(!malformed.has_value());
+    auto errCode = malformed.error().err.code;
+    return std::string() + (10 <= errCode && errCode <= 99? "0" : "") + std::to_string(errCode);
 }
 
 struct CharacterAppearance {

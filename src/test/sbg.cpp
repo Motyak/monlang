@@ -8,6 +8,23 @@
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg]") {
+    auto input = "]";
+    
+    auto expect = tommy_str(R"EOF(
+       |~> SquareBracketsGroup
+       |  ~> ERR-043
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("empty square brackets group", "[test-4311][sbg]") {
     auto input = "[]";
     
@@ -60,7 +77,7 @@ TEST_CASE ("two one-word terms in square brackets group", "[test-4313][sbg]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("one two-words term in square brackets group", "[test-4313][sbg]") {
+TEST_CASE ("one two-words term in square brackets group", "[test-4314][sbg]") {
     auto input = "[fds sdf]";
     
     auto expect = tommy_str(R"EOF(
@@ -79,7 +96,7 @@ TEST_CASE ("one two-words term in square brackets group", "[test-4313][sbg]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("two two-words terms in square brackets group", "[test-4313][sbg]") {
+TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
     auto input = "[fds sdf, abc def]";
     
     auto expect = tommy_str(R"EOF(

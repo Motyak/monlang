@@ -36,6 +36,7 @@ class Print : public AstVisitor<void> {
     bool startOfNewLine = true;
     unsigned currentTabulation = 0;
     bool areProgramWords = false;
+    MayFail<Word> curWord;
 };
 
 #endif // PRINT_H

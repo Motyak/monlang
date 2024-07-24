@@ -81,7 +81,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
 
     if (!programSentence.has_value()) {
-        outputLine(std::string() + "~> ERR-" + std::to_string(programSentence.error().err.code));
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(programSentence));
     }
 
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
@@ -90,6 +90,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
 }
 
 void Print::operator()(const MayFail<Word>& word) {
+    curWord = word; // needed by word handlers
     Word word_;
     if (word.has_value()) {
         word_ = word.value();
@@ -121,7 +122,7 @@ void Print::operator()(const MayFail<Word>& word) {
 void Print::operator()(const SquareBracketsGroup* sbg) {
     outputLine("SquareBracketsGroup");
 
-    if (sbg->terms.size() > 0) {
+    if (sbg->terms.size() > 0 || !curWord.has_value()) {
         currentTabulation++;
     }
 
@@ -137,7 +138,11 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
         handleTerm(term);
     }
     
-    if (sbg->terms.size() > 0) {
+    if (!curWord.has_value()) {
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+    }
+
+    if (sbg->terms.size() > 0 || !curWord.has_value()) {
         currentTabulation--;
     }
 }
