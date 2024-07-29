@@ -7,7 +7,7 @@
             "program": "${workspaceFolder}/bin/test/sbg.elf",
             "args": ["[test-4317]"],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
