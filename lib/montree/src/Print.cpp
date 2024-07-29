@@ -134,12 +134,14 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
         numbering.push(NO_NUMBERING);
     }
 
-    for (auto term : sbg->terms) {
-        handleTerm(term);
-    }
-    
-    if (!curWord.has_value()) {
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+    if (sbg->terms.size() == 0) {
+        if (!curWord.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+        }
+    } else {
+        for (auto term : sbg->terms) {
+            handleTerm(term);
+        }
     }
 
     if (sbg->terms.size() > 0 || !curWord.has_value()) {
@@ -176,7 +178,7 @@ void Print::handleTerm(const MayFail<Term>& term) {
         numbering.pop();
     }
 
-    if (term_.words.size() > 0) {
+    if (term_.words.size() > 0 || !term.has_value()) {
         currentTabulation++;
     }
 
@@ -193,7 +195,11 @@ void Print::handleTerm(const MayFail<Term>& term) {
         operator()(mayfail_cast<Word>(word));
     }
 
-    if (term_.words.size() > 0) {
+    if (!term.has_value()) {
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(term));
+    }
+
+    if (term_.words.size() > 0 || !term.has_value()) {
         currentTabulation--;
     }
 }

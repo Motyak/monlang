@@ -9,11 +9,29 @@
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg]") {
-    auto input = "]";
+    auto input = "";
     
     auto expect = tommy_str(R"EOF(
        |~> SquareBracketsGroup
        |  ~> ERR-043
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("ERR empty term", "[test-4317][sbg]") {
+    auto input = "[";
+
+    auto expect = tommy_str(R"EOF(
+       |~> SquareBracketsGroup
+       |  ~> Term
+       |    ~> ERR-135
     )EOF");
 
     auto input_iss = std::istringstream(input);
