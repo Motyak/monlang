@@ -2,8 +2,8 @@ include utils.mk # buildmake, clean, not, checkmakeflags, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS := --std=c++23 -Wall -Wextra -Og -g -I include
-CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -g -I include -I lib
+CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include -I lib
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
@@ -104,6 +104,10 @@ endif
 
 # will create all necessary directories after the Makefile is parsed #
 $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
+
+# debug settings #
+$(shell [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
+$(shell grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
 
 .DELETE_ON_ERROR:
 .SUFFIXES:
