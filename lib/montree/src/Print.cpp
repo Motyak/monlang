@@ -114,15 +114,22 @@ void Print::operator()(const MayFail<Word>& word) {
     output(": ");
 
     std::visit(*this, word_);
-    outputLine("");
+
+    if (!word.has_value()) {
+        currentTabulation++;
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(word));
+        currentTabulation--;
+    }
 }
 
 ///////////////////////////////////////////////////////////////
 
 void Print::operator()(const SquareBracketsGroup* sbg) {
+    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`
+
     outputLine("SquareBracketsGroup");
 
-    if (sbg->terms.size() > 0 || !curWord.has_value()) {
+    if (sbg->terms.size() > 0 || !curWord_.has_value()) {
         currentTabulation++;
     }
 
@@ -135,22 +142,29 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
     }
 
     if (sbg->terms.size() == 0) {
-        if (!curWord.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+        if (!curWord_.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
         }
     } else {
+        int nb_of_malformed_terms = 0;
         for (auto term : sbg->terms) {
+            if (!term.has_value()) {
+                nb_of_malformed_terms++;
+            }
             handleTerm(term);
+        }
+        if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
         }
     }
 
-    if (sbg->terms.size() > 0 || !curWord.has_value()) {
+    if (sbg->terms.size() > 0 || !curWord_.has_value()) {
         currentTabulation--;
     }
 }
 
 void Print::operator()(const Atom& atom) {
-    out << "Atom: " << "`" << atom.value << "`";
+    outputLine(std::string() + "Atom: `" + atom.value + "`");
 }
 
 ///////////////////////////////////////////////////////////////
@@ -190,12 +204,16 @@ void Print::handleTerm(const MayFail<Term>& term) {
         numbering.push(NO_NUMBERING);
     }
 
+    int nb_of_malformed_words = 0;
     for (auto word: term_.words) {
         areProgramWords = false;
+        if (!word.has_value()) {
+            nb_of_malformed_words++;
+        }
         operator()(mayfail_cast<Word>(word));
     }
 
-    if (!term.has_value()) {
+    if (nb_of_malformed_words == 0 && !term.has_value()) {
         outputLine(std::string() + "~> ERR-" + serializeErrCode(term));
     }
 

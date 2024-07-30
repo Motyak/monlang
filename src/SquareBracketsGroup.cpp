@@ -49,9 +49,9 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& inpu
         if (!consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{403}));
         }
-        if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{432}));
-        }
+        // if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+        //     return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{432}));
+        // }
 
         currentTerm = consumeTerm(terminatorCharacters, input);
         terms.push_back(currentTerm);

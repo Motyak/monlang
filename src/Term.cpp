@@ -38,7 +38,7 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-            SHOULD_NOT_HAPPEN(); // how could this happen, will see
+            SHOULD_NOT_HAPPEN(); // cannot happen because Atom's error drops first
         }
 
         currentWord = consumeWord(input);

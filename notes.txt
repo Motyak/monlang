@@ -1,3 +1,11 @@
+TODO
+
+- Inventer une notation pour les erreurs qui ne peuvent pas arriver en scénario normal (initié par le consumeProgram).
+
+- Réordonner correctement les tests de telle sorte à avoir d'abord les scénarios nominaux (positifs/happy-path) puis les scénarios négatifs
+
+---
+
 To test makefile quality:
 
 # only if we want to test the 'BUILD_LIBS_ONCE= ' configuration
