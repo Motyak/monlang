@@ -39,7 +39,7 @@ all: main
 main: $(OBJS)
 
 test: bin/test/all.elf
-	bin/test/all.elf
+	./run_tests.sh
 
 # able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
