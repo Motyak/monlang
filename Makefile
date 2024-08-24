@@ -9,6 +9,13 @@ DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
 
 BUILD_LIBS_ONCE ?= y
+ifdef CLANG
+	CXX := clang++
+#	ugly workaround to support clang
+	CXXFLAGS += -D__cpp_concepts=202002L
+	CXXFLAGS_TEST += -D__cpp_concepts=202002L
+	LDFLAGS += -lstdc++
+endif
 
 ###########################################################
 
