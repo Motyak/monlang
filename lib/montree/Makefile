@@ -3,6 +3,16 @@ RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I .
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 
+ifdef CLANG
+	CXX := clang++
+#       ugly workaround to support clang
+        CXXFLAGS += -D__cpp_concepts=202002L
+endif
+ifdef X86
+	CXXFLAGS += -m32
+	LDFLAGS += -m32
+endif
+
 ###########################################################
 
 SRC_NAMES := montree

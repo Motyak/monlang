@@ -16,6 +16,11 @@ ifdef CLANG
 	CXXFLAGS_TEST += -D__cpp_concepts=202002L
 	LDFLAGS += -lstdc++
 endif
+ifdef X86
+	CXXFLAGS += -m32
+	CXXFLAGS_TEST += -m32
+	LDFLAGS += -m32
+endif
 
 ###########################################################
 
