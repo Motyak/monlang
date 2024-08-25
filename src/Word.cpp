@@ -7,7 +7,6 @@
 #include <monlang/SquareBracketsGroup.h>
 
 #include <utils/vec-utils.h>
-#include <utils/mem-utils.h>
 
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters = vec_union({
