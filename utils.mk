@@ -1,3 +1,7 @@
+comma := ,
+empty :=
+space := $(empty) $(empty)
+
 # not: logical not
 # $(1): input str
 # returns: true if input str is empty, the empty str otherwise
