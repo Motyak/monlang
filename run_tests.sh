@@ -6,13 +6,13 @@ happy_scenarios_results="0/3 base happy scenarios => KO"
 
 # run base happy scenarios
 {
-    bin/test/all.elf '[base]' \
+    bin/test/all.elf '~[err][base]' \
         && happy_scenarios_results="1/3 base happy scenarios => OK"
 } && \
 
 # run remaining happy scenarios
 {
-    bin/test/all.elf '~[base]~[int]' \
+    bin/test/all.elf '~[err]~[base]~[int]' \
         && happy_scenarios_results="2/3 all happy scenarios => OK"
 } && \
 
