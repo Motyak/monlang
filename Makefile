@@ -1,4 +1,4 @@
-include utils.mk # buildmake, clean, not, checkmakeflags, shouldrebuild
+include utils.mk # askmake, buildmake, clean, not, shell_onrun, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -121,11 +121,11 @@ endif
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-$(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
+$(call shell_onrun, mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
 
 ## debug settings ##
-$(shell [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
-$(shell grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
+$(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
+$(call shell_onrun, grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
 
 .DELETE_ON_ERROR:
 .SUFFIXES:

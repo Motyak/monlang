@@ -2,6 +2,13 @@ comma := ,
 empty :=
 space := $(empty) $(empty)
 
+# shell_onrun: same as $(shell) but doesn't evaluate during make autocompletion
+# $(1): code to evaluate
+# returns: evaluated code on run, the empty str otherwise
+define shell_onrun
+$(if $(filter .DEFAULT,$(MAKECMDGOALS)),,$(shell $(strip $(1))))
+endef
+
 # not: logical not
 # $(1): input str
 # returns: true if input str is empty, the empty str otherwise

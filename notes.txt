@@ -6,6 +6,11 @@ TODO
 
 ---
 
+# récupérer tous les appels de fonctions utils dans Makefile
+perl -ne 'print "$1\n" if /\$\(call (\w+),/' Makefile | sort | uniq | sed -z 's/\n/, /g'
+
+---
+
 To test makefile quality:
 
 # only if we want to test the 'BUILD_LIBS_ONCE= ' configuration
