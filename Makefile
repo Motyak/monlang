@@ -3,13 +3,13 @@ include utils.mk # buildmake, clean, not, checkmakeflags, shouldrebuild
 SHELL := /bin/bash
 RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
-CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include -I lib
+CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
 
 DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
-BUILD_LIBS_ONCE ?= y
+BUILD_LIBS_ONCE ?= y # disable by passing `BUILD_LIBS_ONCE=`
 ifdef CLANG
 	CXX := clang++
 #	ugly workaround to support clang
@@ -38,12 +38,12 @@ OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 
 TEST_FILENAMES := $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cpp=%))
-
 TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
+LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include) # for cleaning
 
 ###########################################################
 
@@ -66,15 +66,16 @@ mrproper:
 
 ###########################################################
 
-# OBJS #
+## $(OBJS): ##
 $(filter-out obj/Word.o,$(OBJS)): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS)
 word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS)))
 obj/Word.o: src/Word.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros)
 
+lib_include_opts := $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
+	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(lib_include_opts) $(DEPFLAGS_TEST)
 
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
@@ -101,14 +102,14 @@ ifneq (,$(or $(BUILD_LIBS_ONCE), \
 		$(AR) $(ARFLAGS) $@ $^)
 endif
 
-# compiles lib used for testing (catch2) #
+## compiles lib used for testing (catch2) ##
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 ifneq (,$(call askmake, lib/catch2))
 	$(call buildmake, lib/catch2)
 endif
 
-# compiles our own lib used for testing (montree) #
+## compiles our own lib used for testing (montree) ##
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(BUILD_LIBS_ONCE),, \
 	.PHONY: lib/montree/obj/montree.o)
@@ -119,10 +120,10 @@ endif
 
 ###########################################################
 
-# will create all necessary directories after the Makefile is parsed #
+# will create all necessary directories after the Makefile is parsed
 $(shell mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
 
-# debug settings #
+## debug settings ##
 $(shell [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
 $(shell grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
 

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I .
+CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 
 ifdef CLANG
@@ -43,5 +43,5 @@ $(OBJS): obj/%.o: src/%.cpp
 
 ###########################################################
 
-# will create all necessary directories after the Makefile is parsed #
+# will create all necessary directories after the Makefile is parsed
 $(shell mkdir -p obj .deps)

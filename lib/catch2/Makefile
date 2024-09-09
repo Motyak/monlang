@@ -4,5 +4,5 @@ ifdef X86
 endif
 
 all: obj/catch_amalgamated.o
-obj/catch_amalgamated.o: src/catch_amalgamated.cpp catch_amalgamated.hpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS) -I .
+obj/catch_amalgamated.o: src/catch_amalgamated.cpp include/catch2/catch_amalgamated.hpp
+	$(CXX) -o $@ -c $< $(CXXFLAGS) -I include/catch2
