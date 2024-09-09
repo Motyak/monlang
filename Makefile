@@ -3,7 +3,7 @@ include utils.mk # askmake, buildmake, clean, not, shell_onrun, shouldrebuild
 SHELL := /bin/bash
 RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
-CXXFLAGS_TEST := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
@@ -14,12 +14,10 @@ ifdef CLANG
 	CXX := clang++
 #	ugly workaround to support clang
 	CXXFLAGS += -D__cpp_concepts=202002L
-	CXXFLAGS_TEST += -D__cpp_concepts=202002L
 	LDFLAGS += -lstdc++
 endif
 ifdef X86
 	CXXFLAGS += -m32
-	CXXFLAGS_TEST += -m32
 	LDFLAGS += -m32
 endif
 
@@ -43,7 +41,7 @@ TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
-LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include) # for cleaning
+LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
 
 ###########################################################
 
@@ -73,9 +71,8 @@ word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS
 obj/Word.o: src/Word.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros)
 
-lib_include_opts := $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(lib_include_opts) $(DEPFLAGS_TEST)
+	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
