@@ -118,21 +118,13 @@ void Print::operator()(const MayFail<Word>& word) {
 
     std::visit(*this, word_); // in case of malformed word,...
                               // ...will still print its partial value
-    
-    // todo: problem: what if the word fails..
-    // ..because of an underlying error ?..
-    // ..(sub-word in a group's term for instance)
-    if (!word.has_value()) {
-        currentTabulation++;
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(word));
-        currentTabulation--;
-    }
 }
 
 ///////////////////////////////////////////////////////////////
 
 void Print::operator()(const SquareBracketsGroup* sbg) {
-    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`
+    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
+                             // ..(which calls operator()(Word))
 
     outputLine("SquareBracketsGroup");
 
@@ -172,6 +164,11 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
 
 void Print::operator()(const Atom& atom) {
     outputLine(std::string() + "Atom: `" + atom.value + "`");
+    if (!curWord.has_value()) {
+        currentTabulation++;
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+        currentTabulation--;
+    }
 }
 
 ///////////////////////////////////////////////////////////////
