@@ -34,13 +34,15 @@ xyz -> custom error (refer to manual)
 121 ProgramSentence can't start with a continuator (leading continuator met)
 122 ProgramSentence continuator must precede a word (trailing continuator met)
 124 ProgramSentence cannot be empty (leading terminator met)
-125 EOF encountered in ProgramSentence
+125 ProgramSentence cannot be empty (early EOF met)
 
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term
 
 431 SquareBracketsTerm can't start with a continuator (leading continuator met)
 432 SquareBracketsTerm continuator must precede a word (trailing continuator met)
+
+992 Atom cannot be empty
 
 === MAKEFILE DESIGN ===
 

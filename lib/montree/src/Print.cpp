@@ -64,6 +64,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         numbering.pop();
     }
 
+    // note: should always enter since a ProgramSentence cannot be empty
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
         currentTabulation++;
     }
@@ -85,6 +86,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         outputLine(std::string() + "~> ERR-" + serializeErrCode(programSentence));
     }
 
+    // note: should always enter since a ProgramSentence cannot be empty
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
         currentTabulation--;
     }
@@ -114,8 +116,12 @@ void Print::operator()(const MayFail<Word>& word) {
     numbering.pop();
     output(": ");
 
-    std::visit(*this, word_);
-
+    std::visit(*this, word_); // in case of malformed word,...
+                              // ...will still print its partial value
+    
+    // todo: problem: what if the word fails..
+    // ..because of an underlying error ?..
+    // ..(sub-word in a group's term for instance)
     if (!word.has_value()) {
         currentTabulation++;
         outputLine(std::string() + "~> ERR-" + serializeErrCode(word));
