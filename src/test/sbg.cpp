@@ -11,7 +11,7 @@
 TEST_CASE ("empty square brackets group", "[test-4311][sbg]") {
     auto input = "[]";
 
-    auto expect = "-> SquareBracketsGroup";
+    auto expect = "-> SquareBracketsGroup (empty)";
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);

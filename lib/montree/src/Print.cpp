@@ -126,11 +126,14 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
-    outputLine("SquareBracketsGroup");
-
-    if (sbg->terms.size() > 0 || !curWord_.has_value()) {
-        currentTabulation++;
+    output("SquareBracketsGroup");
+    if (sbg->terms.size() == 0 && curWord_.has_value()) {
+        outputLine(" (empty)");
+        return;
     }
+    outputLine();
+
+    currentTabulation++;
 
     if (sbg->terms.size() > 1) {
         for (int n : range(sbg->terms.size(), 0)) {
@@ -141,9 +144,8 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
     }
 
     if (sbg->terms.size() == 0) {
-        if (!curWord_.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
-        }
+        ASSERT(!curWord_.has_value());
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
     } else {
         int nb_of_malformed_terms = 0;
         for (auto term : sbg->terms) {
@@ -157,9 +159,7 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
         }
     }
 
-    if (sbg->terms.size() > 0 || !curWord_.has_value()) {
-        currentTabulation--;
-    }
+    currentTabulation--;
 }
 
 void Print::operator()(const Atom& atom) {
@@ -234,7 +234,7 @@ void Print::output(const std::string& chars) {
     startOfNewLine = false;
 }
 
-void Print::outputLine(const std::string& line = "") {
+void Print::outputLine(const std::string& line) {
     output(line);
     out << std::endl;
     startOfNewLine = true;

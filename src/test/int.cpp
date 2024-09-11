@@ -23,7 +23,7 @@ TEST_CASE ("multiple sbg in a sentence", "[test-1511][int]") {
        |  -> ProgramWord #2: SquareBracketsGroup
        |    -> Term
        |      -> Word: Atom: `c`
-       |  -> ProgramWord #3: SquareBracketsGroup
+       |  -> ProgramWord #3: SquareBracketsGroup (empty)
     )EOF");
 
     auto input_iss = std::istringstream(input);

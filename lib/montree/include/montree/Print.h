@@ -29,7 +29,7 @@ class Print : public AstVisitor<void> {
     
     void handleTerm(const MayFail<Term>&);
     void output(const std::string&);
-    void outputLine(const std::string&);
+    void outputLine(const std::string& line = "");
 
     std::ostream& out;
     std::stack<int> numbering;
