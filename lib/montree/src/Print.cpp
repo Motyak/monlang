@@ -122,7 +122,7 @@ void Print::operator()(const MayFail<Word>& word) {
 
 ///////////////////////////////////////////////////////////////
 
-void Print::operator()(const SquareBracketsGroup* sbg) {
+void Print::operator()(SquareBracketsGroup* sbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
@@ -162,13 +162,21 @@ void Print::operator()(const SquareBracketsGroup* sbg) {
     currentTabulation--;
 }
 
-void Print::operator()(const Atom& atom) {
+// void Print::operator()(const ParenthesesGroup*) {
+//     operator()(0); // == not defined yet
+// }
+
+void Print::operator()(Atom atom) {
     outputLine(std::string() + "Atom: `" + atom.value + "`");
     if (!curWord.has_value()) {
         currentTabulation++;
         outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
         currentTabulation--;
     }
+}
+
+void Print::operator()(auto) {
+    outputLine("<ENTITY NOT DEFINED YET>");
 }
 
 ///////////////////////////////////////////////////////////////

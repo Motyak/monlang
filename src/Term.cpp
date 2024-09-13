@@ -16,6 +16,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 };
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+    std::cerr << "DEBUG consumeTerm: `" << input.str().substr(input.tellg()) << "`" << std::endl;
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(Term{}, Error{135}));
     }
@@ -26,6 +27,7 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
     std::vector<MayFail<Word>> words;
     MayFail<Word> currentWord;
 
+    std::cerr << "DEBUG aaa: `" << input.str().substr(input.tellg()) << "`" << std::endl;
     currentWord = consumeWord(input);
     words.push_back(currentWord);
     if (!currentWord.has_value()) {
@@ -38,9 +40,11 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
+            std::cerr << "DEBUG fdsfds: `" << input.str().substr(input.tellg()) << "`" << std::endl;
             SHOULD_NOT_HAPPEN(); // cannot happen because Atom's error drops first
         }
 
+        std::cerr << "DEBUG aab: `" << input.str().substr(input.tellg()) << "`" << std::endl;
         currentWord = consumeWord(input);
         words.push_back(currentWord);
         if (!currentWord.has_value()) {

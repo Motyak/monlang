@@ -8,8 +8,9 @@
 #include <variant>
 
 struct SquareBracketsGroup;
+struct ParenthesesGroup;
 
-using Word = std::variant<SquareBracketsGroup*, Atom>;
+using Word = std::variant<SquareBracketsGroup*, ParenthesesGroup*, Atom>;
 
 MayFail<Word> consumeWord(std::istringstream&);
 

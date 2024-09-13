@@ -1,11 +1,11 @@
 {
     "configurations": [
         {
-            "name": "(gdb) sbg.elf",
+            "name": "(gdb) debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/test/sbg.elf",
-            "args": ["[test-4317]"],
+            "program": "${workspaceFolder}/bin/test/playground.elf",
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

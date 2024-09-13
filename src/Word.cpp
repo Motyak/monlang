@@ -5,6 +5,7 @@
 /* in impl only */
 #include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/ParenthesesGroup.h>
 
 #include <utils/vec-utils.h>
 
@@ -25,6 +26,16 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     terminatorCharacters = vec_union({
         terminatorCharacters,
         SquareBracketsGroup::RESERVED_CHARACTERS
+    });
+#endif
+
+#ifndef DISABLE_PG
+    if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeParenthesesGroup(input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        ParenthesesGroup::RESERVED_CHARACTERS
     });
 #endif
 

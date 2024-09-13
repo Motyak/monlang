@@ -20,8 +20,11 @@ class Print : public AstVisitor<void> {
     void operator()(const MayFail<ProgramSentence>&) override;
     void operator()(const MayFail<Word>&) override;
 
-    void operator()(const SquareBracketsGroup*);
-    void operator()(const Atom&);
+    void operator()(SquareBracketsGroup*);
+    // void operator()(ParenthesesGroup*);
+    void operator()(Atom);
+
+    void operator()(auto); // fall-through
 
   private:
     static constexpr int TAB_SIZE = 2;

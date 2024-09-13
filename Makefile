@@ -25,6 +25,7 @@ endif
 
 ENTITIES := \
 Atom \
+ParenthesesGroup \
 Program \
 ProgramSentence \
 ProgramWord \

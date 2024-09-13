@@ -19,6 +19,7 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
 };
 
 MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
+    std::cerr << "DEBUG consumeProgramSentence: `" << input.str().substr(input.tellg()) << "`" << std::endl;
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
