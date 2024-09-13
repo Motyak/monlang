@@ -13,7 +13,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
 };
 
 MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
-    std::cerr << "DEBUG consumeParenthesesGroup: `" << input.str().substr(input.tellg()) << "`" << std::endl;
+    TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
     };

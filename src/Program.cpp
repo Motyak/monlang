@@ -3,7 +3,7 @@
 #include <monlang/ProgramSentence.h>
 
 MayFail<Program> consumeProgram(std::istringstream& input) {
-    std::cerr << "DEBUG consumeProgram: `" << input.str().substr(input.tellg()) << "`" << std::endl;
+    TRACE_CUR_FUN();
     std::vector<MayFail<ProgramSentence>> sentences;
     MayFail<ProgramSentence> currentSentence;
     while (input.peek() != EOF) {

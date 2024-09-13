@@ -10,6 +10,15 @@
 #include <expected>
 #include <string>
 
+#ifdef TRACE
+    #include <iostream>
+    #define TRACE_CUR_FUN() \
+        std::cerr << "DEBUG " << __func__ << ": `" \
+                << input.str().substr(input.tellg()) << "`\n"
+#else
+    #define TRACE_CUR_FUN()
+#endif
+
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
 constexpr char TAB = 9;

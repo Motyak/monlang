@@ -6,10 +6,8 @@
 #define until(x) while(!(x))
 
 MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
-    // std::cerr << "DEBUG consumeAtom: terminator characters: `";
-    // for (auto c: terminatorCharacters) { std::cerr << c; }
-    // std::cerr << "`" << std::endl;
-    std::cerr << "DEBUG consumeAtom: `" << input.str().substr(input.tellg()) << "`" << std::endl;
+    TRACE_CUR_FUN();
+
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(Atom{}, Error{991}));
     }

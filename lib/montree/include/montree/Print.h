@@ -21,7 +21,7 @@ class Print : public AstVisitor<void> {
     void operator()(const MayFail<Word>&) override;
 
     void operator()(SquareBracketsGroup*);
-    // void operator()(ParenthesesGroup*);
+    void operator()(ParenthesesGroup*);
     void operator()(Atom);
 
     void operator()(auto); // fall-through

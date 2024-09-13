@@ -13,7 +13,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
 };
 
 MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& input) {
-    std::cerr << "DEBUG consumeSquareBracketsGroup: `" << input.str().substr(input.tellg()) << "`" << std::endl;
+    TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
     };

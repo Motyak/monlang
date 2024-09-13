@@ -16,7 +16,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 };
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
-    std::cerr << "DEBUG consumeTerm: `" << input.str().substr(input.tellg()) << "`" << std::endl;
+    TRACE_CUR_FUN();
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(Term{}, Error{135}));
     }
@@ -39,7 +39,6 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-            std::cerr << "DEBUG fdsfds: `" << input.str().substr(input.tellg()) << "`" << std::endl;
             SHOULD_NOT_HAPPEN(); // cannot happen because Atom's error drops first
         }
 

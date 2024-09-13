@@ -9,6 +9,7 @@
 
 /* impl only */
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/ParenthesesGroup.h>
 #include <utils/nb-utils.h>
 
 void Print::operator()(const MayFail<Program>& program) {
@@ -162,9 +163,45 @@ void Print::operator()(SquareBracketsGroup* sbg) {
     currentTabulation--;
 }
 
-// void Print::operator()(const ParenthesesGroup*) {
-//     operator()(0); // == not defined yet
-// }
+void Print::operator()(ParenthesesGroup* pg) {
+    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
+                             // ..(which calls operator()(Word))
+
+    output("ParenthesesGroup");
+    if (pg->terms.size() == 0 && curWord_.has_value()) {
+        outputLine(" (empty)");
+        return;
+    }
+    outputLine();
+
+    currentTabulation++;
+
+    if (pg->terms.size() > 1) {
+        for (int n : range(pg->terms.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
+    }
+
+    if (pg->terms.size() == 0) {
+        ASSERT(!curWord_.has_value());
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+    } else {
+        int nb_of_malformed_terms = 0;
+        for (auto term : pg->terms) {
+            if (!term.has_value()) {
+                nb_of_malformed_terms++;
+            }
+            handleTerm(term);
+        }
+        if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        }
+    }
+
+    currentTabulation--;
+}
 
 void Print::operator()(Atom atom) {
     outputLine(std::string() + "Atom: `" + atom.value + "`");

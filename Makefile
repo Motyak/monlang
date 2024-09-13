@@ -10,6 +10,9 @@ ARFLAGS := rcsv
 
 DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
 BUILD_LIBS_ONCE ?= y # disable by passing `BUILD_LIBS_ONCE=`
+ifdef TRACE
+	CXXFLAGS += -D TRACE
+endif
 ifdef CLANG
 	CXX := clang++
 #	ugly workaround to support clang
