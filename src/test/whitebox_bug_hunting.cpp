@@ -58,7 +58,7 @@ TEST_CASE ("multiple sbg in a sentence", "[wbh-0002][wbh]") {
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("multiple terms in sbg", "[wbh-0003][wbh]") {
-    auto input = "(1 + 1, 2 + 2)";
+    auto input = "[1 + 1, 2 + 2]";
 
     auto expect = tommy_str(R"EOF(
        |-> SquareBracketsGroup
@@ -73,8 +73,29 @@ TEST_CASE ("multiple terms in sbg", "[wbh-0003][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeParenthesesGroup(input_iss);
+    auto output = consumeSquareBracketsGroup(input_iss);
     auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("sbg in the middle of sbg", "[wbh-0004][wbh]") {
+    auto input = "[1, [], 4]";
+
+    auto expect = tommy_str(R"EOF(
+       |-> SquareBracketsGroup
+       |  -> Term #1
+       |    -> Word: Atom: `1`
+       |  -> Term #2
+       |    -> Word: SquareBracketsGroup (empty)
+       |  -> Term #3
+       |    -> Word: Atom: `4`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }

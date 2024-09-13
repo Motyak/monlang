@@ -54,7 +54,7 @@ MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
         //     return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{432}));
         // }
 
-        currentTerm = consumeTerm(terminatorCharacters, input);
+        currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
         if (!currentTerm.has_value()) {
             return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{439}));

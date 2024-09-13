@@ -176,7 +176,7 @@ void Print::operator()(Atom atom) {
 }
 
 void Print::operator()(auto) {
-    outputLine("<ENTITY NOT DEFINED YET>");
+    outputLine("<ENTITY NOT IMPLEMENTED YET>");
 }
 
 ///////////////////////////////////////////////////////////////
