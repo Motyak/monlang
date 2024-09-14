@@ -39,8 +39,11 @@ xyz -> custom error (refer to manual)
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term
 
-431 SquareBracketsTerm can't start with a continuator (leading continuator met)
-432 SquareBracketsTerm continuator must precede a word (trailing continuator met)
+421 ParenthesesGroup can't start with a continuator (leading continuator met)
+422 ParenthesesGroup continuator must precede a word (trailing continuator met)
+
+431 SquareBracketsGroup can't start with a continuator (leading continuator met)
+432 SquareBracketsGroup continuator must precede a word (trailing continuator met)
 
 992 Atom cannot be empty
 

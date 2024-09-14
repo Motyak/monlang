@@ -6,6 +6,31 @@ TODO
 
 ---
 
+Pour ajouter une entité grammaticale:
+- Ajouter le header file dans include/monlang/
+- Ajouter le source file dans src/
+- Ajouter le nouveau type dans le variant Word dans Word.h
+- Compléter Word::consumeWord dans Word.cpp: ajouter bloc de code appelant la fonction consumeXXX
+- Dans toutes les implémentations de AstVisitor, ajouter une nouvelle opération pour le nouveau type
+  -> .h ET .cpp
+- Ajouter l'entité en haut du Makefile monlang/
+
+---
+
+Pour debug:
+
+WHAT
+- montree (codification d'un Program/ProgramSentence/Word sous forme d'arbre)
+- buffer courant de l'input stream
+- arguments passées aux fonctions
+
+WHEN
+- signaler entrée/sortie d'une fonction, avec quels arguments (terminatorCharacters par exemple)
+- tracer les itérations de boucles
+
+
+---
+
 # récupérer tous les appels de fonctions utils dans Makefile
 perl -ne 'print "$1\n" if /\$\(call (\w+),/' Makefile | sort | uniq | sed -z 's/\n/, /g'
 

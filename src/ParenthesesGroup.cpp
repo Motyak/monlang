@@ -19,10 +19,10 @@ MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
     };
 
     if (!consumeSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ParenthesesGroup{}, Error{43}));
+        return std::unexpected(Malformed(ParenthesesGroup{}, Error{42}));
     }
     if (peekSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ParenthesesGroup{}, Error{431}));
+        return std::unexpected(Malformed(ParenthesesGroup{}, Error{421}));
     }
     if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ParenthesesGroup::TERMINATOR_SEQUENCE));
@@ -39,7 +39,7 @@ MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
     currentTerm = consumeTerm(termTerminatorChars, input);
     terms.push_back(currentTerm);
     if (!currentTerm.has_value()) {
-        return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{439}));
+        return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{429}));
     }
 
     until (input.peek() == EOF || std::any_of(
@@ -48,21 +48,21 @@ MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{403}));
+            return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{402}));
         }
         // if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        //     return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{432}));
+        //     return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{422}));
         // }
 
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
         if (!currentTerm.has_value()) {
-            return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{439}));
+            return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{429}));
         }
     }
 
     if (!consumeSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{430}));
+        return std::unexpected(Malformed(ParenthesesGroup{terms}, Error{420}));
     }
 
     return ParenthesesGroup{terms};
