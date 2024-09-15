@@ -2,7 +2,7 @@
 
 #include <utils/str-utils.h>
 
-int _TRACE_CUR_FUNC::depth = 0;
+thread_local int _TRACE_CUR_FUNC::depth = 0;
 
 _TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
     for (int i = 1; i <= depth - 1; ++i) {

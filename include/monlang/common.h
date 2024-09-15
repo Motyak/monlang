@@ -10,10 +10,12 @@
 #include <expected>
 #include <string>
 
+#define rdonly
+
 class _TRACE_CUR_FUNC {
-    static int depth;
+    static thread_local int depth;
     std::string funcName;
-    std::istringstream& input; // tracked variable
+    rdonly std::istringstream& input; // tracked variable
 
   public:
     _TRACE_CUR_FUNC(std::string funcName, std::istringstream& input);
