@@ -10,11 +10,20 @@
 #include <expected>
 #include <string>
 
+class _TRACE_CUR_FUNC {
+    static int depth;
+    std::string funcName;
+    std::istringstream& input; // tracked variable
+
+  public:
+    _TRACE_CUR_FUNC(std::string funcName, std::istringstream& input);
+    ~_TRACE_CUR_FUNC();
+};
+
 #ifdef TRACE
     #include <iostream>
     #define TRACE_CUR_FUN() \
-        std::cerr << "DEBUG " << __func__ << ": `" \
-                << input.str().substr(input.tellg()) << "`\n"
+        auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
 #else
     #define TRACE_CUR_FUN()
 #endif

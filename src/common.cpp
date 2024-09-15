@@ -1,5 +1,52 @@
 #include <monlang/common.h>
 
+#include <utils/str-utils.h>
+
+int _TRACE_CUR_FUNC::depth = 0;
+
+_TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
+    for (int i = 1; i <= depth - 1; ++i) {
+        std::cerr << "│   ";
+    }
+    if (depth >= 1) {
+        std::cerr << "├───";
+    }
+
+    std::cerr << funcName << " BEGIN";
+
+    std::string remaining = input.str().substr(input.tellg());
+    auto remainingAsLines = split(remaining, "\n");
+    ASSERT(remainingAsLines.size() > 0);
+    std::cerr << " `" << remainingAsLines[0] << "`";
+    if (remainingAsLines.size() > 1) {
+        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
+        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
+    }
+
+    std::cerr << std::endl;
+    depth++;
+}
+
+_TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
+    depth--;
+    for (int i = 1; i <= depth; ++i) {
+        std::cerr << "│   ";
+    }
+
+    std::cerr << funcName << " END";
+
+    std::string remaining = input.str().substr(input.tellg());
+    auto remainingAsLines = split(remaining, "\n");
+    ASSERT(remainingAsLines.size() > 0);
+    std::cerr << " `" << remainingAsLines[0] << "`";
+    if (remainingAsLines.size() > 1) {
+        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
+        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
+    }
+
+    std::cerr << std::endl;
+}
+
 Error::operator unsigned() const {
     return this->code;
 }
