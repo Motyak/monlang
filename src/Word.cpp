@@ -6,6 +6,7 @@
 #include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
+#include <monlang/CurlyBracketsGroup.h>
 
 #include <utils/vec-utils.h>
 
@@ -36,6 +37,17 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     terminatorCharacters = vec_union({
         terminatorCharacters,
         ParenthesesGroup::RESERVED_CHARACTERS
+    });
+#endif
+
+#ifndef DISABLE_CBG
+    static thread_local int indentLevel = 0;
+    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeCurlyBracketsGroup(indentLevel, input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        CurlyBracketsGroup::RESERVED_CHARACTERS
     });
 #endif
 

@@ -28,6 +28,7 @@ endif
 
 ENTITIES := \
 Atom \
+CurlyBracketsGroup \
 ParenthesesGroup \
 Program \
 ProgramSentence \

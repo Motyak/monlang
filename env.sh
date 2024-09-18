@@ -1,1 +1,1 @@
-alias make='BUILD_LIBS_ONCE= make -j16'
+alias make='TRACE=y BUILD_LIBS_ONCE= make -j16'

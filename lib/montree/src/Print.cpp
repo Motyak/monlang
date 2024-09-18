@@ -203,6 +203,10 @@ void Print::operator()(ParenthesesGroup* pg) {
     currentTabulation--;
 }
 
+void Print::operator()(CurlyBracketsGroup* cbg) {
+    outputLine("CurlyBracketsGroup");
+}
+
 void Print::operator()(Atom atom) {
     outputLine(std::string() + "Atom: `" + atom.value + "`");
     if (!curWord.has_value()) {
