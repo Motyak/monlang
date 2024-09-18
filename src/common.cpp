@@ -51,7 +51,7 @@ Error::operator unsigned() const {
     return this->code;
 }
 
-CharacterAppearance::CharacterAppearance(char c, unsigned ntimes) : c(c), ntimes(ntimes) {
+CharacterAppearance::CharacterAppearance(char c, int ntimes) : c(c), ntimes(ntimes) {
     ;
 }
 
@@ -89,7 +89,7 @@ std::expected<void, Error> consumeSequence(const std::vector<CharacterAppearance
             continue;
         }
 
-        for (unsigned i = 1; i <= charAppearance.ntimes; ++i) {
+        for (int i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
                 return std::unexpected(Error{101});
             }
@@ -114,7 +114,7 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
             continue;
         }
 
-        for (unsigned i = 1; i <= charAppearance.ntimes; ++i) {
+        for (int i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
                 // restore stream position
                 input.seekg(initialPosition);

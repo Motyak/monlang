@@ -39,6 +39,8 @@ xyz -> custom error (refer to manual)
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term
 
+411 CurlyBracketsGroup with wrong indentation
+
 421 ParenthesesGroup can't start with a continuator (leading continuator met)
 422 ParenthesesGroup continuator must precede a word (trailing continuator met)
 

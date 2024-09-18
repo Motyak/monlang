@@ -70,12 +70,12 @@ MayFail<R> mayfail_convert(auto inputMayfail, auto converter) {
             .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);});
 }
 
-// template <typename T>
-// T mayfail_unwrap(MayFail<T> inputMayfail) {
-//     return inputMayfail.has_value()? 
-//     		inputMayfail.value()
-//     		: inputMayfail.error().val;
-// }
+template <typename T>
+T mayfail_unwrap(MayFail<T> inputMayfail) {
+    return inputMayfail.has_value()?
+            inputMayfail.value()
+            : inputMayfail.error().val;
+}
 
 template <typename T>
 std::string serializeErrCode(MayFail<T> malformed) {
@@ -86,10 +86,10 @@ std::string serializeErrCode(MayFail<T> malformed) {
 
 struct CharacterAppearance {
     char c;
-    unsigned ntimes;
-    CharacterAppearance(char c, unsigned ntimes);
+    int ntimes;
+    CharacterAppearance(char c, int ntimes);
     CharacterAppearance(char c);
-    operator char() const;
+    operator char() const; // wut?
 };
 
 using Sequence = std::vector<CharacterAppearance>;
