@@ -28,7 +28,16 @@ static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
     return {ProgramSentence{programWords}};
 }
 
-CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{toSentences(term)} {}
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences) {
+    this->sentences = sentences;
+}
+
+CurlyBracketsGroup::CurlyBracketsGroup(std::optional<MayFail<Term>> term, std::vector<MayFail<ProgramSentence>> sentences) {
+    this->term = term;
+    this->sentences = sentences;
+}
+
+CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{term, toSentences(term)} {}
 
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istringstream& input) {
     TRACE_CUR_FUN();
@@ -51,6 +60,9 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istr
             sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value(),
         };
         auto term = consumeTerm(termTerminatorChars, input);
+        if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), Error{410}));
+        }
         return CurlyBracketsTerm(term);
     }
 
@@ -74,7 +86,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istr
     }
 
     if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{430}));
+        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{410}));
     }
 
     return CurlyBracketsGroup{sentences};

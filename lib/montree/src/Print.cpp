@@ -10,10 +10,10 @@
 /* impl only */
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
+#include <monlang/CurlyBracketsGroup.h>
 #include <utils/nb-utils.h>
 
 void Print::operator()(const MayFail<Program>& program) {
-    // TODO: use std::expected monadic operations
     Program prog;
     if (program.has_value()) {
         prog = program.value();
@@ -204,7 +204,52 @@ void Print::operator()(ParenthesesGroup* pg) {
 }
 
 void Print::operator()(CurlyBracketsGroup* cbg) {
-    outputLine("CurlyBracketsGroup");
+    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
+                             // ..(which calls operator()(Word))
+
+    output("CurlyBracketsGroup");
+
+    if (!cbg->term && cbg->sentences.size() == 0 && curWord_.has_value()) {
+        outputLine(" (empty)");
+        return;
+    }
+    outputLine();
+
+    currentTabulation++;
+
+    /* handle single term */
+    if (cbg->term) {
+        auto term = cbg->term.value();
+        handleTerm(term);
+        currentTabulation--;
+        return;
+    }
+
+    if (cbg->sentences.size() > 1) {
+        for (int n : range(cbg->sentences.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
+    }
+
+    if (cbg->sentences.size() == 0) {
+        ASSERT(!curWord_.has_value());
+        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+    } else {
+        int nb_of_malformed_sentences = 0;
+        for (auto sentence : cbg->sentences) {
+            if (!sentence.has_value()) {
+                nb_of_malformed_sentences++;
+            }
+            operator()(sentence);
+        }
+        if (nb_of_malformed_sentences == 0 && !curWord_.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        }
+    }
+
+    currentTabulation--;
 }
 
 void Print::operator()(Atom atom) {

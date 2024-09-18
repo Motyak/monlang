@@ -6,18 +6,26 @@
 #include <monlang/Term.h>
 
 #include <vector>
+#include <optional>
 
 struct CurlyBracketsGroup {
     static const Sequence INITIATOR_SEQUENCE;
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
+    /* either */
+    std::optional<MayFail<Term>> term;
     std::vector<MayFail<ProgramSentence>> sentences;
+
+    CurlyBracketsGroup() = default;
+    CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences);
+  protected:
+    CurlyBracketsGroup(std::optional<MayFail<Term>>, std::vector<MayFail<ProgramSentence>>);
 };
 using Subprogram = CurlyBracketsGroup;
 
 struct CurlyBracketsTerm : public CurlyBracketsGroup {
-    CurlyBracketsTerm(MayFail<Term> term); // will convert term into program sentences
+    CurlyBracketsTerm(MayFail<Term> term);
 };
 
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istringstream&);
