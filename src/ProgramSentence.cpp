@@ -24,7 +24,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
         sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
 
-    if (!consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
+    if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{126}));
     }
     if (input.peek() == EOF) {
