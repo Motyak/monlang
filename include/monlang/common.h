@@ -10,26 +10,6 @@
 #include <expected>
 #include <string>
 
-#define rdonly
-
-class _TRACE_CUR_FUNC {
-    static thread_local int depth;
-    std::string funcName;
-    rdonly std::istringstream& input; // tracked variable
-
-  public:
-    _TRACE_CUR_FUNC(std::string funcName, std::istringstream& input);
-    ~_TRACE_CUR_FUNC();
-};
-
-#ifdef TRACE
-    #include <iostream>
-    #define TRACE_CUR_FUN() \
-        auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
-#else
-    #define TRACE_CUR_FUN()
-#endif
-
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
 constexpr char TAB = 9;
@@ -99,5 +79,25 @@ size_t sequenceLen(const Sequence&);
 
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
+
+#define rdonly
+
+class _TRACE_CUR_FUNC {
+    static thread_local int depth;
+    std::string funcName;
+    rdonly std::istringstream& input; // tracked variable
+
+  public:
+    _TRACE_CUR_FUNC(std::string funcName, std::istringstream& input);
+    ~_TRACE_CUR_FUNC();
+};
+
+#ifdef TRACE
+    #include <iostream>
+    #define TRACE_CUR_FUN() \
+        auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
+#else
+    #define TRACE_CUR_FUN()
+#endif
 
 #endif // COMMON_H

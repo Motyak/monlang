@@ -39,8 +39,9 @@ CurlyBracketsGroup::CurlyBracketsGroup(std::optional<MayFail<Term>> term, std::v
 
 CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{term, toSentences(term)} {}
 
-MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istringstream& input) {
+MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
+    static thread_local int indentLevel = 0;
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
@@ -67,27 +68,26 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istr
     }
 
     input.ignore(1); // consume newline
+    indentLevel++;
 
     std::vector<MayFail<ProgramSentence>> sentences;
     MayFail<ProgramSentence> currentSentence;
 
-    until (input.peek() == EOF || std::any_of(
-            terminatorCharacters.begin(),
-            terminatorCharacters.end(),
-            [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
-        if (!consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
-            return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{411}));
-        }
-        currentSentence = consumeProgramSentence(input);
+    until (input.peek() == EOF || !peekSequence({{SPACE, 4 * indentLevel}}, input)) {
+        currentSentence = consumeProgramSentence(input, indentLevel);
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
             return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{419}));
         }
     }
 
+    if (!consumeSequence({{SPACE, 4 * (indentLevel - 1)}}, input)) {
+        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{411}));
+    }
     if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{410}));
     }
+    indentLevel--;
 
     return CurlyBracketsGroup{sentences};
 }

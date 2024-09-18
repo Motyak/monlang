@@ -15,6 +15,6 @@ struct ProgramSentence {
     std::vector<MayFail<ProgramWord>> programWords;
 };
 
-MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input);
+MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int indentLevel = 0);
 
 #endif // PROGRAM_SENTENCE_H

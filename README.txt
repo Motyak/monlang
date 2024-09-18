@@ -35,6 +35,7 @@ xyz -> custom error (refer to manual)
 122 ProgramSentence continuator must precede a word (trailing continuator met)
 124 ProgramSentence cannot be empty (leading terminator met)
 125 ProgramSentence cannot be empty (early EOF met)
+126 ProgramSentence has wrong indentation
 
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term

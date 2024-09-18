@@ -28,6 +28,6 @@ struct CurlyBracketsTerm : public CurlyBracketsGroup {
     CurlyBracketsTerm(MayFail<Term> term);
 };
 
-MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(int indentLevel, std::istringstream&);
+MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

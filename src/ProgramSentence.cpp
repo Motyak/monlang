@@ -18,12 +18,15 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value()
 };
 
-MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input) {
+MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
 
+    if (!consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{126}));
+    }
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{125}));
     }

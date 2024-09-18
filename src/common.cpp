@@ -35,7 +35,7 @@ _TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
 
     std::cerr << funcName << " END";
 
-    std::string remaining = input.str().substr(input.tellg());
+    std::string remaining = input.tellg() == -1? "" : input.str().substr(input.tellg());
     auto remainingAsLines = split(remaining, "\n");
     ASSERT(remainingAsLines.size() > 0);
     std::cerr << " `" << remainingAsLines[0] << "`";
