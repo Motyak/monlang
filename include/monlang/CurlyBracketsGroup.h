@@ -13,7 +13,6 @@ struct CurlyBracketsGroup {
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    /* either */
     std::optional<MayFail<Term>> term;
     std::vector<MayFail<ProgramSentence>> sentences;
 
