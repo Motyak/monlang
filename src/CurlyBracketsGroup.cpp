@@ -12,33 +12,6 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
-    Term term_ = mayfail_unwrap(term);
-
-    std::vector<MayFail<ProgramWord>> programWords;
-    for (auto word: term_.words) {
-        programWords.push_back(mayfail_cast<ProgramWord>(word));
-    }
-
-    if (!term.has_value()) {
-        // vector containing one malformed program sentence with term error code
-        return {std::unexpected(Malformed(ProgramSentence{programWords}, term.error().err))};
-    }
-
-    return {ProgramSentence{programWords}};
-}
-
-CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences) {
-    this->sentences = sentences;
-}
-
-CurlyBracketsGroup::CurlyBracketsGroup(std::optional<MayFail<Term>> term, std::vector<MayFail<ProgramSentence>> sentences) {
-    this->term = term;
-    this->sentences = sentences;
-}
-
-CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{term, toSentences(term)} {}
-
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     static thread_local int indentLevel = 0;
@@ -91,3 +64,30 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
 
     return CurlyBracketsGroup{sentences};
 }
+
+static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
+    Term term_ = mayfail_unwrap(term);
+
+    std::vector<MayFail<ProgramWord>> programWords;
+    for (auto word: term_.words) {
+        programWords.push_back(mayfail_cast<ProgramWord>(word));
+    }
+
+    if (!term.has_value()) {
+        // vector containing one malformed program sentence with term error code
+        return {std::unexpected(Malformed(ProgramSentence{programWords}, term.error().err))};
+    }
+
+    return {ProgramSentence{programWords}};
+}
+
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences) {
+    this->sentences = sentences;
+}
+
+CurlyBracketsGroup::CurlyBracketsGroup(std::optional<MayFail<Term>> term, std::vector<MayFail<ProgramSentence>> sentences) {
+    this->term = term;
+    this->sentences = sentences;
+}
+
+CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{term, toSentences(term)} {}
