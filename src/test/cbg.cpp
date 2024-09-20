@@ -119,7 +119,7 @@ TEST_CASE ("ERR cbg missing terminator", "[test-4116][cbg][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR multiline cbg missing terminator", "[test-4117][cbg][err]") {
+TEST_CASE ("ERR multiline cbg must contain at least one sentence", "[test-4117][cbg][err]") {
     auto input = tommy_str(R"EOF(
        |{
        |}
