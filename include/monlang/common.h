@@ -69,7 +69,8 @@ struct CharacterAppearance {
     int ntimes;
     CharacterAppearance(char c, int ntimes);
     CharacterAppearance(char c);
-    operator char() const; // wut?
+    operator char() const; // allow me to cast std::vector<char>..
+                           // ..into std::vector<CharacterAppearance> aka Sequence
 };
 
 using Sequence = std::vector<CharacterAppearance>;

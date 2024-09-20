@@ -40,7 +40,7 @@ xyz -> custom error (refer to manual)
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term
 
-411 CurlyBracketsGroup with wrong indentation
+412 multiline CurlyBracketsGroup must contain at least one sentence
 
 421 ParenthesesGroup can't start with a continuator (leading continuator met)
 422 ParenthesesGroup continuator must precede a word (trailing continuator met)
@@ -48,7 +48,7 @@ xyz -> custom error (refer to manual)
 431 SquareBracketsGroup can't start with a continuator (leading continuator met)
 432 SquareBracketsGroup continuator must precede a word (trailing continuator met)
 
-992 Atom cannot be empty
+992 Atom cannot be empty (hit a reserved character)
 
 === MAKEFILE DESIGN ===
 

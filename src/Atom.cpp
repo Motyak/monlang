@@ -22,6 +22,7 @@ MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::is
         value += currentChar;
     }
 
+    // means we hit a reserved character
     if (value.size() == 0) {
         return std::unexpected(Malformed(Atom{}, Error{992}));
     }

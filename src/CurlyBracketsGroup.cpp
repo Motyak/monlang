@@ -3,6 +3,8 @@
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
 
+#include <utils/vec-utils.h>
+
 #define until(x) while(!(x))
 
 const Sequence CurlyBracketsGroup::INITIATOR_SEQUENCE = {'{'};
@@ -18,6 +20,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
+    auto indentedTermSeq = vec_union({{{SPACE, 4 * indentLevel}}, CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
     if (!consumeSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(CurlyBracketsGroup{}, Error{41}));
@@ -41,25 +44,38 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
 
     input.ignore(1); // consume newline
+
+    if (peekSequence(indentedTermSeq, input)) {
+        return std::unexpected(Malformed(CurlyBracketsGroup{}, Error{412}));
+    }
+
     indentLevel++;
 
     std::vector<MayFail<ProgramSentence>> sentences;
     MayFail<ProgramSentence> currentSentence;
 
+    currentSentence = consumeProgramSentence(input, indentLevel);
+    sentences.push_back(currentSentence);
+    if (!currentSentence.has_value()) {
+        indentLevel--; // restore indent level, because static
+        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{419}));
+    }
+
     until (input.peek() == EOF || !peekSequence({{SPACE, 4 * indentLevel}}, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
+            indentLevel--; // restore indent level, because static
             return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{419}));
         }
     }
 
-    if (!consumeSequence({{SPACE, 4 * (indentLevel - 1)}}, input)) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{411}));
-    }
-    if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
+
+    if (!consumeSequence(indentedTermSeq, input)) {
+        indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{410}));
     }
+
     indentLevel--;
 
     return CurlyBracketsGroup{sentences};

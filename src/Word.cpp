@@ -20,14 +20,13 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     //     ..
     // });
 
-#ifndef DISABLE_CBG
-    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto res = mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
-        return res;
+#ifndef DISABLE_SBG
+    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
-        CurlyBracketsGroup::RESERVED_CHARACTERS
+        SquareBracketsGroup::RESERVED_CHARACTERS
     });
 #endif
 
@@ -41,13 +40,14 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     });
 #endif
 
-#ifndef DISABLE_SBG
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
+#ifndef DISABLE_CBG
+    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        auto res = mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
+        return res;
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
-        SquareBracketsGroup::RESERVED_CHARACTERS
+        CurlyBracketsGroup::RESERVED_CHARACTERS
     });
 #endif
 

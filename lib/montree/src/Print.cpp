@@ -209,7 +209,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
 
     output("CurlyBracketsGroup");
 
-    if (!cbg->term && cbg->sentences.size() == 0 && curWord_.has_value()) {
+    if (cbg->sentences.size() == 0 && curWord_.has_value()) {
         outputLine(" (empty)");
         return;
     }
@@ -221,6 +221,9 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     if (cbg->term) {
         auto term = cbg->term.value();
         handleTerm(term);
+        if (!curWord_.has_value()) {
+            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        }
         currentTabulation--;
         return;
     }
