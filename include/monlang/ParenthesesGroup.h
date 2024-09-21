@@ -15,6 +15,9 @@ struct ParenthesesGroup {
     std::vector<MayFail<Term>> terms;
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream&);
+MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream&);
+
+using consumeParenthesesGroup_RetType = std::variant<MayFail<ParenthesesGroup>, MayFail<PostfixParenthesesGroup>>;
+consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 
 #endif // PARENTHESES_GROUP_H

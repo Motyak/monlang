@@ -1,4 +1,5 @@
 #include <monlang/ParenthesesGroup.h>
+#include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/common.h>
 
 #define until(x) while(!(x))
@@ -13,7 +14,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
+MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
@@ -67,4 +68,8 @@ MayFail<ParenthesesGroup> consumeParenthesesGroup(std::istringstream& input) {
     }
 
     return ParenthesesGroup{terms};
+}
+
+consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
+    return consumeParenthesesGroupStrictly(input); // TODO: TMP IMPL
 }

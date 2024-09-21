@@ -8,10 +8,9 @@ struct Atom {
     std::string value;
 };
 
-MayFail<Atom>
-consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
-std::variant<MayFail<Atom>, MayFail<PostfixParenthesesGroup>>
-consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+using consumeAtom_RetType = std::variant<MayFail<Atom>, MayFail<PostfixParenthesesGroup>>;
+consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // ATOM_H

@@ -22,33 +22,37 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     // });
 
 #ifndef DISABLE_SBG
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
-    }
     terminatorCharacters = vec_union({
         terminatorCharacters,
         SquareBracketsGroup::RESERVED_CHARACTERS
     });
+    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
+    }
 #endif
 
 #ifndef DISABLE_PG
-    if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeParenthesesGroup(input));
-    }
     terminatorCharacters = vec_union({
         terminatorCharacters,
         ParenthesesGroup::RESERVED_CHARACTERS
     });
+    if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+        auto ret = consumeParenthesesGroup(input);
+        return std::visit(overload{
+            [](MayFail<ParenthesesGroup> atom){return mayfail_convert<Word>(atom);},
+            [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
+        }, ret);
+    }
 #endif
 
 #ifndef DISABLE_CBG
-    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
-    }
     terminatorCharacters = vec_union({
         terminatorCharacters,
         CurlyBracketsGroup::RESERVED_CHARACTERS
     });
+    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
+    }
 #endif
 
     /* Atom is the "fall-through" Word */

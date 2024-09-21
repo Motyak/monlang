@@ -32,3 +32,26 @@ TEST_CASE ("nested curly brackets group", "[test-1000][int]") {
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("postfix pg", "[test-1001][sbg]") {
+    auto input = "fds(a)(b)";
+
+    auto expect = tommy_str(R"EOF(
+       |-> PostfixParenthesesGroup
+       |  -> PostfixParenthesesGroup
+       |    -> Atom: `fds`
+       |    -> ParenthesesGroup
+       |      -> Term
+       |        -> Word: Atom: `a`
+       |  -> ParenthesesGroup
+       |    -> Term
+       |      -> Word: Atom: `b`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}

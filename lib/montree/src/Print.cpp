@@ -265,32 +265,17 @@ void Print::operator()(Atom* atom) {
     }
 }
 
-// void Print::operator()(PostfixParenthesesGroup* ppg) {
-//     outputLine("left part");
-//     currIndent++;
-//     std::visit(overload{
-//         [this](SquareBracketsGroup*){outputLine("SquareBracketsGroup");},
-//         [this](ParenthesesGroup*){outputLine("ParenthesesGroup");},
-//         [this](CurlyBracketsGroup*){outputLine("CurlyBracketsGroup");},
-//         [this](Atom*){outputLine("Atom");},
-//         [this](PostfixParenthesesGroup*){outputLine("PostfixParenthesesGroup");}
-//     }, ppg->leftPart);
-//     currIndent--;
+void Print::operator()(PostfixParenthesesGroup* ppg) {
+    outputLine("PostfixParenthesesGroup");
 
-//     outputLine("right part");
-//     currIndent++;
-//     output("len =");
-//     out << ppg->rightPart.terms.size() << "\n";
-//     currIndent--;
+    currIndent++;
+    operator()(MayFail<Word>(ppg->leftPart));
+    currIndent--;
 
-//     // outputLine("PostfixParenthesesGroup:");
-//     // currIndent++;
-//     // outputLine("left part: ");
-//     // operator()(ppg->leftPart); // handle word
-//     // outputLine("right part: ");
-//     // operator()(ppg->rightPart); // handle parentheses group
-//     // currIndent--;
-// }
+    currIndent++;
+    operator()(mayfail_convert<Word>(ppg->rightPart));
+    currIndent--;
+}
 
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");
