@@ -9,6 +9,7 @@
 #include <monlang/CurlyBracketsGroup.h>
 
 #include <utils/vec-utils.h>
+#include <utils/variant-utils.h>
 
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters = vec_union({
@@ -42,8 +43,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
 #ifndef DISABLE_CBG
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto res = mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
-        return res;
+        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
@@ -51,6 +51,11 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     });
 #endif
 
-    // Atom is the "fall-through" Word
-    return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
+    /* Atom is the "fall-through" Word */
+
+    auto ret = consumeAtom(terminatorCharacters, input);
+    return std::visit(overload{
+        [](MayFail<Atom> atom){return mayfail_convert<Word>(atom);},
+        [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
+    }, ret);
 }

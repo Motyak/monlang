@@ -1,11 +1,13 @@
 #include <monlang/Atom.h>
+#include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/common.h>
 
 #include <algorithm>
 
 #define until(x) while(!(x))
 
-MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+MayFail<Atom>
+consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
@@ -28,4 +30,9 @@ MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::is
     }
 
     return Atom{value};
+}
+
+std::variant<MayFail<Atom>, MayFail<PostfixParenthesesGroup>>
+consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+    return consumeAtomStrictly(terminatorCharacters, input); // TODO: TMP IMPL
 }

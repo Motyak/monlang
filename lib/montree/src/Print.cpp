@@ -12,6 +12,7 @@
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <utils/nb-utils.h>
+#include <utils/variant-utils.h> //
 
 void Print::operator()(const MayFail<Program>& program) {
     Program prog;
@@ -255,14 +256,41 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     currentTabulation--;
 }
 
-void Print::operator()(Atom atom) {
-    outputLine(std::string() + "Atom: `" + atom.value + "`");
+void Print::operator()(Atom* atom) {
+    outputLine(std::string() + "Atom: `" + atom->value + "`");
     if (!curWord.has_value()) {
         currentTabulation++;
         outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
         currentTabulation--;
     }
 }
+
+// void Print::operator()(PostfixParenthesesGroup* ppg) {
+//     outputLine("left part");
+//     currentTabulation++;
+//     std::visit(overload{
+//         [this](SquareBracketsGroup*){outputLine("SquareBracketsGroup");},
+//         [this](ParenthesesGroup*){outputLine("ParenthesesGroup");},
+//         [this](CurlyBracketsGroup*){outputLine("CurlyBracketsGroup");},
+//         [this](Atom*){outputLine("Atom");},
+//         [this](PostfixParenthesesGroup*){outputLine("PostfixParenthesesGroup");}
+//     }, ppg->leftPart);
+//     currentTabulation--;
+
+//     outputLine("right part");
+//     currentTabulation++;
+//     output("len =");
+//     out << ppg->rightPart.terms.size() << "\n";
+//     currentTabulation--;
+
+//     // outputLine("PostfixParenthesesGroup:");
+//     // currentTabulation++;
+//     // outputLine("left part: ");
+//     // operator()(ppg->leftPart); // handle word
+//     // outputLine("right part: ");
+//     // operator()(ppg->rightPart); // handle parentheses group
+//     // currentTabulation--;
+// }
 
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");

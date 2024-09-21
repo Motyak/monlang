@@ -2,7 +2,6 @@
 #define WORD_H
 
 #include <monlang/common.h>
-#include <monlang/Atom.h>
 
 #include <sstream>
 #include <variant>
@@ -10,8 +9,10 @@
 struct SquareBracketsGroup;
 struct ParenthesesGroup;
 struct CurlyBracketsGroup;
+struct Atom;
+struct PostfixParenthesesGroup;
 
-using Word = std::variant<SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*, Atom>;
+using Word = std::variant<SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*, Atom*, PostfixParenthesesGroup*>;
 
 MayFail<Word> consumeWord(std::istringstream&);
 
