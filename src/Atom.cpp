@@ -1,6 +1,11 @@
 #include <monlang/Atom.h>
 #include <monlang/PostfixParenthesesGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/common.h>
+
+/* in impl only */
+#include <monlang/ParenthesesGroup.h>
+#include <monlang/SquareBracketsGroup.h>
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
@@ -40,10 +45,22 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         return atom;
     }
 
-    using PostfixLeftPart = std::variant<Atom*, PostfixParenthesesGroup*>;
+    using PostfixLeftPart = std::variant<Atom*, PostfixSquareBracketsGroup*, PostfixParenthesesGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
     BEGIN:
+    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
+        auto curr_psbg = PostfixSquareBracketsGroup{
+            variant_cast(accumulatedPostfixLeftPart),
+            whats_right_behind
+        };
+        if (!whats_right_behind.has_value()) {
+            return std::unexpected(Malformed(curr_psbg, Error{329}));
+        }
+        accumulatedPostfixLeftPart = move_to_heap(curr_psbg);
+        goto BEGIN;
+    }
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
         auto curr_ppg = PostfixParenthesesGroup{
@@ -59,6 +76,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
 
     return std::visit(overload{
         [](Atom* atom) -> consumeAtom_RetType {return *atom;},
+        [](PostfixSquareBracketsGroup* psbg) -> consumeAtom_RetType {return *psbg;},
         [](PostfixParenthesesGroup* ppg) -> consumeAtom_RetType {return *ppg;}
     }, accumulatedPostfixLeftPart);
 }

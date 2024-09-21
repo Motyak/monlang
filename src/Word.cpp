@@ -27,7 +27,11 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         SquareBracketsGroup::RESERVED_CHARACTERS
     });
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeSquareBracketsGroup(input));
+        auto ret = consumeSquareBracketsGroup(input);
+        return std::visit(overload{
+            [](MayFail<SquareBracketsGroup> sbg){return mayfail_convert<Word>(sbg);},
+            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
+        }, ret);
     }
 #endif
 
@@ -39,7 +43,8 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto ret = consumeParenthesesGroup(input);
         return std::visit(overload{
-            [](MayFail<ParenthesesGroup> atom){return mayfail_convert<Word>(atom);},
+            [](MayFail<ParenthesesGroup> pg){return mayfail_convert<Word>(pg);},
+            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);},
             [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
         }, ret);
     }
@@ -60,6 +65,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     auto ret = consumeAtom(terminatorCharacters, input);
     return std::visit(overload{
         [](MayFail<Atom> atom){return mayfail_convert<Word>(atom);},
+        [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);},
         [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
     }, ret);
 }

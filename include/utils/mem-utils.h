@@ -1,7 +1,7 @@
 #ifndef MEM_UTILS_H
 #define MEM_UTILS_H
 
-#include <utility>
+#include <utility> // std::move
 
 template <typename T>
 T* move_to_heap(T obj) {

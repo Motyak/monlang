@@ -1,4 +1,5 @@
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h> // not used but required in .h ?
 #include <monlang/common.h>
 
 #define until(x) while(!(x))
@@ -13,7 +14,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& input) {
+MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
@@ -67,4 +68,8 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroup(std::istringstream& inpu
     }
 
     return SquareBracketsGroup{terms};
+}
+
+consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
+    return consumeSquareBracketsGroupStrictly(input); // TODO: TMP IMPL
 }

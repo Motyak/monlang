@@ -6,7 +6,6 @@
 #include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
 
-#include <monlang/Atom.h>
 #include <monlang/Term.h>
 
 /* interface only */
@@ -24,6 +23,7 @@ class Print : public AstVisitor<void> {
     void operator()(ParenthesesGroup*);
     void operator()(CurlyBracketsGroup*);
     void operator()(Atom*);
+    void operator()(PostfixSquareBracketsGroup*);
     void operator()(PostfixParenthesesGroup*);
 
     void operator()(auto); // fall-through

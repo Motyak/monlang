@@ -5,14 +5,15 @@
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
 #include <monlang/Word.h>
-#include <monlang/Atom.h>
 
 /* impl only */
+#include <monlang/Atom.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/PostfixParenthesesGroup.h>
 #include <utils/nb-utils.h>
-#include <utils/variant-utils.h> //
 
 void Print::operator()(const MayFail<Program>& program) {
     Program prog;
@@ -263,6 +264,18 @@ void Print::operator()(Atom* atom) {
         outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
         currIndent--;
     }
+}
+
+void Print::operator()(PostfixSquareBracketsGroup* psbg) {
+    outputLine("PostfixSquareBracketsGroup");
+
+    currIndent++;
+    operator()(MayFail<Word>(psbg->leftPart));
+    currIndent--;
+
+    currIndent++;
+    operator()(mayfail_convert<Word>(psbg->rightPart));
+    currIndent--;
 }
 
 void Print::operator()(PostfixParenthesesGroup* ppg) {

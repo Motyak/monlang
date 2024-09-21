@@ -10,9 +10,13 @@ struct SquareBracketsGroup;
 struct ParenthesesGroup;
 struct CurlyBracketsGroup;
 struct Atom;
+struct PostfixSquareBracketsGroup;
 struct PostfixParenthesesGroup;
 
-using Word = std::variant<SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*, Atom*, PostfixParenthesesGroup*>;
+using Word = std::variant<
+    SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*, Atom*,
+    PostfixSquareBracketsGroup*, PostfixParenthesesGroup*
+>;
 
 MayFail<Word> consumeWord(std::istringstream&);
 
