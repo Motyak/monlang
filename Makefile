@@ -69,11 +69,8 @@ mrproper:
 
 ###########################################################
 
-## $(OBJS): ##
-$(filter-out obj/Word.o,$(OBJS)): obj/%.o: src/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS)
 word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS)))
-obj/Word.o: src/Word.cpp
+$(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros)
 
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
