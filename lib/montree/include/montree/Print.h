@@ -39,7 +39,7 @@ class Print : public AstVisitor<void> {
     std::ostream& out;
     std::stack<int> numbering;
     bool startOfNewLine = true;
-    unsigned currentTabulation = 0;
+    int currIndent = 0;
     bool areProgramWords = false;
     MayFail<Word> curWord;
 };

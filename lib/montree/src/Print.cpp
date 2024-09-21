@@ -25,7 +25,7 @@ void Print::operator()(const MayFail<Program>& program) {
     }
 
     if (prog.sentences.size() > 0) {
-        currentTabulation++;
+        currIndent++;
     }
 
     if (prog.sentences.size() > 1) {
@@ -41,7 +41,7 @@ void Print::operator()(const MayFail<Program>& program) {
     }
     
     if (prog.sentences.size() > 0) {
-        currentTabulation--;
+        currIndent--;
     }
 }
 
@@ -68,7 +68,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
 
     // note: should always enter since a ProgramSentence cannot be empty
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
-        currentTabulation++;
+        currIndent++;
     }
 
     if (progSentence.programWords.size() > 1) {
@@ -90,7 +90,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
 
     // note: should always enter since a ProgramSentence cannot be empty
     if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
-        currentTabulation--;
+        currIndent--;
     }
 }
 
@@ -135,7 +135,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
     }
     outputLine();
 
-    currentTabulation++;
+    currIndent++;
 
     if (sbg->terms.size() > 1) {
         for (int n : range(sbg->terms.size(), 0)) {
@@ -161,7 +161,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
         }
     }
 
-    currentTabulation--;
+    currIndent--;
 }
 
 void Print::operator()(ParenthesesGroup* pg) {
@@ -175,7 +175,7 @@ void Print::operator()(ParenthesesGroup* pg) {
     }
     outputLine();
 
-    currentTabulation++;
+    currIndent++;
 
     if (pg->terms.size() > 1) {
         for (int n : range(pg->terms.size(), 0)) {
@@ -201,7 +201,7 @@ void Print::operator()(ParenthesesGroup* pg) {
         }
     }
 
-    currentTabulation--;
+    currIndent--;
 }
 
 void Print::operator()(CurlyBracketsGroup* cbg) {
@@ -216,7 +216,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     }
     outputLine();
 
-    currentTabulation++;
+    currIndent++;
 
     /* handle single term */
     if (cbg->term) {
@@ -225,7 +225,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
         if (!curWord_.has_value()) {
             outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
         }
-        currentTabulation--;
+        currIndent--;
         return;
     }
 
@@ -253,21 +253,21 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
         }
     }
 
-    currentTabulation--;
+    currIndent--;
 }
 
 void Print::operator()(Atom* atom) {
     outputLine(std::string() + "Atom: `" + atom->value + "`");
     if (!curWord.has_value()) {
-        currentTabulation++;
+        currIndent++;
         outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
-        currentTabulation--;
+        currIndent--;
     }
 }
 
 // void Print::operator()(PostfixParenthesesGroup* ppg) {
 //     outputLine("left part");
-//     currentTabulation++;
+//     currIndent++;
 //     std::visit(overload{
 //         [this](SquareBracketsGroup*){outputLine("SquareBracketsGroup");},
 //         [this](ParenthesesGroup*){outputLine("ParenthesesGroup");},
@@ -275,21 +275,21 @@ void Print::operator()(Atom* atom) {
 //         [this](Atom*){outputLine("Atom");},
 //         [this](PostfixParenthesesGroup*){outputLine("PostfixParenthesesGroup");}
 //     }, ppg->leftPart);
-//     currentTabulation--;
+//     currIndent--;
 
 //     outputLine("right part");
-//     currentTabulation++;
+//     currIndent++;
 //     output("len =");
 //     out << ppg->rightPart.terms.size() << "\n";
-//     currentTabulation--;
+//     currIndent--;
 
 //     // outputLine("PostfixParenthesesGroup:");
-//     // currentTabulation++;
+//     // currIndent++;
 //     // outputLine("left part: ");
 //     // operator()(ppg->leftPart); // handle word
 //     // outputLine("right part: ");
 //     // operator()(ppg->rightPart); // handle parentheses group
-//     // currentTabulation--;
+//     // currIndent--;
 // }
 
 void Print::operator()(auto) {
@@ -322,7 +322,7 @@ void Print::handleTerm(const MayFail<Term>& term) {
     }
 
     if (term_.words.size() > 0 || !term.has_value()) {
-        currentTabulation++;
+        currIndent++;
     }
 
     if (term_.words.size() > 1) {
@@ -347,13 +347,13 @@ void Print::handleTerm(const MayFail<Term>& term) {
     }
 
     if (term_.words.size() > 0 || !term.has_value()) {
-        currentTabulation--;
+        currIndent--;
     }
 }
 
 void Print::output(const std::string& chars) {
     if (startOfNewLine) {
-        out << std::string(currentTabulation * TAB_SIZE, SPACE);
+        out << std::string(currIndent * TAB_SIZE, SPACE);
     }
     out << chars;
     startOfNewLine = false;
