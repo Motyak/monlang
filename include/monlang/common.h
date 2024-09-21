@@ -16,8 +16,8 @@ constexpr char TAB = 9;
 constexpr char BACKSLASH = 92;
 
 struct Error {
-    unsigned code;
-    operator unsigned() const;
+    int code;
+    operator int() const;
 };
 
 #define OK() return std::expected<void, Error>()

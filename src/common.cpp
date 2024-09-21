@@ -47,7 +47,7 @@ _TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
     std::cerr << std::endl;
 }
 
-Error::operator unsigned() const {
+Error::operator int() const {
     return this->code;
 }
 
