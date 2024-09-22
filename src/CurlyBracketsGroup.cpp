@@ -1,7 +1,7 @@
 #include <monlang/CurlyBracketsGroup.h>
-#include <monlang/common.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
+#include <monlang/common.h>
 
 #include <utils/vec-utils.h>
 

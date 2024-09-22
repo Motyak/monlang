@@ -1,9 +1,9 @@
 #ifndef CURLY_BRACKETS_GROUP_H
 #define CURLY_BRACKETS_GROUP_H
 
-#include <monlang/common.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
+#include <monlang/common.h>
 
 #include <vector>
 #include <optional>

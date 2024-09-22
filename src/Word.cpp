@@ -1,12 +1,14 @@
 #include <monlang/Word.h>
 #include <monlang/common.h>
-#include <monlang/Atom.h>
 
 /* in impl only */
 #include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
+#include <monlang/Atom.h>
+#include <monlang/PostfixParenthesesGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>
@@ -44,8 +46,8 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         auto ret = consumeParenthesesGroup(input);
         return std::visit(overload{
             [](MayFail<ParenthesesGroup> pg){return mayfail_convert<Word>(pg);},
-            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);},
-            [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
+            [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);},
+            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
         }, ret);
     }
 #endif
@@ -65,7 +67,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     auto ret = consumeAtom(terminatorCharacters, input);
     return std::visit(overload{
         [](MayFail<Atom> atom){return mayfail_convert<Word>(atom);},
-        [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);},
-        [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);}
+        [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);},
+        [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
     }, ret);
 }

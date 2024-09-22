@@ -1,6 +1,9 @@
 #include <monlang/SquareBracketsGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h> // not used but required in .h ?
+#include <monlang/Term.h>
 #include <monlang/common.h>
+
+/* impl only */
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 #define until(x) while(!(x))
 

@@ -1,8 +1,8 @@
 #ifndef PROGRAM_SENTENCE_H
 #define PROGRAM_SENTENCE_H
 
-#include <monlang/common.h>
 #include <monlang/ProgramWord.h>
+#include <monlang/common.h>
 
 #include <vector>
 #include <sstream>

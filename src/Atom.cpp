@@ -1,11 +1,11 @@
 #include <monlang/Atom.h>
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/common.h>
 
 /* in impl only */
 #include <monlang/ParenthesesGroup.h>
+#include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>

@@ -1,6 +1,6 @@
 #include <monlang/Program.h>
-#include <monlang/common.h>
 #include <monlang/ProgramSentence.h>
+#include <monlang/common.h>
 
 MayFail<Program> consumeProgram(std::istringstream& input) {
     TRACE_CUR_FUN();

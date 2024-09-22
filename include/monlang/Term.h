@@ -1,8 +1,8 @@
 #ifndef TERM_H
 #define TERM_H
 
-#include <monlang/common.h>
 #include <monlang/Word.h>
+#include <monlang/common.h>
 
 #include <vector>
 #include <sstream>

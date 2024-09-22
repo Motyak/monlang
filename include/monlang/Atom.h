@@ -1,9 +1,10 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/common.h>
+
+struct PostfixParenthesesGroup;
+struct PostfixSquareBracketsGroup;
 
 struct Atom {
     std::string value;

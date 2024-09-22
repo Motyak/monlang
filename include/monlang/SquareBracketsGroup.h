@@ -2,11 +2,12 @@
 #define SQUARE_BRACKETS_GROUP_H
 
 #include <monlang/Term.h>
-// #include <monlang/PostfixSquareBracketsGroup.h> // moved to .cpp to avoid incomplete type issues ?
 #include <monlang/common.h>
 
 #include <sstream>
 #include <vector>
+
+struct PostfixSquareBracketsGroup;
 
 struct SquareBracketsGroup {
     static const Sequence INITIATOR_SEQUENCE;

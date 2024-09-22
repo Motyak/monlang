@@ -1,7 +1,10 @@
 #include <monlang/ParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h> // not yet used but required in .h ?
-#include <monlang/PostfixParenthesesGroup.h> // not yet used but required in .h ?
+#include <monlang/Term.h>
 #include <monlang/common.h>
+
+/* impl only */
+#include <monlang/PostfixParenthesesGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 #define until(x) while(!(x))
 

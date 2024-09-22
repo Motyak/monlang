@@ -1,9 +1,7 @@
 #include <monlang/ProgramSentence.h>
-#include <monlang/common.h>
 #include <monlang/ProgramWord.h>
+#include <monlang/common.h>
 
-/* in impl only */
-#include <monlang/Program.h>
 #include <utils/assert-util.h>
 
 #include <algorithm>
