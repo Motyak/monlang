@@ -13,9 +13,9 @@ struct Atom {
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 using consumeAtom_RetType = std::variant<
-    MayFail<Atom>,
-    MayFail<PostfixSquareBracketsGroup>,
-    MayFail<PostfixParenthesesGroup>
+    MayFail<Atom*>,
+    MayFail<PostfixSquareBracketsGroup*>,
+    MayFail<PostfixParenthesesGroup*>
 >;
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 

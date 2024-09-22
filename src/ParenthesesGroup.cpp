@@ -75,5 +75,5 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
 }
 
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
-    return consumeParenthesesGroupStrictly(input); // TODO: TMP IMPL
+    return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input)); // TODO: TMP IMPL
 }

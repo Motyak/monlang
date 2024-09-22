@@ -42,7 +42,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     auto atom = consumeAtomStrictly(terminatorCharacters, input);
     if (!atom.has_value()) {
-        return atom;
+        return mayfail_convert<Atom*>(atom);
     }
 
     using PostfixLeftPart = std::variant<Atom*, PostfixSquareBracketsGroup*, PostfixParenthesesGroup*>;
@@ -51,32 +51,32 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
     BEGIN:
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-        auto curr_psbg = PostfixSquareBracketsGroup{
+        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
             variant_cast(accumulatedPostfixLeftPart),
             whats_right_behind
-        };
+        });
         if (!whats_right_behind.has_value()) {
             return std::unexpected(Malformed(curr_psbg, Error{329}));
         }
-        accumulatedPostfixLeftPart = move_to_heap(curr_psbg);
+        accumulatedPostfixLeftPart = curr_psbg;
         goto BEGIN;
     }
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
-        auto curr_ppg = PostfixParenthesesGroup{
+        auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
             variant_cast(accumulatedPostfixLeftPart),
             whats_right_behind
-        };
+        });
         if (!whats_right_behind.has_value()) {
             return std::unexpected(Malformed(curr_ppg, Error{319}));
         }
-        accumulatedPostfixLeftPart = move_to_heap(curr_ppg);
+        accumulatedPostfixLeftPart = curr_ppg;
         goto BEGIN;
     }
 
     return std::visit(overload{
-        [](Atom* atom) -> consumeAtom_RetType {return *atom;},
-        [](PostfixSquareBracketsGroup* psbg) -> consumeAtom_RetType {return *psbg;},
-        [](PostfixParenthesesGroup* ppg) -> consumeAtom_RetType {return *ppg;}
+        [](Atom* atom) -> consumeAtom_RetType {return atom;},
+        [](PostfixSquareBracketsGroup* psbg) -> consumeAtom_RetType {return psbg;},
+        [](PostfixParenthesesGroup* ppg) -> consumeAtom_RetType {return ppg;}
     }, accumulatedPostfixLeftPart);
 }

@@ -74,5 +74,5 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
 }
 
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
-    return consumeSquareBracketsGroupStrictly(input); // TODO: TMP IMPL
+    return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
 }

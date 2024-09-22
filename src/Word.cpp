@@ -14,7 +14,10 @@
 #include <utils/variant-utils.h>
 
 MayFail<Word> consumeWord(std::istringstream& input) {
-    std::vector<char> terminatorCharacters = vec_union({
+    std::vector<char> terminatorCharacters;
+
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
         ProgramSentence::RESERVED_CHARACTERS
     });
 
@@ -31,8 +34,8 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto ret = consumeSquareBracketsGroup(input);
         return std::visit(overload{
-            [](MayFail<SquareBracketsGroup> sbg){return mayfail_convert<Word>(sbg);},
-            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
+            [](MayFail<SquareBracketsGroup*> sbg){return mayfail_cast<Word>(sbg);},
+            [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
         }, ret);
     }
 #endif
@@ -45,9 +48,9 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto ret = consumeParenthesesGroup(input);
         return std::visit(overload{
-            [](MayFail<ParenthesesGroup> pg){return mayfail_convert<Word>(pg);},
-            [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);},
-            [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
+            [](MayFail<ParenthesesGroup*> pg){return mayfail_cast<Word>(pg);},
+            [](MayFail<PostfixParenthesesGroup*> ppg){return mayfail_cast<Word>(ppg);},
+            [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
         }, ret);
     }
 #endif
@@ -58,7 +61,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         CurlyBracketsGroup::RESERVED_CHARACTERS
     });
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input));
+        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input)); // TODO: no convert should be needed
     }
 #endif
 
@@ -66,8 +69,8 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
     auto ret = consumeAtom(terminatorCharacters, input);
     return std::visit(overload{
-        [](MayFail<Atom> atom){return mayfail_convert<Word>(atom);},
-        [](MayFail<PostfixParenthesesGroup> ppg){return mayfail_convert<Word>(ppg);},
-        [](MayFail<PostfixSquareBracketsGroup> psbg){return mayfail_convert<Word>(psbg);}
+        [](MayFail<Atom*> atom){return mayfail_cast<Word>(atom);},
+        [](MayFail<PostfixParenthesesGroup*> ppg){return mayfail_cast<Word>(ppg);},
+        [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
     }, ret);
 }

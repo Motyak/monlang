@@ -22,9 +22,9 @@ struct ParenthesesGroup {
 MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream&);
 
 using consumeParenthesesGroup_RetType = std::variant<
-    MayFail<ParenthesesGroup>,
-    MayFail<PostfixParenthesesGroup>,
-    MayFail<PostfixSquareBracketsGroup>
+    MayFail<ParenthesesGroup*>,
+    MayFail<PostfixParenthesesGroup*>,
+    MayFail<PostfixSquareBracketsGroup*>
 >;
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 

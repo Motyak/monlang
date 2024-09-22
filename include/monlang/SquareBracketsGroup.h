@@ -21,8 +21,8 @@ struct SquareBracketsGroup {
 MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream&);
 
 using consumeSquareBracketsGroup_RetType = std::variant<
-    MayFail<SquareBracketsGroup>,
-    MayFail<PostfixSquareBracketsGroup>
+    MayFail<SquareBracketsGroup*>,
+    MayFail<PostfixSquareBracketsGroup*>
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
 
