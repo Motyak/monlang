@@ -8,8 +8,9 @@ DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
 ARFLAGS := rcsv
 
-DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
 BUILD_LIBS_ONCE ?= y # disable by passing `BUILD_LIBS_ONCE=`
+DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
+DISABLE_POSTFIXES ?= $(empty) # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 ifdef TRACE
 	CXXFLAGS += -D TRACE
 endif
@@ -72,8 +73,9 @@ mrproper:
 ###########################################################
 
 word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS)))
+postfix_macros := $(addprefix -D DISABLE_P,$(subst $(comma),$(space),$(DISABLE_POSTFIXES)))
 $(OBJS): obj/%.o: src/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros)
+	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros) $(postfix_macros)
 
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)

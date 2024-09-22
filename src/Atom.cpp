@@ -48,7 +48,10 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
     using PostfixLeftPart = std::variant<Atom*, PostfixSquareBracketsGroup*, PostfixParenthesesGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
+    [[maybe_unused]]
     BEGIN:
+#ifndef DISABLE_SBG
+#ifndef DISABLE_PSBG_IN_ATOM
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
         auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
@@ -61,6 +64,10 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         accumulatedPostfixLeftPart = curr_psbg;
         goto BEGIN;
     }
+#endif // DISABLE_PSBG_IN_ATOM
+#endif // DISABLE_SBG
+#ifndef DISABLE_PG
+#ifndef DISABLE_PPG_IN_ATOM
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
         auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
@@ -73,6 +80,8 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         accumulatedPostfixLeftPart = curr_ppg;
         goto BEGIN;
     }
+#endif // DISABLE_PPG_IN_ATOM
+#endif // DISABLE_PG
 
     return std::visit(overload{
         [](Atom* atom) -> consumeAtom_RetType {return atom;},
