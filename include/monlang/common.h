@@ -51,7 +51,7 @@ MayFail<R> mayfail_convert(MayFail<T> inputMayfail, auto converter) {
 }
 
 template <typename T>
-T mayfail_unwrap(MayFail<T> inputMayfail) {
+T& mayfail_unwrap(MayFail<T> inputMayfail) {
     return inputMayfail.has_value()?
             inputMayfail.value()
             : inputMayfail.error().val;

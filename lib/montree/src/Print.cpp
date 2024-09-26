@@ -269,33 +269,43 @@ void Print::operator()(Atom* atom) {
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
-    numbering.push(NO_NUMBERING);
+    // this is a hack, we save the stack and empty it before the calls..
+    // ..so that we get rid of the `Word: ` prefix. We restore the stack..
+    // ..after the calls
+    auto save_stack = numbering;
+    numbering = std::stack<int>();
 
     currIndent++;
     operator()(MayFail<Word>(psbg->leftPart));
     currIndent--;
 
-    numbering.push(NO_NUMBERING);
-
     currIndent++;
-    operator()(mayfail_convert<Word>(psbg->rightPart));
+    operator()(MayFail<Word>(&mayfail_unwrap(psbg->rightPart)));
     currIndent--;
+
+    // restore the stack
+    numbering = save_stack;
 }
 
 void Print::operator()(PostfixParenthesesGroup* ppg) {
     outputLine("PostfixParenthesesGroup");
 
-    numbering.push(NO_NUMBERING);
+    // this is a hack, we save the stack and empty it before the calls..
+    // ..so that we get rid of the `Word: ` prefix. We restore the stack..
+    // ..after the calls
+    auto save_stack = numbering;
+    numbering = std::stack<int>();
 
     currIndent++;
     operator()(MayFail<Word>(ppg->leftPart));
     currIndent--;
 
-    numbering.push(NO_NUMBERING);
-
     currIndent++;
-    operator()(mayfail_convert<Word>(ppg->rightPart));
+    operator()(MayFail<Word>(&mayfail_unwrap(ppg->rightPart)));
     currIndent--;
+
+    // restore the stack
+    numbering = save_stack;
 }
 
 void Print::operator()(auto) {

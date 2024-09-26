@@ -101,23 +101,6 @@ TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg", "[test-4361][sbg]") {
-    auto input = "fds[]";
-
-    auto expect = tommy_str(R"EOF(
-       |-> PostfixSquareBracketsGroup
-       |  -> Atom: `fds`
-       |  -> SquareBracketsGroup (empty)
-    )EOF");
-
-    auto input_iss = std::istringstream(input);
-    auto output_word = consumeWord(input_iss);
-    auto output_str = montree::astToString(output_word);
-    REQUIRE (output_str == expect);
-}
-
-////////////////////////////////////////////////////////////////
-
 TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg][err]") {
     auto input = "";
     

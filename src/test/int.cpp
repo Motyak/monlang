@@ -35,7 +35,7 @@ TEST_CASE ("nested curly brackets group", "[test-1000][int]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix pg", "[test-1001][sbg]") {
+TEST_CASE ("postfix pg", "[test-1001][int]") {
     auto input = "fds(a)(b)";
 
     auto expect = tommy_str(R"EOF(
