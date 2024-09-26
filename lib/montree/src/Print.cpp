@@ -269,9 +269,13 @@ void Print::operator()(Atom* atom) {
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
+    numbering.push(NO_NUMBERING);
+
     currIndent++;
     operator()(MayFail<Word>(psbg->leftPart));
     currIndent--;
+
+    numbering.push(NO_NUMBERING);
 
     currIndent++;
     operator()(mayfail_convert<Word>(psbg->rightPart));
@@ -281,9 +285,13 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
 void Print::operator()(PostfixParenthesesGroup* ppg) {
     outputLine("PostfixParenthesesGroup");
 
+    numbering.push(NO_NUMBERING);
+
     currIndent++;
     operator()(MayFail<Word>(ppg->leftPart));
     currIndent--;
+
+    numbering.push(NO_NUMBERING);
 
     currIndent++;
     operator()(mayfail_convert<Word>(ppg->rightPart));

@@ -134,3 +134,25 @@ TEST_CASE ("ProgramSentence ERR trailing atom right after a non-atom", "[wbh-000
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
+    auto input = "(a(b) / c)";
+    auto expect = tommy_str(R"EOF(
+        -> ParenthesesGroup
+          -> Term
+            -> Word #1: PostfixParenthesesGroup
+              -> Word: Atom: `a`
+              -> Word: ParenthesesGroup
+                -> Term
+                  -> Word: Atom: `b`
+            -> Word #2: Atom: `/`
+            -> Word #3: Atom: `c`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
