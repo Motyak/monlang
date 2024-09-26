@@ -51,7 +51,8 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-            SHOULD_NOT_HAPPEN(); // how could this happen, will see
+            // this happens when we have an Atom right after a non-Atom (without a space in between)
+            return std::unexpected(Malformed(ProgramSentence{programWords}, Error{102}));
         }
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, Error{122}));

@@ -39,7 +39,8 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-            SHOULD_NOT_HAPPEN(); // cannot happen because Atom's error drops first
+            // this happens when we have an Atom right after a non-Atom (without a space in between)
+            return std::unexpected(Malformed(Term{words}, Error{103}));
         }
 
         currentWord = consumeWord(input);

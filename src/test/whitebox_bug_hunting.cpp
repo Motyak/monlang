@@ -22,7 +22,7 @@ TEST_CASE ("ERR nested malformed sbg", "[wbh-0001][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output = consumeSquareBracketsGroupStrictly(input_iss);
     auto output_word = mayfail_convert<Word>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -73,7 +73,7 @@ TEST_CASE ("multiple terms in sbg", "[wbh-0003][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output = consumeSquareBracketsGroupStrictly(input_iss);
     auto output_word = mayfail_convert<Word>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -97,5 +97,40 @@ TEST_CASE ("sbg in the middle of sbg", "[wbh-0004][wbh]") {
     auto input_iss = std::istringstream(input);
     auto output_word = consumeWord(input_iss);
     auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("Term ERR trailing atom right after a non-atom", "[wbh-0005][wbh]") {
+    auto input = "[[]fds]";
+
+    auto expect = tommy_str(R"EOF(
+       |~> SquareBracketsGroup
+       |  ~> Term
+       |    -> Word: SquareBracketsGroup (empty)
+       |    ~> ERR-103
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("ProgramSentence ERR trailing atom right after a non-atom", "[wbh-0006][wbh]") {
+    auto input = "[]fds";
+
+    auto expect = tommy_str(R"EOF(
+       |~> ProgramSentence
+       |  -> ProgramWord: SquareBracketsGroup (empty)
+       |  ~> ERR-102
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
+    auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
