@@ -33,8 +33,8 @@ class Print : public AstVisitor<void> {
     static constexpr int NO_NUMBERING = -1;
     
     void handleTerm(const MayFail<Term>&);
-    void output(const std::string&);
-    void outputLine(const std::string& line = "");
+    void output(const char* strs...);
+    void outputLine(const char* strs...);
 
     std::ostream& out;
     std::stack<int> numbering;

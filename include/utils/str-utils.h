@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-std::string replace_all(const std::string& str, const std::string& from, const std::string& to)
+inline std::string replace_all(const std::string& str, const std::string& from, const std::string& to)
 {
     std::string _str = str; // working variable, needs to be mutable for ::replace() to work
 
@@ -19,7 +19,7 @@ std::string replace_all(const std::string& str, const std::string& from, const s
 
 #define escape_newlines(str) (replace_all(str, std::string(1, /*LF*/char(10)), "\\n"))
 
-std::vector<std::string> split(const std::string& str, const std::string& delim) {
+inline std::vector<std::string> split(const std::string& str, const std::string& delim) {
     std::vector<std::string> res;
 
     size_t start_pos = 0;
@@ -34,6 +34,11 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     res.push_back(str.substr(start_pos));
 
     return res;
+}
+
+template <typename T>
+inline const char* itoa(T num) {
+    return std::to_string(num).c_str();
 }
 
 #endif // STR_UTILS_H

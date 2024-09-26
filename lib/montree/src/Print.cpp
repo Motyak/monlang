@@ -13,17 +13,40 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/PostfixParenthesesGroup.h>
+
 #include <utils/nb-utils.h>
+#include <utils/str-utils.h>
+#include <cstdarg>
+
+#define until(x) while(!(x))
+
+#define SERIALIZE_ERR_CODE(x) serializeErrCode(x).c_str()
+
+#define outputLine(...) \
+    output(__VA_ARGS__ __VA_OPT__(,) "\n", nullptr); \
+    startOfNewLine = true
+
+#define output(a, ...) output(a, __VA_ARGS__ __VA_OPT__(,) nullptr)
+void (Print::output)(const char* strs...) {
+    if (startOfNewLine) {
+        out << std::string(currIndent * TAB_SIZE, SPACE);
+    }
+
+    va_list args;
+    va_start(args, strs);
+    const char* currArg = strs;
+    until (currArg == nullptr) {
+        out << currArg;
+        currArg = va_arg(args, const char*);
+    }
+    va_end(args);
+
+    startOfNewLine = false;
+}
 
 void Print::operator()(const MayFail<Program>& program) {
-    Program prog;
-    if (program.has_value()) {
-        prog = program.value();
-        outputLine("-> Program");
-    } else {
-        prog = program.error().val;
-        outputLine("~> Program");
-    }
+    const Program& prog = mayfail_unwrap(program);
+    outputLine(program.has_value()? "-> Program" : "~> Program");
 
     if (prog.sentences.size() > 0) {
         currIndent++;
@@ -47,22 +70,16 @@ void Print::operator()(const MayFail<Program>& program) {
 }
 
 void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
-    ProgramSentence progSentence;
-    if (programSentence.has_value()) {
-        progSentence = programSentence.value();
-        output("-> ");
-    } else {
-        progSentence = programSentence.error().val;
-        output("~> ");
-    }
+    const ProgramSentence& progSentence = mayfail_unwrap(programSentence);
+    output(programSentence.has_value()? "-> " : "~> ");
 
     if (numbering.empty()) {
-        outputLine(std::string() + "ProgramSentence");
+        outputLine("ProgramSentence");
     } else {
         if (int n = numbering.top(); n == NO_NUMBERING) {
-            outputLine(std::string() + "ProgramSentence");
+            outputLine("ProgramSentence");
         } else {
-            outputLine(std::string() + "ProgramSentence #" + std::to_string(n));
+            outputLine("ProgramSentence #", itoa(n));
         }
         numbering.pop();
     }
@@ -86,7 +103,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
 
     if (!programSentence.has_value()) {
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(programSentence));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(programSentence));
     }
 
     // note: should always enter since a ProgramSentence cannot be empty
@@ -96,15 +113,9 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
 }
 
 void Print::operator()(const MayFail<Word>& word) {
-    curWord = word; // needed by word handlers
-    Word word_;
-    if (word.has_value()) {
-        word_ = word.value();
-        output("-> ");
-    } else {
-        word_ = word.error().val;
-        output("~> ");
-    }
+    this->curWord = word; // needed by word handlers
+    const Word& word_ = mayfail_unwrap(word);
+    output(word.has_value()? "-> " : "~> ");
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
@@ -112,9 +123,9 @@ void Print::operator()(const MayFail<Word>& word) {
         return;
     }
 
-    output(std::string() + (areProgramWords? "ProgramWord" : "Word"));
+    output(areProgramWords? "ProgramWord" : "Word");
     if (int n = numbering.top(); n != NO_NUMBERING) {
-        output(std::string() + " #" + std::to_string(n));
+        output(" #", itoa(n));
     }
     numbering.pop();
     output(": ");
@@ -148,7 +159,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
 
     if (sbg->terms.size() == 0) {
         ASSERT(!curWord_.has_value());
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
     } else {
         int nb_of_malformed_terms = 0;
         for (auto term : sbg->terms) {
@@ -158,7 +169,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
             handleTerm(term);
         }
         if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+            outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
         }
     }
 
@@ -188,7 +199,7 @@ void Print::operator()(ParenthesesGroup* pg) {
 
     if (pg->terms.size() == 0) {
         ASSERT(!curWord_.has_value());
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
     } else {
         int nb_of_malformed_terms = 0;
         for (auto term : pg->terms) {
@@ -198,7 +209,7 @@ void Print::operator()(ParenthesesGroup* pg) {
             handleTerm(term);
         }
         if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+            outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
         }
     }
 
@@ -224,7 +235,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
         auto term = cbg->term.value();
         handleTerm(term);
         if (!curWord_.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+            outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
         }
         currIndent--;
         return;
@@ -240,7 +251,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
 
     if (cbg->sentences.size() == 0) {
         ASSERT(!curWord_.has_value());
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
     } else {
         int nb_of_malformed_sentences = 0;
         for (auto sentence : cbg->sentences) {
@@ -250,7 +261,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
             operator()(sentence);
         }
         if (nb_of_malformed_sentences == 0 && !curWord_.has_value()) {
-            outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord_));
+            outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord_));
         }
     }
 
@@ -258,10 +269,10 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
 }
 
 void Print::operator()(Atom* atom) {
-    outputLine(std::string() + "Atom: `" + atom->value + "`");
+    outputLine("Atom: `", atom->value.c_str(), "`");
     if (!curWord.has_value()) {
         currIndent++;
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(curWord));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(curWord));
         currIndent--;
     }
 }
@@ -327,12 +338,12 @@ void Print::handleTerm(const MayFail<Term>& term) {
     }
 
     if (numbering.empty()) {
-        outputLine(std::string() + "Term");
+        outputLine("Term");
     } else {
         if (int n = numbering.top(); n == NO_NUMBERING) {
-            outputLine(std::string() + "Term");
+            outputLine("Term");
         } else {
-            outputLine(std::string() + "Term #" + std::to_string(n));
+            outputLine("Term #", itoa(n));
         }
         numbering.pop();
     }
@@ -359,24 +370,10 @@ void Print::handleTerm(const MayFail<Term>& term) {
     }
 
     if (nb_of_malformed_words == 0 && !term.has_value()) {
-        outputLine(std::string() + "~> ERR-" + serializeErrCode(term));
+        outputLine("~> ERR-", SERIALIZE_ERR_CODE(term));
     }
 
     if (term_.words.size() > 0 || !term.has_value()) {
         currIndent--;
     }
-}
-
-void Print::output(const std::string& chars) {
-    if (startOfNewLine) {
-        out << std::string(currIndent * TAB_SIZE, SPACE);
-    }
-    out << chars;
-    startOfNewLine = false;
-}
-
-void Print::outputLine(const std::string& line) {
-    output(line);
-    out << std::endl;
-    startOfNewLine = true;
 }
