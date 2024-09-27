@@ -27,10 +27,6 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     // });
 
 #ifndef DISABLE_SBG
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        SquareBracketsGroup::RESERVED_CHARACTERS
-    });
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto ret = consumeSquareBracketsGroup(input);
         return std::visit(overload{
@@ -38,13 +34,13 @@ MayFail<Word> consumeWord(std::istringstream& input) {
             [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
         }, ret);
     }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        SquareBracketsGroup::RESERVED_CHARACTERS
+    });
 #endif
 
 #ifndef DISABLE_PG
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        ParenthesesGroup::RESERVED_CHARACTERS
-    });
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto ret = consumeParenthesesGroup(input);
         return std::visit(overload{
@@ -53,16 +49,20 @@ MayFail<Word> consumeWord(std::istringstream& input) {
             [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
         }, ret);
     }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        ParenthesesGroup::RESERVED_CHARACTERS
+    });
 #endif
 
 #ifndef DISABLE_CBG
+    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input)); // TODO: no convert should be needed
+    }
     terminatorCharacters = vec_union({
         terminatorCharacters,
         CurlyBracketsGroup::RESERVED_CHARACTERS
     });
-    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input)); // TODO: no convert should be needed
-    }
 #endif
 
     /* Atom is the "fall-through" Word */
