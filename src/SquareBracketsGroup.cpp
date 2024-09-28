@@ -5,6 +5,8 @@
 /* impl only */
 #include <monlang/PostfixSquareBracketsGroup.h>
 
+#include <algorithm>
+
 #define until(x) while(!(x))
 
 const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = {'['};

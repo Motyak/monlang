@@ -3,6 +3,8 @@
 
 #include <monlang/common.h>
 
+#include <variant>
+
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 
