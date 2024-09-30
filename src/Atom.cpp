@@ -83,9 +83,8 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
 #endif // DISABLE_PPG_IN_ATOM
 #endif // DISABLE_PG
 
-    return std::visit(overload{
-        [](Atom* atom) -> consumeAtom_RetType {return atom;},
-        [](PostfixSquareBracketsGroup* psbg) -> consumeAtom_RetType {return psbg;},
-        [](PostfixParenthesesGroup* ppg) -> consumeAtom_RetType {return ppg;}
-    }, accumulatedPostfixLeftPart);
+    return std::visit(
+        [](auto word) -> consumeAtom_RetType {return word;},
+        accumulatedPostfixLeftPart
+    );
 }

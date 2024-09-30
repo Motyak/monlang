@@ -28,11 +28,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
 #ifndef DISABLE_SBG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto ret = consumeSquareBracketsGroup(input);
-        return std::visit(overload{
-            [](MayFail<SquareBracketsGroup*> sbg){return mayfail_cast<Word>(sbg);},
-            [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
-        }, ret);
+        return mayfail_cast<Word>(consumeSquareBracketsGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
@@ -42,12 +38,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
 #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        auto ret = consumeParenthesesGroup(input);
-        return std::visit(overload{
-            [](MayFail<ParenthesesGroup*> pg){return mayfail_cast<Word>(pg);},
-            [](MayFail<PostfixParenthesesGroup*> ppg){return mayfail_cast<Word>(ppg);},
-            [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
-        }, ret);
+        return mayfail_cast<Word>(consumeParenthesesGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
@@ -66,11 +57,5 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 #endif
 
     /* Atom is the "fall-through" Word */
-
-    auto ret = consumeAtom(terminatorCharacters, input);
-    return std::visit(overload{
-        [](MayFail<Atom*> atom){return mayfail_cast<Word>(atom);},
-        [](MayFail<PostfixParenthesesGroup*> ppg){return mayfail_cast<Word>(ppg);},
-        [](MayFail<PostfixSquareBracketsGroup*> psbg){return mayfail_cast<Word>(psbg);}
-    }, ret);
+    return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
 }

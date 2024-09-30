@@ -3,6 +3,7 @@
 
 #include <utils/mem-utils.h>
 #include <utils/assert-util.h>
+#include <utils/variant-utils.h>
 
 #include <vector>
 #include <sstream>
@@ -36,6 +37,17 @@ template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
     return inputMayfail.transform([](auto t){return R{t};})
             .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+}
+
+template <typename R, typename... Targs>
+MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
+    return std::visit(
+        [](auto inputMayfail){
+            return inputMayfail.transform([](auto t){return R{t};})
+                    .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+        },
+        inputMayfailVariant
+    );
 }
 
 template <typename R, typename T>
