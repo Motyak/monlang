@@ -89,12 +89,12 @@ $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 # libs
 ############################################################
 
-# aggregate all lib objects into one static lib #
+## aggregate all lib objects into one static lib ##
 .SECONDEXPANSION:
 lib/libs.a: $$(lib_objects)
 	$(AR) $(ARFLAGS) $@ $^
 
-# aggregate all test lib objects into one static test lib #
+## aggregate all test lib objects into one static test lib ##
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
 # when BUILD_LIBS_ONCE is unset => we always enter this recipe
