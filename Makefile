@@ -3,6 +3,7 @@ include utils.mk # askmake, buildmake, clean, not, shell_onrun, shouldrebuild
 SHELL := /bin/bash
 RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -Werror -O3 -I include
 CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
@@ -43,6 +44,8 @@ Word \
 OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 
+RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
+
 TEST_FILENAMES := $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cpp=%))
 TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
@@ -57,25 +60,32 @@ all: main
 
 main: $(OBJS)
 
+dist: $(RELEASE_OBJS)
+	$(SHELL) -x release.sh
+
 test: bin/test/all.elf
 	./run_tests.sh
 
 # able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
 	@# $@ DONE
-$(call clean, $(RM) $(OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
+$(call clean, $(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
 
 mrproper:
-	$(RM) bin obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
+	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
-.PHONY: all main test clean mrproper
+.PHONY: all main dist test clean mrproper
 
 ###########################################################
 
 word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS)))
 postfix_macros := $(addprefix -D DISABLE_P,$(subst $(comma),$(space),$(DISABLE_POSTFIXES)))
+
 $(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros) $(postfix_macros)
+
+$(RELEASE_OBJS): obj/release/%.o: src/%.cpp
+	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(word_macros) $(postfix_macros)
 
 $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
@@ -116,7 +126,7 @@ lib/montree/obj/montree.o:
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-$(call shell_onrun, mkdir -p obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
+$(call shell_onrun, mkdir -p obj/release obj/test .deps/test bin/test $(LIB_OBJ_DIRS))
 
 ## debug settings ##
 $(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
