@@ -97,6 +97,7 @@ lib/libs.a: $$(lib_objects)
 # aggregate all test lib objects into one static test lib #
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
+# when BUILD_LIBS_ONCE is unset => we always enter this recipe
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 
@@ -107,11 +108,8 @@ lib/catch2/obj/catch_amalgamated.o:
 
 ## compiles our own lib used for testing (montree) ##
 test_lib_objects += lib/montree/obj/montree.o
-ifeq (,$(BUILD_LIBS_ONCE))
-ifneq (,$(call askmake, lib/montree))
-.PHONY: lib/montree/obj/montree.o
-endif
-endif
+$(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
+	.PHONY: lib/montree/obj/montree.o)
 lib/montree/obj/montree.o:
 	$(call buildmake, lib/montree)
 
