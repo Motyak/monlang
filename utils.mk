@@ -26,11 +26,14 @@ endef
 # askmake: invoke make -q for a target dir
 # $(1): target dir
 # returns: true if the target needs to be rebuild, false otherwise
+# NOTE: outer shell expression is only used to split in separate line..
+#       ..multiple `$(..)` expressions in a defined function.
+#       The later oneline would have been equivalent, but is uglier:
+#       $(shell ! $(MAKE) -qsC $(1) && echo true)$(if $(.SHELLSTATUS:1=),$(eval __SHOULDREBUILD += $(1)))
 define askmake
-$(shell \
-	if ! $(MAKE) -qsC $(1); then \
-		echo true; \
-	fi)
+$(shell echo \
+	$(shell ! $(MAKE) -qsC $(1) && echo true) \
+	$(if $(.SHELLSTATUS:1=),$(eval __SHOULDREBUILD += $(1))))
 endef
 
 # buildmake: generate the commands to make the target
@@ -51,7 +54,7 @@ $(shell \
 	for lib in $(2); do \
 		if [ ! -e $$lib ]; then { echo true; exit 0; }; fi; \
 		if [ $$lib -nt $(1) ]; then { echo true; exit 0; }; fi; \
-	done)
+	done)$(__SHOULDREBUILD)
 endef
 
 # clean: run 'clean' target recipe in a verbose shell, support dry run as well
