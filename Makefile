@@ -97,27 +97,17 @@ lib/libs.a: $$(lib_objects)
 # aggregate all test lib objects into one static test lib #
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_lib_objects)
-# (in 'BUILD_LIBS_ONCE= ' mode) we always enter the recipe..
-# .. to check if libs are outdated (by questioning their make)
-#ifneq (,$(or $(BUILD_LIBS_ONCE), \
-#			 $(call not, $(BUILD_LIBS_ONCE) $(call checkmakeflags, n q))))
-#	$(info __SHOULDREBUILD `$(__SHOULDREBUILD)`)
-#	$(info shouldrebuild `$(call shouldrebuild, $@, $^)`)
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
-#endif
 
 ## compiles lib used for testing (catch2) ##
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-#ifneq (,$(call askmake, lib/catch2)) # useless
 	$(call buildmake, lib/catch2)
-#endif # useless
 
 ## compiles our own lib used for testing (montree) ##
 test_lib_objects += lib/montree/obj/montree.o
 ifeq (,$(BUILD_LIBS_ONCE))
-#$(info askmake `$(call askmake, lib/montree)`)
 ifneq (,$(call askmake, lib/montree))
 .PHONY: lib/montree/obj/montree.o
 endif
