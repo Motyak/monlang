@@ -52,11 +52,10 @@ xyz -> custom error (refer to manual)
 
 === MAKEFILE DESIGN ===
 
-Support:
+Support :
 - parallel mode (-j --jobs)
 - question mode (-q --question)
 - dry mode (-n --dryrun)
-  -> ATM when both disabling the variable 'BUILD_LIBS_ONCE' and passing the -n flag, it fails to detect when it should repackage the libs
 
 Each lib should have its own build system (whether it's a Makefile or something else), we don't want to check ourselves if a lib is up-to-date, we want to use its build system instead.
 By default the libs are built only once, even if their code changes afterward.
