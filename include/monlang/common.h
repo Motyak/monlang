@@ -3,7 +3,6 @@
 
 #include <utils/mem-utils.h>
 #include <utils/assert-util.h>
-#include <utils/variant-utils.h>
 
 #include <vector>
 #include <sstream>
