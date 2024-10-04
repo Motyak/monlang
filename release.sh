@@ -2,6 +2,9 @@
 shopt -s nullglob globstar
 set -o errexit
 
+## package release objects (in background job) ##
+ar rcs dist/monlang-parser.a obj/release/**/*.o & package_proc_id=$!
+
 ## copy public header files ##
 rm -rf dist/monlang-parser; mkdir -p $_
 cp -r include/monlang/* -t dist/monlang-parser/
@@ -31,10 +34,10 @@ cat <<'EOF'
 namespace LV1 {
     using Ast = ::Ast;
     using AstVisitor = ::AstVisitor;
+    using ValidAstVisitor = ::ValidAstVisitor;
 }
 EOF
 )
 perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
 
-## package release objects ##
-ar rcs dist/monlang-parser.a obj/release/**/*.o
+wait $package_proc_id
