@@ -1,12 +1,18 @@
 #!/bin/bash
 shopt -s nullglob globstar
-set -o errexit
+set -o errexit -o pipefail
+
+exec 10> /tmp/monlang_trace.txt
+export BASH_XTRACEFD=10
+trap '{ echo RELEASE FAILED, trace was saved in /tmp/monlang_trace.txt; } 10>/dev/null' ERR
+set -o xtrace
+
+rm -rf dist/monlang-parser; mkdir -p $_
 
 ## package release objects (in background job) ##
 ar rcs dist/monlang-parser.a obj/release/**/*.o & package_proc_id=$!
 
 ## copy public header files ##
-rm -rf dist/monlang-parser; mkdir -p $_
 cp -r include/monlang/* -t dist/monlang-parser/
 for header in dist/monlang-parser/**/*.h; do
     perl -i -pe 's/<monlang\//<monlang-parser\//g' $header;
@@ -41,3 +47,5 @@ EOF
 perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
 
 wait $package_proc_id
+
+echo RELEASE DONE

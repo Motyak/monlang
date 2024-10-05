@@ -61,7 +61,7 @@ all: main
 main: $(OBJS)
 
 dist: $(RELEASE_OBJS)
-	$(SHELL) -x release.sh
+	./release.sh
 
 test: bin/test/all.elf
 	./run_tests.sh
