@@ -39,7 +39,7 @@ endef
 # buildmake: (allows us to hide sub-make commands in dry run mode)
 # $(1): target dir
 define buildmake
-$(MAKE) -C $(1)
+$(MAKE) -C $(strip $(1))
 endef
 
 # shouldrebuild: check if target is missing or outdated based on dependencies
