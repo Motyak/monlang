@@ -25,16 +25,21 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{125}));
     }
+    // empty sentences are valid, just discarded by the Program
+    if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+        input.ignore(1);
+        return ProgramSentence{};
+    }
     if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{126}));
-    }
-    if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, Error{121}));
     }
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(1);
         return ProgramSentence{};
+    }
+    if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{121}));
     }
 
     std::vector<MayFail<ProgramWord>> programWords;
@@ -68,6 +73,11 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(ProgramSentence{programWords}, Error{120}));
+    }
+
+    // eat and discard trailing newlines as well
+    while (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+        input.ignore(1);
     }
 
     return ProgramSentence{programWords};

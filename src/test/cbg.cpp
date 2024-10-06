@@ -139,6 +139,28 @@ TEST_CASE ("ERR multiline cbg must contain at least one sentence", "[test-4117][
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("ERR multiline cbg must contain at least one sentence (empty lines)", "[test-4155][cbg][err]") {
+    auto input = tommy_str(R"EOF(
+       |{
+       |
+       |\s\s\s\s
+       |}
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> CurlyBracketsGroup
+       |  ~> ERR-413
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("ERR prog sentence wrong indent", "[test-4118][cbg][err]") {
     auto input = tommy_str(R"EOF(
        |{

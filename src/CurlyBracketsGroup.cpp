@@ -55,14 +55,21 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     MayFail<ProgramSentence> currentSentence;
 
     currentSentence = consumeProgramSentence(input, indentLevel);
+    if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
+        goto LOOP; // ignore empty sentences
+    }
     sentences.push_back(currentSentence);
     if (!currentSentence.has_value()) {
         indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{419}));
     }
 
+    LOOP:
     until (input.peek() == EOF || !peekSequence({{SPACE, 4 * indentLevel}}, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
+        if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
+            continue; // ignore empty sentences
+        }
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
             indentLevel--; // restore indent level, because static
@@ -73,6 +80,11 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     if (!consumeSequence(indentedTermSeq, input)) {
         indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{410}));
+    }
+
+    if (sentences.size() == 0) {
+        indentLevel--; // restore indent level, because static
+        return std::unexpected(Malformed(CurlyBracketsGroup{}, Error{413}));
     }
 
     indentLevel--;

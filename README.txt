@@ -39,7 +39,8 @@ xyz -> custom error (refer to manual)
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term
 
-412 multiline CurlyBracketsGroup must contain at least one sentence
+412 multiline CurlyBracketsGroup must contain at least one sentence (hit terminator right after initiator)
+413 multiline CurlyBracketsGroup must contain at least one sentence (block with empty lines exclusively)
 
 421 ParenthesesGroup can't start with a continuator (leading continuator met)
 422 ParenthesesGroup continuator must precede a word (trailing continuator met)

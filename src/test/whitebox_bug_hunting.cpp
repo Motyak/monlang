@@ -160,7 +160,7 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0008][wbh]") {
+TEST_CASE ("should not print programsentence error when any malformed program words", "[wbh-0008][wbh]") {
     auto input = tommy_str(R"EOF(
         {
             b
@@ -175,6 +175,54 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0008][wbh]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeProgramSentence(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("discard in-between indented empty lines in cbg", "[wbh-0009][wbh]") {
+    auto input = tommy_str(R"EOF(
+       |{
+       |    fds
+       |\s\s\s\s
+       |    sdf
+       |}
+    )EOF");
+    auto expect = tommy_str(R"EOF(
+        -> CurlyBracketsGroup
+          -> ProgramSentence #1
+            -> ProgramWord: Atom: `fds`
+          -> ProgramSentence #2
+            -> ProgramWord: Atom: `sdf`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("discard in-between non-indented empty lines in cbg", "[wbh-0010][wbh]") {
+    auto input = tommy_str(R"EOF(
+       |{
+       |    fds
+       |
+       |    sdf
+       |}
+    )EOF");
+    auto expect = tommy_str(R"EOF(
+        -> CurlyBracketsGroup
+          -> ProgramSentence #1
+            -> ProgramWord: Atom: `fds`
+          -> ProgramSentence #2
+            -> ProgramWord: Atom: `sdf`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
