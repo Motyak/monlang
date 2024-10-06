@@ -32,7 +32,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
 
     /* handle single term expression */
-    if (!peekSequence({NEWLINE}, input)) {
+    if (!peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         std::vector<char> termTerminatorChars = {
             sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value(),
         };
@@ -43,7 +43,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
         return CurlyBracketsTerm(term);
     }
 
-    input.ignore(1); // consume newline
+    input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
 
     if (peekSequence(indentedTermSeq, input)) {
         return std::unexpected(Malformed(CurlyBracketsGroup{}, Error{412}));

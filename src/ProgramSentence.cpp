@@ -27,7 +27,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     }
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(1);
+        input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
         return ProgramSentence{};
     }
     if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
@@ -35,7 +35,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     }
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(1);
+        input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
         return ProgramSentence{};
     }
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
@@ -77,7 +77,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
 
     // eat and discard trailing newlines as well
     while (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(1);
+        input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
     }
 
     return ProgramSentence{programWords};
