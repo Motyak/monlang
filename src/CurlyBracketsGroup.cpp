@@ -70,7 +70,6 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
         }
     }
 
-
     if (!consumeSequence(indentedTermSeq, input)) {
         indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, Error{410}));

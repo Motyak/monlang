@@ -1,5 +1,6 @@
 // THIS TEST FILE SHOULD NOT BE ADDED TO `all.cpp`
 
+#include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/Word.h>
@@ -153,6 +154,27 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeWord(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0008][wbh]") {
+    auto input = tommy_str(R"EOF(
+        {
+            b
+    )EOF");
+    auto expect = tommy_str(R"EOF(
+        ~> ProgramSentence
+          ~> ProgramWord: CurlyBracketsGroup
+            ~> ProgramSentence
+              -> ProgramWord: Atom: `b`
+              ~> ERR-120
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }

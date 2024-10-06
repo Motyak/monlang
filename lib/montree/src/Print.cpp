@@ -97,12 +97,16 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
         numbering.push(NO_NUMBERING);
     }
 
+    int malformedProgramWords = 0;
     for (auto programWord: progSentence.programWords) {
         areProgramWords = true;
         operator()(mayfail_cast<Word>(programWord));
+        if (!programWord.has_value()) {
+            malformedProgramWords += 1;
+        }
     }
 
-    if (!programSentence.has_value()) {
+    if (!programSentence.has_value() && malformedProgramWords == 0) {
         outputLine("~> ERR-", SERIALIZE_ERR_CODE(programSentence));
     }
 
