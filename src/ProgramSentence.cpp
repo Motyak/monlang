@@ -22,18 +22,19 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
         sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
     };
 
-    if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, Error{126}));
-    }
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{125}));
+    }
+    if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
+        return std::unexpected(Malformed(ProgramSentence{}, Error{126}));
     }
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(ProgramSentence{}, Error{121}));
     }
-    // ProgramSentence cannot be empty (special "group" grammar entity)
+    // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, Error{124}));
+        input.ignore(1);
+        return ProgramSentence{};
     }
 
     std::vector<MayFail<ProgramWord>> programWords;

@@ -19,6 +19,22 @@ TEST_CASE ("empty program", "[test-1111][base]") {
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("empty ProgramSentences == empty Program as well", "[test-1116][base]") {
+    auto input = tommy_str(R"EOF(
+       |
+       |
+    )EOF");
+
+    auto expect = "-> Program";
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("one program sentence", "[test-1112][base]") {
     auto input = tommy_str(R"EOF(
        |fds
@@ -97,26 +113,6 @@ TEST_CASE ("two two-program-words sentences", "[test-1115][base]") {
        |  -> ProgramSentence #2
        |    -> ProgramWord #1: Atom: `dfs`
        |    -> ProgramWord #2: Atom: `dsf`
-    )EOF");
-
-    auto input_iss = std::istringstream(input);
-    auto output = consumeProgram(input_iss);
-    auto output_str = montree::astToString(output);
-    REQUIRE (output_str == expect);
-}
-
-////////////////////////////////////////////////////////////////
-
-TEST_CASE ("ERR empty ProgramSentence", "[test-1116][base][err]") {
-    auto input = tommy_str(R"EOF(
-       |
-       |
-    )EOF");
-
-    auto expect = tommy_str(R"EOF(
-       |~> Program
-       |  ~> ProgramSentence
-       |    ~> ERR-124
     )EOF");
 
     auto input_iss = std::istringstream(input);

@@ -8,6 +8,9 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
     MayFail<ProgramSentence> currentSentence;
     while (input.peek() != EOF) {
         currentSentence = consumeProgramSentence(input);
+        if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
+            continue; // ignore empty sentences
+        }
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
             return std::unexpected(Malformed(Program{sentences}, Error{119}));
