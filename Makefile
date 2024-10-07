@@ -65,7 +65,7 @@ test: bin/test/all.elf
 
 # performs "sanity" check
 check: bin/test/bigbang.elf
-	bin/test/bigbang.elf
+	bin/test/bigbang.elf --allow-running-no-tests
 
 # able to run in parallel mode, e.g.: make -j check dist
 dist: $(RELEASE_OBJS) .WAIT
