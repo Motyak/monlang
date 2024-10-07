@@ -51,6 +51,10 @@ Error::operator int() const {
     return this->code;
 }
 
+std::ostream& operator<<(std::ostream& os, Error err) {
+    return os << err.fmt;
+}
+
 CharacterAppearance::CharacterAppearance(char c, int ntimes) : c(c), ntimes(ntimes) {
     ;
 }
@@ -84,14 +88,14 @@ std::expected<void, Error> consumeSequence(const std::vector<CharacterAppearance
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
-                return std::unexpected(Error{100});
+                return std::unexpected(ERR(100));
             }
             continue;
         }
 
         for (int i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
-                return std::unexpected(Error{101});
+                return std::unexpected(ERR(101));
             }
             input.ignore(1);
         }

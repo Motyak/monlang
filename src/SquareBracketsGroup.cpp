@@ -26,10 +26,10 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     };
 
     if (!consumeSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{}, Error{43}));
+        return std::unexpected(Malformed(SquareBracketsGroup{}, ERR(043)));
     }
     if (peekSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{}, Error{431}));
+        return std::unexpected(Malformed(SquareBracketsGroup{}, ERR(431)));
     }
     if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE));
@@ -46,7 +46,7 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     currentTerm = consumeTerm(termTerminatorChars, input);
     terms.push_back(currentTerm);
     if (!currentTerm.has_value()) {
-        return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{439}));
+        return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(439)));
     }
 
     until (input.peek() == EOF || std::any_of(
@@ -55,21 +55,21 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
             [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
         
         if (!consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{403}));
+            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(403)));
         }
         // if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        //     return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{432}));
+        //     return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(432)));
         // }
 
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
         if (!currentTerm.has_value()) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{439}));
+            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(439)));
         }
     }
 
     if (!consumeSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{terms}, Error{430}));
+        return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(430)));
     }
 
     return SquareBracketsGroup{terms};

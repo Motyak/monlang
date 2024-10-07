@@ -13,7 +13,7 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
         }
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
-            return std::unexpected(Malformed(Program{sentences}, Error{119}));
+            return std::unexpected(Malformed(Program{sentences}, ERR(119)));
         }
     }
     return Program{sentences};

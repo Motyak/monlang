@@ -18,7 +18,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Atom{}, Error{991}));
+        return std::unexpected(Malformed(Atom{}, ERR(991)));
     }
 
     std::string value;
@@ -33,7 +33,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 
     // means we hit a reserved character
     if (value.size() == 0) {
-        return std::unexpected(Malformed(Atom{}, Error{992}));
+        return std::unexpected(Malformed(Atom{}, ERR(992)));
     }
 
     return Atom{value};
@@ -59,7 +59,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
             whats_right_behind
         });
         if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_psbg, Error{329}));
+            return std::unexpected(Malformed(curr_psbg, ERR(329)));
         }
         accumulatedPostfixLeftPart = curr_psbg;
         goto BEGIN;
@@ -76,7 +76,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
             whats_right_behind
         });
         if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_ppg, Error{319}));
+            return std::unexpected(Malformed(curr_ppg, ERR(319)));
         }
         accumulatedPostfixLeftPart = curr_ppg;
         goto BEGIN;

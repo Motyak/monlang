@@ -17,8 +17,11 @@ constexpr char BACKSLASH = 92;
 
 struct Error {
     int code;
+    std::string fmt;
     operator int() const;
+    friend std::ostream& operator<<(std::ostream&, Error);
 };
+#define ERR(x) Error{atoi(#x), "ERR-"#x}
 
 #define OK() return std::expected<void, Error>()
 
@@ -76,10 +79,9 @@ T& mayfail_unwrap(MayFail<T>& inputMayfail) {
 }
 
 template <typename T>
-std::string serializeErrCode(MayFail<T> malformed) {
+std::string serializeErr(MayFail<T> malformed) {
     ASSERT(!malformed.has_value());
-    auto errCode = malformed.error().err.code;
-    return std::string() + (10 <= errCode && errCode <= 99? "0" : "") + std::to_string(errCode);
+    return malformed.error().err.fmt;
 }
 
 struct CharacterAppearance {
