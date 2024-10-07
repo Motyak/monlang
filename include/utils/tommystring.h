@@ -10,7 +10,7 @@ static std::string interpret_escape_sequences(std::string);
 static std::string replace_all(std::string str, const std::string& from, const std::string& to);
 
 #define tommy_str(raw_str) tommy_str(__FILE__, __LINE__, raw_str)
-std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
+inline std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
     /* /!\ only support indentation using tabs or 4 spaces times n */
 
     constexpr char TAB = 9;
@@ -68,7 +68,7 @@ std::string (tommy_str)(std::string filename, int lineno, std::string raw_str) {
     return res.substr(0, res.size() - 1);
 }
 
-std::string replace_all(std::string str, const std::string& from, const std::string& to)
+static std::string replace_all(std::string str, const std::string& from, const std::string& to)
 {
     size_t start_pos = 0;
     while ((start_pos = str.find(from, start_pos)) != std::string::npos)
@@ -80,7 +80,7 @@ std::string replace_all(std::string str, const std::string& from, const std::str
 }
 
 // /!\ will wrongly interpret escaped escape sequences (e.g.: '\\s' => '\SPACE instead of '\s')
-std::string interpret_escape_sequences(std::string str) {
+static std::string interpret_escape_sequences(std::string str) {
     const char SPACE = ' ';
     auto from = R"(\s)";
     auto to = std::string(1, SPACE);

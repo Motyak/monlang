@@ -60,21 +60,26 @@ all: main
 
 main: $(OBJS)
 
-dist: $(RELEASE_OBJS)
-	./release.sh
-
 test: bin/test/all.elf
 	./run_tests.sh
 
+# performs "sanity" check
+check: bin/test/bigbang.elf
+	bin/test/bigbang.elf
+
+# able to run in parallel mode, e.g.: make -j check dist
+dist: $(RELEASE_OBJS) .WAIT
+	./release.sh
+
 # able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
-	@# $@ DONE
+	# $@ DONE
 $(call clean, $(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
 
 mrproper:
 	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
-.PHONY: all main dist test clean mrproper
+.PHONY: all main test check dist clean mrproper
 
 ###########################################################
 
@@ -91,6 +96,9 @@ $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+
+bin/test/all.elf: $(filter-out obj/test/_%,$(TEST_OBJS)) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 -include $(DEPS) $(TEST_DEPS)

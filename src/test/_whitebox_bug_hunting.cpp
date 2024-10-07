@@ -1,4 +1,4 @@
-// THIS TEST FILE SHOULD NOT BE ADDED TO `all.cpp`
+// THIS TEST FILE SHOULD NOT BE PART OF THE TEST SUITE (all.elf)
 
 #include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
