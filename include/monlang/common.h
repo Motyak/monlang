@@ -2,7 +2,7 @@
 #define COMMON_H
 
 #include <utils/mem-utils.h>
-#include <utils/assert-util.h>
+#include <utils/assert-utils.h>
 
 #include <vector>
 #include <sstream>
