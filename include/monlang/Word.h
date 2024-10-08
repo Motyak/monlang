@@ -7,15 +7,15 @@
 #include <variant>
 
 struct Atom;
-struct SquareBracketsGroup;
 struct ParenthesesGroup;
+struct SquareBracketsGroup;
 struct CurlyBracketsGroup;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 
 using Word = std::variant<
     Atom*,
-    SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*,
+    ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*,
     PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 >;
 

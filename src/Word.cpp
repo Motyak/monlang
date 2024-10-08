@@ -3,8 +3,8 @@
 
 /* in impl only */
 #include <monlang/ProgramSentence.h>
-#include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
+#include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
 #include <monlang/PostfixParenthesesGroup.h>
@@ -26,16 +26,6 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     //     ..
     // });
 
-#ifndef DISABLE_SBG
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast<Word>(consumeSquareBracketsGroup(input));
-    }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        SquareBracketsGroup::RESERVED_CHARACTERS
-    });
-#endif
-
 #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_cast<Word>(consumeParenthesesGroup(input));
@@ -43,6 +33,16 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     terminatorCharacters = vec_union({
         terminatorCharacters,
         ParenthesesGroup::RESERVED_CHARACTERS
+    });
+#endif
+
+#ifndef DISABLE_SBG
+    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_cast<Word>(consumeSquareBracketsGroup(input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        SquareBracketsGroup::RESERVED_CHARACTERS
     });
 #endif
 

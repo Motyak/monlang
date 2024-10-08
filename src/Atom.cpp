@@ -9,10 +9,9 @@
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
+#include <utils/loop-utils.h>
 
 #include <algorithm>
-
-#define until(x) while(!(x))
 
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
@@ -23,10 +22,8 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 
     std::string value;
     char currentChar;
-    until (input.peek() == EOF || std::any_of(
-            terminatorCharacters.begin(),
-            terminatorCharacters.end(),
-            [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
+
+    until (input.peek() == EOF || peekAnyChar(terminatorCharacters, input)) {
         input.get(currentChar);
         value += currentChar;
     }
@@ -41,6 +38,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     auto atom = consumeAtomStrictly(terminatorCharacters, input);
+
     if (!atom.has_value()) {
         return mayfail_convert<Atom*>(atom);
     }
@@ -50,24 +48,6 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
 
     [[maybe_unused]]
     BEGIN:
-    #ifndef DISABLE_SBG
-    #ifndef DISABLE_PSBG_IN_ATOM
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
-            variant_cast(accumulatedPostfixLeftPart),
-            whats_right_behind
-        });
-        if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_psbg, ERR(329)));
-        }
-        accumulatedPostfixLeftPart = curr_psbg;
-        goto BEGIN;
-    }
-    #endif
-    #endif
-
-    #ifndef DISABLE_PG
     #ifndef DISABLE_PPG_IN_ATOM
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
@@ -82,6 +62,20 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         goto BEGIN;
     }
     #endif
+
+    #ifndef DISABLE_PSBG_IN_ATOM
+    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
+        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
+            variant_cast(accumulatedPostfixLeftPart),
+            whats_right_behind
+        });
+        if (!whats_right_behind.has_value()) {
+            return std::unexpected(Malformed(curr_psbg, ERR(329)));
+        }
+        accumulatedPostfixLeftPart = curr_psbg;
+        goto BEGIN;
+    }
     #endif
 
     return std::visit(

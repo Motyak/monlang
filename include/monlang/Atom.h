@@ -16,8 +16,8 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 
 using consumeAtom_RetType = std::variant<
     MayFail<Atom*>,
-    MayFail<PostfixSquareBracketsGroup*>,
-    MayFail<PostfixParenthesesGroup*>
+    MayFail<PostfixParenthesesGroup*>,
+    MayFail<PostfixSquareBracketsGroup*>
 >;
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
