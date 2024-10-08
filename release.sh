@@ -26,7 +26,7 @@ for header in [A-Z]*.h; do
         cat <<< $camelcase_entity_name \
         | perl -pe 's/([A-Z])/_$1/g' \
         | perl -pe 'tr/[a-z]/[A-Z]/' \
-        | tail -c+2 # remove heading underscore
+        | tail -c+2 # remove leading underscore
     )
     CC=$camelcase_entity_name UPP=$uppercase_entity_name \
         perl -i -pe 's/(#endif \/\/ $ENV{UPP}_H)/namespace LV1 { using $ENV{CC} = ::$ENV{CC}; }\n\n$1/' $header

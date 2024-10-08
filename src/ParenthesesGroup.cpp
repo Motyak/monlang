@@ -58,9 +58,6 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
         if (!consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(402)));
         }
-        // if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        //     return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(422)));
-        // }
 
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);

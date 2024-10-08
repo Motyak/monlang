@@ -1,6 +1,6 @@
 === ERROR CODE CONVENTION ===
 
---- ERROR CODE PATTERN
+--- Error code pattern
 
 0xy -> missing initiator
 x0y -> missing continuator
@@ -31,23 +31,7 @@ xyz -> custom error (refer to manual)
 
 99 Atom
 
---- ERRORS THAT DON'T EXIST, WITH JUSTIFICATION
-
-011 => Program has no initiator seq
-012 => ProgramSentence has no initiator seq
-
-101 => Program has no continuator seq
-
-110 => Program has no terminator seq
-
---- ERRORS THAT CANT HAPPEN FROM A PROGRAM CONSUMPTION CONTEXT, WITH JUSTIFICATION
-
-125 ProgramSentence cannot be empty (hit early EOF)
-      => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
-995 Atom cannot be empty (hit early EOF)
-      => `consumeProgram` checks for EOF way before...
-
---- MANUAL (SPECIFIC ERROR CODES)
+--- Manual (specific error codes)
 
 121 ProgramSentence can't start with a continuator (hit leading continuator)
 122 ProgramSentence continuator must precede a word (hit trailing continuator)
@@ -59,20 +43,30 @@ xyz -> custom error (refer to manual)
 412 multiline CurlyBracketsGroup must contain at least one sentence (hit terminator right after initiator)
 413 multiline CurlyBracketsGroup must contain at least one sentence (block with empty lines exclusively)
 
-421 ParenthesesGroup can't start with a continuator (leading continuator met)
-422 ParenthesesGroup continuator must precede a word (trailing continuator met)
-
-431 SquareBracketsGroup can't start with a continuator (leading continuator met)
-432 SquareBracketsGroup continuator must precede a word (trailing continuator met)
-
 992 Atom cannot be empty (hit a reserved character)
+
+--- Errors that can't happen from a program consumption context, with justification
+
+125 ProgramSentence cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
+995 Atom cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF way before...
+
+--- Errors that don't exist, with justification
+
+011 => Program has no initiator seq
+012 => ProgramSentence has no initiator seq
+
+101 => Program has no continuator seq
+
+110 => Program has no terminator seq
 
 === MAKEFILE DESIGN ===
 
 Support :
 - parallel mode (-j --jobs)
 - question mode (-q --question)
-- dry mode (-n --dryrun)
+- dry mode (-n --dry-run)
 
 Each lib should have its own build system (whether it's a Makefile or something else), we don't want to check ourselves if a lib is up-to-date, we want to use its build system instead.
 By default the libs are built only once, even if their code changes afterward.

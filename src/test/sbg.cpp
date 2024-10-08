@@ -99,7 +99,9 @@ TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
     REQUIRE (output_str == expect);
 }
 
-////////////////////////////////////////////////////////////////
+//==============================================================
+// ERR
+//==============================================================
 
 TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg][err]") {
     auto input = "";
@@ -123,8 +125,7 @@ TEST_CASE ("ERR premature EOF", "[test-4317][sbg][err]") {
 
     auto expect = tommy_str(R"EOF(
        |~> SquareBracketsGroup
-       |  ~> Term
-       |    ~> ERR-135
+       |  ~> ERR-430
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -215,7 +216,7 @@ TEST_CASE ("ERR empty second term", "[test-4321][sbg][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR heading term continuator", "[test-4322][sbg][err]") {
+TEST_CASE ("ERR leading term continuator", "[test-4322][sbg][err]") {
     auto input = "[ fds]";
 
     auto expect = tommy_str(R"EOF(
