@@ -6,15 +6,16 @@
 #include <sstream>
 #include <variant>
 
+struct Atom;
 struct SquareBracketsGroup;
 struct ParenthesesGroup;
 struct CurlyBracketsGroup;
-struct Atom;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 
 using Word = std::variant<
-    SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*, Atom*,
+    Atom*,
+    SquareBracketsGroup*, ParenthesesGroup*, CurlyBracketsGroup*,
     PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 >;
 

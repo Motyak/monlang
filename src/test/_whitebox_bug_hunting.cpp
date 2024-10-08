@@ -1,5 +1,13 @@
 // THIS TEST FILE SHOULD NOT BE PART OF THE TEST SUITE (all.elf)
 
+/*
+What it tests:
+- hidden features (behavior that could be "derived"/extrapolated..
+                 ..from the features but is not introduced explicitly)
+- non-regression for bugs found during exploration in the playground.cpp..
+                        ..then fixed
+*/
+
 #include <monlang/ProgramSentence.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
@@ -8,6 +16,22 @@
 #include <utils/tommystring.h>
 #include <montree/montree.h>
 #include <catch2/catch_amalgamated.hpp>
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("empty ProgramSentences == empty Program as well", "[wbh-0020][wbh]") {
+    auto input = tommy_str(R"EOF(
+       |
+       |
+    )EOF");
+
+    auto expect = "-> Program";
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
 
 ////////////////////////////////////////////////////////////////
 
