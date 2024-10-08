@@ -100,6 +100,7 @@ size_t sequenceLen(const Sequence&);
 
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
+bool peekAnyChar(const std::vector<char>&, std::istringstream&);
 
 #define rdonly
 

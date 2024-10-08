@@ -145,23 +145,6 @@ TEST_CASE ("Term ERR trailing atom right after a non-atom", "[wbh-0005][wbh]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ProgramSentence ERR trailing atom right after a non-atom", "[wbh-0006][wbh]") {
-    auto input = "[]fds";
-
-    auto expect = tommy_str(R"EOF(
-       |~> ProgramSentence
-       |  -> ProgramWord: SquareBracketsGroup (empty)
-       |  ~> ERR-102
-    )EOF");
-
-    auto input_iss = std::istringstream(input);
-    auto output = consumeProgramSentence(input_iss);
-    auto output_str = montree::astToString(output);
-    REQUIRE (output_str == expect);
-}
-
-////////////////////////////////////////////////////////////////
-
 TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
     auto input = "(a(b) / c)";
     auto expect = tommy_str(R"EOF(

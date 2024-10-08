@@ -1,5 +1,15 @@
 === ERROR CODE CONVENTION ===
 
+--- ERROR CODE PATTERN
+
+0xy -> missing initiator
+x0y -> missing continuator
+xy0 -> missing terminator
+xy9 -> malformed sub-element
+xyz -> custom error (refer to manual)
+
+---
+
 11 Program
 12 ProgramSentence
 13 Term
@@ -21,20 +31,27 @@
 
 99 Atom
 
----
+--- ERRORS THAT DON'T EXIST, WITH JUSTIFICATION
 
-0xy -> missing initiator
-x0y -> missing continuator
-xy0 -> missing terminator
-xy9 -> malformed sub-element
-xyz -> custom error (refer to manual)
+011 => Program has no initiator seq
+012 => ProgramSentence has no initiator seq
 
----
+101 => Program has no continuator seq
 
-121 ProgramSentence can't start with a continuator (leading continuator met)
-122 ProgramSentence continuator must precede a word (trailing continuator met)
-125 ProgramSentence cannot be empty (early EOF met)
-126 ProgramSentence has wrong indentation
+110 => Program has no terminator seq
+
+--- ERRORS THAT CANT HAPPEN FROM A PROGRAM CONSUMPTION CONTEXT, WITH JUSTIFICATION
+
+125 ProgramSentence cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
+995 Atom cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF way before...
+
+--- MANUAL (SPECIFIC ERROR CODES)
+
+121 ProgramSentence can't start with a continuator (hit leading continuator)
+122 ProgramSentence continuator must precede a word (hit trailing continuator)
+123 ProgramSentence has wrong indentation
 
 131 Term can't start with a continuator (leading continuator met)
 135 EOF encountered in Term

@@ -18,7 +18,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Atom{}, ERR(991)));
+        return std::unexpected(Malformed(Atom{}, ERR(995)));
     }
 
     std::string value;

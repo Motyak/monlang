@@ -1,3 +1,5 @@
+#include <monlang/ProgramSentence.h>
+#include <monlang/Word.h>
 #include <monlang/CurlyBracketsGroup.h>
 
 #include <utils/tommystring.h>
@@ -53,5 +55,24 @@ TEST_CASE ("postfix pg", "[test-1001][int]") {
     auto input_iss = std::istringstream(input);
     auto output_word = consumeWord(input_iss);
     auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+//==============================================================
+// ERR
+//==============================================================
+
+TEST_CASE ("ProgramSentence ERR trailing atom right after a non-atom", "[test-1002][int][err]") {
+    auto input = "[]fds";
+
+    auto expect = tommy_str(R"EOF(
+       |~> ProgramSentence
+       |  -> ProgramWord: SquareBracketsGroup (empty)
+       |  ~> ERR-102
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
+    auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }

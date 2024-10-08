@@ -3,10 +3,9 @@
 #include <monlang/common.h>
 
 #include <utils/assert-util.h>
+#include <utils/loop-utils.h>
 
 #include <algorithm>
-
-#define until(x) while(!(x))
 
 const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = { SPACE };
 const Sequence ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
@@ -18,26 +17,27 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
 
 MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
-    std::vector<char> terminatorCharacters = {
-        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value()
-    };
 
     if (input.peek() == EOF) {
         return std::unexpected(Malformed(ProgramSentence{}, ERR(125)));
     }
+
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
         return ProgramSentence{};
     }
+
     if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, ERR(126)));
+        return std::unexpected(Malformed(ProgramSentence{}, ERR(123)));
     }
-    // empty sentences are valid, just discarded by the Program
+
+    // indented empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
         return ProgramSentence{};
     }
+
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(ProgramSentence{}, ERR(121)));
     }
@@ -45,17 +45,9 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     std::vector<MayFail<ProgramWord>> programWords;
     MayFail<ProgramWord> currentWord;
 
-    currentWord = consumeProgramWord(input);
-    programWords.push_back(currentWord);
-    if (!currentWord.has_value()) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(129)));
-    }
-
-    until (input.peek() == EOF || std::any_of(
-            terminatorCharacters.begin(),
-            terminatorCharacters.end(),
-            [&input](auto terminatorChar){return input.peek() == terminatorChar;})) {
-        
+    LOOP until (input.peek() == EOF || peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
+    if (!__first_it)
+    {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             // this happens when we have an Atom right after a non-Atom (without a space in between)
             return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(102)));
@@ -63,12 +55,14 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(122)));
         }
-
+    }
         currentWord = consumeProgramWord(input);
         programWords.push_back(currentWord);
         if (!currentWord.has_value()) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(129)));
         }
+
+        ENDLOOP
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {

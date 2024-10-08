@@ -171,7 +171,7 @@ TEST_CASE ("ERR prog sentence wrong indent", "[test-4118][cbg][err]") {
     auto expect = tommy_str(R"EOF(
        |~> CurlyBracketsGroup
        |  ~> ProgramSentence
-       |    ~> ERR-126
+       |    ~> ERR-123
     )EOF");
 
     auto input_iss = std::istringstream(input);

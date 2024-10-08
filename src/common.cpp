@@ -132,3 +132,12 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     input.seekg(initialPosition);
     return true;
 }
+
+bool peekAnyChar(const std::vector<char>& chars, std::istringstream& input) {
+    for (auto c: chars) {
+        if (input.peek() == c) {
+            return true;
+        }
+    }
+    return false;
+}
