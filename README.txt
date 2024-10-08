@@ -49,6 +49,8 @@ xyz -> custom error (refer to manual)
 
 125 ProgramSentence cannot be empty (hit early EOF)
       => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
+135 Term cannot be empty (hit early EOF)
+      => in all "group" entities comprising of terms, we check for EOF before loop first iteration
 995 Atom cannot be empty (hit early EOF)
       => `consumeProgram` checks for EOF way before...
 
@@ -56,10 +58,12 @@ xyz -> custom error (refer to manual)
 
 011 => Program has no initiator seq
 012 => ProgramSentence has no initiator seq
+013 => Term has no initiator seq
 
 101 => Program has no continuator seq
 
 110 => Program has no terminator seq
+130 => Term has no terminator seq
 
 === MAKEFILE DESIGN ===
 

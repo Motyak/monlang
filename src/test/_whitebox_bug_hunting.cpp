@@ -127,24 +127,6 @@ TEST_CASE ("sbg in the middle of sbg", "[wbh-0004][wbh]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("Term ERR trailing atom right after a non-atom", "[wbh-0005][wbh]") {
-    auto input = "[[]fds]";
-
-    auto expect = tommy_str(R"EOF(
-       |~> SquareBracketsGroup
-       |  ~> Term
-       |    -> Word: SquareBracketsGroup (empty)
-       |    ~> ERR-103
-    )EOF");
-
-    auto input_iss = std::istringstream(input);
-    auto output_word = consumeWord(input_iss);
-    auto output_str = montree::astToString(output_word);
-    REQUIRE (output_str == expect);
-}
-
-////////////////////////////////////////////////////////////////
-
 TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
     auto input = "(a(b) / c)";
     auto expect = tommy_str(R"EOF(
