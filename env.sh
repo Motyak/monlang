@@ -15,9 +15,14 @@ function make {
     local opt_args=""
     local target_args=""
     for arg in "$@"; do
-        [[ "$arg" =~ ^- ]] && opt_args="${opt_args}${opt_args:+ }${arg}" && continue
-        [[ "$arg" =~ = ]] && opt_args="${opt_args}${opt_args:+ }${arg}" && continue
-        target_args="${target_args}${target_args:+ }${arg}"
+        case $arg in
+        -* | *=*)
+            opt_args="${opt_args}${opt_args:+ }${arg}"
+            ;;
+        *)
+            target_args="${target_args}${target_args:+ }${arg}"
+            ;;
+        esac
     done
 
     local make_prefix="$MAKE $EXTRA_ARGS $opt_args"
@@ -29,16 +34,18 @@ function make {
     echo "DEBUG opt args: \`$opt_args\`"
     echo "DEBUG target args: \`$target_args\`"
 
-    if [[ "$make_prefix" =~ ' -q' ]] || [[ "$make_prefix" =~ ' --question' ]]; then
+    case "$make_prefix" in
+    *\ -q* | *\ --question*)
         # dry run first
         echo eval "$make_prefix $target_args"
-        exit $?
-    fi
+        echo exit $?
+        ;;
+    esac
 
     # dry run first
     echo eval "${final_cmd:-$MAKE}"
 }
 
 ## add (back) make autocompletion for our new definition of make
-source tools/bash_completion_make
+source tools/bash_completion_make # exports _make function
 complete -F _make make
