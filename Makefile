@@ -1,4 +1,4 @@
-include utils.mk # askmake, buildmake, clean, not, shell_onrun, shouldrebuild
+include utils.mk # askmake, buildmake, not, shell_onrun, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -74,10 +74,8 @@ dist: $(RELEASE_OBJS)
 check-dist: check $(RELEASE_OBJS)
 	./release.sh
 
-# able to run in parallel mode, e.g.: make -j clean <targets>
 clean:
-	# $@ DONE
-$(call clean, $(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
+	$(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
 
 mrproper:
 	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)

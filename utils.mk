@@ -59,15 +59,3 @@ $(shell echo \
 	$(__SHOULDREBUILD) # required in dry run mode
 )
 endef
-
-# clean: run 'clean' target recipe in a verbose shell, support dry run as well
-# $(1): shell command
-# returns: nothing
-define clean
-$(if $(filter clean,$(MAKECMDGOALS)),
-	$(if $(findstring n, $(firstword -$(MAKEFLAGS))),
-		$(shell $(SHELL) -vnc '$(strip $(1))'),
-		$(shell $(SHELL) -vc '$(strip $(1))')
-	)
-)
-endef

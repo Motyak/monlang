@@ -77,7 +77,6 @@ You can toggle a variable in order to track libs code change, by doing so we're 
 
 When parallel mode enabled, having multiple "goal" targets in the make command will run the goals in parallel rather than sequentially (which is probably not what you expect).
 If you want to run multiple goals in a row, use one make command per goal (you can even chain commands with `&&`).
-Our `clean` goal is an exception, it will always run first in a parallel context.
 
 === GENERATE INCLUDE GRAPH ===
 

@@ -12,38 +12,34 @@ function make {
     local MAKE="/usr/bin/make"
     local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE="
 
+    local target_args="$($MAKE -q -E '$(info $(MAKECMDGOALS))' "$@" | head -n1)"
     local opt_args=""
-    local target_args=""
+
+    # find non-target arguments, append them to opt_args
     for arg in "$@"; do
-        case $arg in
-        -* | *=*)
-            opt_args="${opt_args}${opt_args:+ }${arg}"
-            ;;
-        *)
-            target_args="${target_args}${target_args:+ }${arg}"
-            ;;
-        esac
+        [[ " $target_args" =~ \ $arg ]] && continue
+        opt_args="${opt_args}${opt_args:+ }${arg}"
     done
 
-    local make_prefix="$MAKE $EXTRA_ARGS $opt_args"
+    local make_prefix="${MAKE}${EXTRA_ARGS:+ }${EXTRA_ARGS}${opt_args:+ }${opt_args}"
     local final_cmd=""
     for target in $target_args; do
         final_cmd="${final_cmd}${final_cmd:+ && }${make_prefix} $target"
     done
 
-    echo "DEBUG opt args: \`$opt_args\`"
-    echo "DEBUG target args: \`$target_args\`"
+    # echo "DEBUG opt args: \`$opt_args\`" #debug
+    # echo "DEBUG target args: \`$target_args\`" #debug
 
     case "$make_prefix" in
     *\ -q* | *\ --question*)
-        # dry run first
-        echo eval "$make_prefix $target_args"
-        echo exit $?
+        echo eval \""$make_prefix $target_args"\" #debug
+        eval "$make_prefix $target_args"
+        return $?
         ;;
     esac
 
-    # dry run first
-    echo eval "${final_cmd:-$MAKE}"
+    echo eval \""${final_cmd:-$MAKE}"\" #debug
+    eval "${final_cmd:-$MAKE}"
 }
 
 ## add (back) make autocompletion for our new definition of make
