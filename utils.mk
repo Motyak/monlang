@@ -50,7 +50,7 @@ endef
 #       ..multiple `$(..)` expressions in a defined function.
 define shouldrebuild
 $(shell echo \
-	$(shell \
+	$(shell
 		if [ ! -e $(1) ]; then { echo true; exit 0; }; fi; \
 		for lib in $(2); do \
 			if [ ! -e $$lib ]; then { echo true; exit 0; }; fi; \
@@ -64,9 +64,9 @@ endef
 # $(1): shell command
 # returns: nothing
 define clean
-$(if $(filter clean,$(MAKECMDGOALS)), \
-	$(if $(findstring n, $(firstword -$(MAKEFLAGS))), \
-		$(shell $(SHELL) -vnc '$(strip $(1))'), \
+$(if $(filter clean,$(MAKECMDGOALS)),
+	$(if $(findstring n, $(firstword -$(MAKEFLAGS))),
+		$(shell $(SHELL) -vnc '$(strip $(1))'),
 		$(shell $(SHELL) -vc '$(strip $(1))')
 	)
 )

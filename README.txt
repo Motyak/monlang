@@ -75,6 +75,10 @@ Each lib should have its own build system (whether it's a Makefile or something 
 By default the libs are built only once, even if their code changes afterward.
 You can toggle a variable in order to track libs code change, by doing so we're systematically going to recheck and potentially rebuild each lib if they are out-of-date (by questioning its build system and re-running it if it says it's necessary).
 
+When parallel mode enabled, having multiple "goal" targets in the make command will run the goals in parallel rather than sequentially (which is probably not what you expect).
+If you want to run multiple goals in a row, use one make command per goal (you can even chain commands with `&&`).
+Our `clean` goal is an exception, it will always run first in a parallel context.
+
 === GENERATE INCLUDE GRAPH ===
 
 # Edit .clang-uml config file

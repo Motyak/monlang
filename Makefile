@@ -67,8 +67,11 @@ test: bin/test/all.elf
 check: bin/test/bigbang.elf
 	bin/test/bigbang.elf --allow-running-no-tests
 
-# able to run in parallel mode, e.g.: make -j check dist
-dist: $(RELEASE_OBJS) .WAIT
+dist: $(RELEASE_OBJS)
+	./release.sh
+
+# faster than `make check && make dist` when we expect check to pass
+check-dist: check $(RELEASE_OBJS)
 	./release.sh
 
 # able to run in parallel mode, e.g.: make -j clean <targets>
@@ -79,7 +82,7 @@ $(call clean, $(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS))
 mrproper:
 	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
-.PHONY: all main test check dist clean mrproper
+.PHONY: all main test check dist check-dist clean mrproper
 
 ###########################################################
 
