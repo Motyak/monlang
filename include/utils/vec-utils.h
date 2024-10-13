@@ -14,4 +14,13 @@ std::vector<T> vec_union(const std::initializer_list<std::vector<T>>& vecs) {
     return std::vector<T>(tmp.begin(), tmp.end());
 }
 
+template <typename T>
+std::vector<T> vec_concat(const std::initializer_list<std::vector<T>>& vecs) {
+    std::vector<T> res;
+    for (auto vec: vecs) {
+        res.insert(res.end(), vec.begin(), vec.end());
+    }
+    return res;
+}
+
 #endif // VEC_UTILS_H

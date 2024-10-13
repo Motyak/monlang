@@ -28,7 +28,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
         return ProgramSentence{};
     }
 
-    if (indentLevel > 0 && !consumeSequence({{SPACE, 4 * indentLevel}}, input)) {
+    if (indentLevel > 0 && !consumeSequence(indentSeq, input)) {
         return std::unexpected(Malformed(ProgramSentence{}, ERR(123)));
     }
 

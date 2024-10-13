@@ -2,6 +2,8 @@
 
 #include <utils/str-utils.h>
 
+#include <limits>
+
 thread_local int _TRACE_CUR_FUNC::depth = 0;
 
 _TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
@@ -55,16 +57,21 @@ std::ostream& operator<<(std::ostream& os, Error err) {
     return os << err.fmt;
 }
 
-CharacterAppearance::CharacterAppearance(char c, int ntimes) : c(c), ntimes(ntimes) {
+Quantifier::Quantifier(int n) : n(n) {
     ;
 }
 
-CharacterAppearance::CharacterAppearance(char c) : CharacterAppearance{c, 1} {
-    ;
+Quantifier::operator int() const {
+    return n;
 }
 
-CharacterAppearance::operator char() const {
-    return this->c;
+Quantifier operator "" _(unsigned long long int n) {
+    ASSERT(n <= std::numeric_limits<int>::max());
+    return Quantifier{int(n)};
+}
+
+CharacterAppearance::CharacterAppearance(char c, Quantifier ntimes) : c(c), ntimes(ntimes) {
+    ;
 }
 
 std::optional<char> sequenceFirstChar(const std::vector<CharacterAppearance>& sequence) {

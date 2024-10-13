@@ -85,13 +85,20 @@ std::string serializeErr(MayFail<T> malformed) {
     return malformed.error().err.fmt;
 }
 
+struct Quantifier {
+  private:
+    int n;
+
+  public:
+    explicit Quantifier(int);
+    operator int() const; // accessor
+};
+Quantifier operator "" _(unsigned long long int);
+
 struct CharacterAppearance {
     char c;
-    int ntimes;
-    CharacterAppearance(char c, int ntimes);
-    CharacterAppearance(char c);
-    operator char() const; // allow me to cast std::vector<char>..
-                           // ..into std::vector<CharacterAppearance> aka Sequence
+    Quantifier ntimes;
+    CharacterAppearance(char c, Quantifier ntimes = 1_);
 };
 
 using Sequence = std::vector<CharacterAppearance>;
@@ -102,6 +109,8 @@ size_t sequenceLen(const Sequence&);
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
+
+#define indentSeq Sequence{{SPACE, Quantifier{4 * indentLevel}}}
 
 #define rdonly
 

@@ -21,14 +21,10 @@ function make {
         opt_args="${opt_args}${opt_args:+ }${arg}"
     done
 
-    local make_prefix="${MAKE}${EXTRA_ARGS:+ }${EXTRA_ARGS}${opt_args:+ }${opt_args}"
-    local final_cmd=""
-    for target in $target_args; do
-        final_cmd="${final_cmd}${final_cmd:+ && }${make_prefix} $target"
-    done
-
     # echo "DEBUG opt args: \`$opt_args\`" #debug
     # echo "DEBUG target args: \`$target_args\`" #debug
+
+    local make_prefix="${MAKE}${EXTRA_ARGS:+ }${EXTRA_ARGS}${opt_args:+ }${opt_args}"
 
     case "$make_prefix" in
     *\ -q* | *\ --question*)
@@ -38,8 +34,13 @@ function make {
         ;;
     esac
 
-    echo eval \""${final_cmd:-$MAKE}"\" #debug
-    eval "${final_cmd:-$MAKE}"
+    local final_cmd=""
+    for target in $target_args; do
+        final_cmd="${final_cmd}${final_cmd:+ && }${make_prefix} $target"
+    done
+
+    echo eval \""${final_cmd:-$make_prefix}"\" #debug
+    eval "${final_cmd:-$make_prefix}"
 }
 
 ## add (back) make autocompletion for our new definition of make
