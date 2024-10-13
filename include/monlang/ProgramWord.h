@@ -8,6 +8,6 @@
 
 struct ProgramWord : public Word {};
 
-MayFail<ProgramWord> consumeProgramWord(std::istringstream&);
+MayFail<ProgramWord> consumeProgramWord(std::istringstream& input, int indentLevel = 0);
 
 #endif // PROGRAM_WORD_H

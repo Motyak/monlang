@@ -56,7 +56,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
             return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(122)));
         }
     }
-        currentWord = consumeProgramWord(input);
+        currentWord = consumeProgramWord(input, indentLevel);
         programWords.push_back(currentWord);
         if (!currentWord.has_value()) {
             return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(129)));

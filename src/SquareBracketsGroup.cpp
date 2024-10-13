@@ -20,7 +20,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
+MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
     const std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
@@ -49,7 +49,7 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
             return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(403)));
         }
     }
-        currentTerm = consumeTerm(termTerminatorChars, input);
+        currentTerm = consumeTerm(termTerminatorChars, input, indentLevel);
         terms.push_back(currentTerm);
         if (!currentTerm.has_value()) {
             return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(439)));
@@ -65,6 +65,6 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     return SquareBracketsGroup{terms};
 }
 
-consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
-    return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
+consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input, int indentLevel) {
+    return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input, indentLevel)); // TODO: TMP IMPL
 }

@@ -13,7 +13,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
     sequenceFirstChar(CONTINUATOR_SEQUENCE).value()
 };
 
-MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
@@ -35,7 +35,7 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
             return std::unexpected(Malformed(Term{words}, ERR(103)));
         }
     }
-        currentWord = consumeWord(input);
+        currentWord = consumeWord(input, indentLevel);
         words.push_back(currentWord);
         if (!currentWord.has_value()) {
             return std::unexpected(Malformed(Term{words}, ERR(139)));

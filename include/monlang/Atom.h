@@ -19,6 +19,6 @@ using consumeAtom_RetType = std::variant<
     MayFail<PostfixParenthesesGroup*>,
     MayFail<PostfixSquareBracketsGroup*>
 >;
-consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input, int indentLevel = 0);
 
 #endif // ATOM_H

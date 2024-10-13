@@ -14,9 +14,9 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
+MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
-    static thread_local int indentLevel = 0;
+    // static thread_local int indentLevel = 0;
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
@@ -36,7 +36,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
         std::vector<char> termTerminatorChars = {
             sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value(),
         };
-        auto term = consumeTerm(termTerminatorChars, input);
+        auto term = consumeTerm(termTerminatorChars, input, indentLevel);
         if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
             return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(410)));
         }
@@ -60,7 +60,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
     sentences.push_back(currentSentence);
     if (!currentSentence.has_value()) {
-        indentLevel--; // restore indent level, because static
+        // indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
     }
 
@@ -72,18 +72,18 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
         }
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
-            indentLevel--; // restore indent level, because static
+            // indentLevel--; // restore indent level, because static
             return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
         }
     }
 
     if (!consumeSequence(indentedTerminatorSeq, input)) {
-        indentLevel--; // restore indent level, because static
+        // indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(410)));
     }
 
     if (sentences.size() == 0) {
-        indentLevel--; // restore indent level, because static
+        // indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(413)));
     }
 

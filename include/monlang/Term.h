@@ -14,6 +14,6 @@ struct Term {
     std::vector<MayFail<Word>> words;
 };
 
-MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input, int indentLevel = 0);
 
 #endif // TERM_H

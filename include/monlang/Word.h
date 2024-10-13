@@ -19,6 +19,6 @@ using Word = std::variant<
     PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 >;
 
-MayFail<Word> consumeWord(std::istringstream&);
+MayFail<Word> consumeWord(std::istringstream& input, int indentLevel = 0);
 
 #endif // WORD_H

@@ -19,13 +19,13 @@ struct ParenthesesGroup {
     std::vector<MayFail<Term>> terms;
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream&);
+MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& input, int indentLevel = 0);
 
 using consumeParenthesesGroup_RetType = std::variant<
     MayFail<ParenthesesGroup*>,
     MayFail<PostfixParenthesesGroup*>,
     MayFail<PostfixSquareBracketsGroup*>
 >;
-consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
+consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input, int indentLevel = 0);
 
 #endif // PARENTHESES_GROUP_H

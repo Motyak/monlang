@@ -36,7 +36,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
     return Atom{value};
 }
 
-consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input, int indentLevel) {
     auto atom = consumeAtomStrictly(terminatorCharacters, input);
 
     if (!atom.has_value()) {
@@ -50,7 +50,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
     BEGIN:
     #ifndef DISABLE_PPG_IN_ATOM
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeParenthesesGroupStrictly(input);
+        auto whats_right_behind = consumeParenthesesGroupStrictly(input, indentLevel);
         auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
             variant_cast(accumulatedPostfixLeftPart),
             whats_right_behind
@@ -65,7 +65,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
 
     #ifndef DISABLE_PSBG_IN_ATOM
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
+        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input, indentLevel);
         auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
             variant_cast(accumulatedPostfixLeftPart),
             whats_right_behind

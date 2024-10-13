@@ -18,12 +18,12 @@ struct SquareBracketsGroup {
     std::vector<MayFail<Term>> terms;
 };
 
-MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream&);
+MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream& input, int indentLevel = 0);
 
 using consumeSquareBracketsGroup_RetType = std::variant<
     MayFail<SquareBracketsGroup*>,
     MayFail<PostfixSquareBracketsGroup*>
 >;
-consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
+consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input, int indentLevel = 0);
 
 #endif // SQUARE_BRACKETS_GROUP_H

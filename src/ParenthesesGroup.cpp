@@ -20,7 +20,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& input) {
+MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
@@ -42,7 +42,7 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     std::vector<MayFail<Term>> terms;
     MayFail<Term> currentTerm;
 
-    currentTerm = consumeTerm(termTerminatorChars, input);
+    currentTerm = consumeTerm(termTerminatorChars, input, indentLevel);
     terms.push_back(currentTerm);
     if (!currentTerm.has_value()) {
         return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(429)));
@@ -55,7 +55,7 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
             return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(402)));
         }
     }
-        currentTerm = consumeTerm(termTerminatorChars, input);
+        currentTerm = consumeTerm(termTerminatorChars, input, indentLevel);
         terms.push_back(currentTerm);
         if (!currentTerm.has_value()) {
             return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(429)));
@@ -71,6 +71,6 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     return ParenthesesGroup{terms};
 }
 
-consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
-    return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input)); // TODO: TMP IMPL
+consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input, int indentLevel) {
+    return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input, indentLevel)); // TODO: TMP IMPL
 }
