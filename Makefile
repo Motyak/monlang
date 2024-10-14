@@ -70,10 +70,6 @@ check: bin/test/bigbang.elf
 dist: $(RELEASE_OBJS)
 	./release.sh
 
-# faster than `make check && make dist` when we expect check to pass
-check-dist: check $(RELEASE_OBJS)
-	./release.sh
-
 clean:
 	$(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
 
@@ -97,9 +93,6 @@ $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-bin/test/all.elf: $(filter-out obj/test/_%,$(TEST_OBJS)) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 -include $(DEPS) $(TEST_DEPS)
