@@ -4,6 +4,7 @@
 #include <monlang/common.h>
 
 #include <utils/vec-utils.h>
+#include <utils/defer-util.h>
 
 #define until(x) while(!(x))
 
@@ -50,6 +51,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
 
     indentLevel++;
+    defer { indentLevel--; }; // restore indent level, because static
 
     std::vector<MayFail<ProgramSentence>> sentences;
     MayFail<ProgramSentence> currentSentence;
@@ -60,7 +62,6 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
     sentences.push_back(currentSentence);
     if (!currentSentence.has_value()) {
-        indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
     }
 
@@ -72,22 +73,17 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
         }
         sentences.push_back(currentSentence);
         if (!currentSentence.has_value()) {
-            indentLevel--; // restore indent level, because static
             return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
         }
     }
 
     if (!consumeSequence(indentedTerminatorSeq, input)) {
-        indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(410)));
     }
 
     if (sentences.size() == 0) {
-        indentLevel--; // restore indent level, because static
         return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(413)));
     }
-
-    indentLevel--;
 
     return CurlyBracketsGroup{sentences};
 }

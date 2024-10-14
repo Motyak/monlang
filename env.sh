@@ -28,8 +28,8 @@ function make {
 
     case "$make_prefix" in
     *\ -q* | *\ --question*)
-        echo eval \""$make_prefix $target_args"\" #debug
-        eval "$make_prefix $target_args"
+        echo eval \""${make_prefix}${target_args:+ }${target_args}"\" #debug
+        eval "${make_prefix}${target_args:+ }${target_args}"
         return $?
         ;;
     esac
