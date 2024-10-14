@@ -5,8 +5,8 @@ RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -Werror -O3 -I include
 CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
-DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
-DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$(notdir $*.d)
+DEPFLAGS = -MMD -MP -MF .deps/$*.d
+DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
 ARFLAGS := rcsv
 
 BUILD_LIBS_ONCE ?= y # disable by passing `BUILD_LIBS_ONCE=`
@@ -47,7 +47,6 @@ DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
 
 TEST_FILENAMES := $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cpp=%))
-TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
@@ -76,7 +75,7 @@ clean:
 mrproper:
 	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
-.PHONY: all main test check dist check-dist clean mrproper
+.PHONY: all main test check dist clean mrproper
 
 ###########################################################
 
@@ -89,11 +88,8 @@ $(OBJS): obj/%.o: src/%.cpp
 $(RELEASE_OBJS): obj/release/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(word_macros) $(postfix_macros)
 
-$(TEST_OBJS): obj/test/%.o: src/test/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
-
-$(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+$(TEST_BINS): bin/test/%.elf: src/test/%.cpp $(OBJS) lib/test-libs.a
+	$(CXX) -o $@ $< $(OBJS) lib/test-libs.a $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
 
 -include $(DEPS) $(TEST_DEPS)
 
