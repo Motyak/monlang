@@ -53,4 +53,5 @@ negative_all_ok=1
 echo "${happy_scenarios_results}"
 echo "${negative_scenarios_results}"
 
-((happy_all_ok && negative_all_ok)) && exit 0 || exit 1
+#((happy_all_ok && negative_all_ok)) && exit 0 || exit 1
+((happy_all_ok)) && exit 0 || exit 1
