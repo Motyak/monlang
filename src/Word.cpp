@@ -7,8 +7,6 @@
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>

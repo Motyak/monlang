@@ -38,40 +38,4 @@ auto visitAst(T visitor, const Ast& tree) {
     }
 }
 
-////////////////////////////////////////////////////////
-
-template <typename T>
-class ValidAstVisitor;
-
-template <>
-class ValidAstVisitor<void> : public AstVisitor<void> {
-  public:
-    virtual void operator()(const Program&) = 0;
-    virtual void operator()(const ProgramSentence&) = 0;
-    virtual void operator()(const Word&) = 0;
-
-    void operator()(const MayFail<Program>& prog) override {
-        ASSERT(prog.has_value());
-        operator()(prog.value());
-    }
-
-    void operator()(const MayFail<ProgramSentence>& progSentence) override {
-        ASSERT(progSentence.has_value());
-        operator()(progSentence.value());
-    }
-
-    void operator()(const MayFail<Word>& word) override {
-        ASSERT(word.has_value());
-        operator()(word.value());
-    }
-};
-
-template <typename T>
-class ValidAstVisitor : public ValidAstVisitor<void> {
-  public:
-    static constexpr bool returnsSomething = true;
-
-    T res;
-};
-
 #endif // VISITOR_H

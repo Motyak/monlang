@@ -2,9 +2,9 @@
 shopt -s nullglob globstar
 set -o errexit -o pipefail
 
-exec 10> /tmp/monlang_trace.txt
-export BASH_XTRACEFD=10
-trap '{ echo RELEASE FAILED, trace was saved in /tmp/monlang_trace.txt; } 10>/dev/null' ERR
+exec 9> /tmp/monlang_trace.txt
+export BASH_XTRACEFD=9
+trap '{ echo RELEASE FAILED, trace was saved in /tmp/monlang_trace.txt; } 9>/dev/null' ERR
 set -o xtrace
 
 rm -rf dist/monlang-parser; mkdir -p $_
