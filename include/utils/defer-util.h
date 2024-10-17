@@ -10,13 +10,15 @@ struct __Deferrer {
     }
 };
 
+struct __defer_dummy {};
+
 template <class F>
-__Deferrer<F> operator*(int, F f) {
+__Deferrer<F> operator*(__defer_dummy, F f) {
     return {f};
 }
 
 #define __DEFER_(x) __defer##x
 #define __DEFER(x) __DEFER_(x)
-#define defer auto __DEFER(__LINE__) = 0 * [&]()
+#define defer auto __DEFER(__LINE__) = __defer_dummy{} * [&]()
 
 #endif // DEFER_UTIL_H
