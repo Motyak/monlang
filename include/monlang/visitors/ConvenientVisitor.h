@@ -1,5 +1,5 @@
-#ifndef SIMPLE_VISITOR_H
-#define SIMPLE_VISITOR_H
+#ifndef CONVENIENT_VISITOR_H
+#define CONVENIENT_VISITOR_H
 
 #include <monlang/visitors/visitor.h>
 
@@ -107,7 +107,7 @@ class ConvenientVisitor : public ConvenientVisitor<void> {
     T res;
 };
 
-#ifdef SIMPLE_VISITOR_H_MAIN
+#ifdef CONVENIENT_VISITOR_H_MAIN
 // #include <monlang/visitors/ConvenientVisitor.h>
 #include <monlang/Atom.h>
 
@@ -131,7 +131,7 @@ struct Fds : public ConvenientVisitor<void> {
 };
 
 /*
-g++ -o obj/main.o -x c++ -c include/monlang/visitors/ConvenientVisitor.h -D SIMPLE_VISITOR_H_MAIN --std=c++23 -Wall -Wextra -I include \
+g++ -o obj/main.o -x c++ -c include/monlang/visitors/ConvenientVisitor.h -D CONVENIENT_VISITOR_H_MAIN --std=c++23 -Wall -Wextra -I include \
 && g++ -o bin/main.elf obj/*.o
 */
 int main()
@@ -144,6 +144,6 @@ int main()
     }
     visitAst(Fds{}, composable_atom);
 }
-#endif // SIMPLE_VISITOR_H_MAIN
+#endif // CONVENIENT_VISITOR_H_MAIN
 
-#endif // SIMPLE_VISITOR_H
+#endif // CONVENIENT_VISITOR_H
