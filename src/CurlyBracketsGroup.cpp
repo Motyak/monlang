@@ -21,7 +21,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
-    auto indentedTerminatorSeq = vec_concat({indentSeq, CurlyBracketsGroup::TERMINATOR_SEQUENCE});
+    auto indentedTerminatorSeq = vec_concat({INDENT_SEQUENCE(), CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
     if (!consumeSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(041)));
@@ -66,7 +66,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     }
 
     LOOP:
-    until (input.peek() == EOF || !peekSequence(indentSeq, input)) {
+    until (input.peek() == EOF || !peekSequence(INDENT_SEQUENCE(), input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
         if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
             continue; // ignore empty sentences

@@ -102,6 +102,7 @@ struct CharacterAppearance {
 };
 
 using Sequence = std::vector<CharacterAppearance>;
+Sequence operator *(int ntimes, Sequence);
 
 std::optional<char> sequenceFirstChar(const Sequence&);
 size_t sequenceLen(const Sequence&);
@@ -109,8 +110,6 @@ size_t sequenceLen(const Sequence&);
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
-
-#define indentSeq Sequence{{SPACE, Quantifier{4 * indentLevel}}}
 
 #define rdonly
 

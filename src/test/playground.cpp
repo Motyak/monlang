@@ -9,13 +9,30 @@
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("fds") {
-    auto input = tommy_str(R"EOF(
-        [{1 + 2};]
+    // auto input = tommy_str(R"EOF(
+    //    |{
+    //    |    let foo {
+    //    |        bar
+    //    |    }
+    //    |    fds
+    //    |}
+    // )EOF");
+    auto input = "{ +let_foo_{ ++bar +} +fds } ";
+
+    auto expect = tommy_str(R"EOF(
+        -> CurlyBracketsGroup
+          -> ProgramSentence #1
+            -> ProgramWord #1: Atom: `let`
+            -> ProgramWord #2: Atom: `foo`
+            -> ProgramWord #3: CurlyBracketsGroup
+              -> ProgramSentence
+                -> ProgramWord: Atom: `bar`
+          -> ProgramSentence #2
+            -> ProgramWord: Atom: `fds`
     )EOF");
-    auto expect = "whatever";
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
-    auto output_str = montree::astToString(output);
+    auto output_word = consumeWord(input_iss);
+    auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }

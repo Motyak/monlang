@@ -74,6 +74,17 @@ CharacterAppearance::CharacterAppearance(char c, Quantifier ntimes) : c(c), ntim
     ;
 }
 
+Sequence operator *(int ntimes, Sequence seq) {
+    ASSERT(ntimes >= 0);
+    Sequence res;
+    for (int i = 1; i <= ntimes; ++i) {
+        for (size_t j = 0; j < seq.size(); ++j) {
+            res.push_back(seq[j]);
+        }
+    }
+    return res;
+}
+
 std::optional<char> sequenceFirstChar(const std::vector<CharacterAppearance>& sequence) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes > 0) {
