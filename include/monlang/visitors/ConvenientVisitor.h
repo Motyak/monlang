@@ -58,7 +58,7 @@ class ConvenientVisitor<void> : public AstVisitor<void> {
 
     virtual void operator()(const Term& term) {
         for (auto word: term.words) {
-            operator()(word);
+            operator()(word.value());
         }
     }
 
@@ -106,42 +106,5 @@ class ConvenientVisitor : public ConvenientVisitor<void> {
 
     T res;
 };
-
-#ifdef CONVENIENT_VISITOR_H_MAIN
-// #include <monlang/visitors/ConvenientVisitor.h>
-#include <monlang/Atom.h>
-
-struct Fds : public ConvenientVisitor<void> {
-
-    using ConvenientVisitor::operator();
-
-    void operator()(PostfixSquareBracketsGroup* psbg) override {
-        std::cout << "PostfixSBG: " << std::endl;
-        ConvenientVisitor::operator()(psbg);
-    }
-
-    void operator()(Atom* atom) override {
-        std::cout << "Atom: `" << atom->value << "`" << std::endl;
-    }
-
-    void operator()(SquareBracketsGroup* sbg) override {
-        std::cout << "SBG: ";
-        ConvenientVisitor::operator()(sbg);
-    }
-};
-
-// g++ -o main.o -x c++ -c include/monlang/visitors/ConvenientVisitor.h -D CONVENIENT_VISITOR_H_MAIN --std=c++23 -Wall -Wextra -I include
-// g++ -o main.elf main.o obj/*.o
-int main()
-{
-    auto input = std::istringstream("foo[bar]\n");
-    auto word = consumeWord(input);
-    if (!word.has_value()) {
-        std::cout << "wtf" << std::endl;
-        return 1;
-    }
-    visitAst(Fds{}, word);
-}
-#endif // CONVENIENT_VISITOR_H_MAIN
 
 #endif // CONVENIENT_VISITOR_H
