@@ -15,6 +15,7 @@
 class Print : public AstVisitor<void> {
   public:
     Print(std::ostream&);
+
     void operator()(const MayFail<Program>&) override;
     void operator()(const MayFail<ProgramSentence>&) override;
     void operator()(const MayFail<Word>&) override;

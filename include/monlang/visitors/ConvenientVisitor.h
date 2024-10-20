@@ -130,19 +130,17 @@ struct Fds : public ConvenientVisitor<void> {
     }
 };
 
-/*
-g++ -o obj/main.o -x c++ -c include/monlang/visitors/ConvenientVisitor.h -D CONVENIENT_VISITOR_H_MAIN --std=c++23 -Wall -Wextra -I include \
-&& g++ -o bin/main.elf obj/*.o
-*/
+// g++ -o main.o -x c++ -c include/monlang/visitors/ConvenientVisitor.h -D CONVENIENT_VISITOR_H_MAIN --std=c++23 -Wall -Wextra -I include
+// g++ -o main.elf main.o obj/*.o
 int main()
 {
     auto input = std::istringstream("foo[bar]\n");
-    auto composable_atom = consumeWord(input);
-    if (!composable_atom.has_value()) {
+    auto word = consumeWord(input);
+    if (!word.has_value()) {
         std::cout << "wtf" << std::endl;
-        return 0;
+        return 1;
     }
-    visitAst(Fds{}, composable_atom);
+    visitAst(Fds{}, word);
 }
 #endif // CONVENIENT_VISITOR_H_MAIN
 

@@ -103,6 +103,7 @@ struct CharacterAppearance {
 
 using Sequence = std::vector<CharacterAppearance>;
 Sequence operator *(int ntimes, Sequence);
+std::ostream& operator<<(std::ostream&, Sequence);
 
 std::optional<char> sequenceFirstChar(const Sequence&);
 size_t sequenceLen(const Sequence&);

@@ -85,6 +85,15 @@ Sequence operator *(int ntimes, Sequence seq) {
     return res;
 }
 
+std::ostream& operator<<(std::ostream& out, Sequence seq) {
+    for (auto charAppearance: seq) {
+        for (int i = 1; i <= charAppearance.ntimes; ++i) {
+            out << charAppearance.c;
+        }
+    }
+    return out;
+}
+
 std::optional<char> sequenceFirstChar(const std::vector<CharacterAppearance>& sequence) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes > 0) {
