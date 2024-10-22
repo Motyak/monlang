@@ -1,7 +1,11 @@
 #include <monlang/visitors/Unparse.h>
+#include <monlang/visitors/ConvenientVisitor.h>
 
 /* impl only */
 #include <monlang/Atom.h>
+#include <monlang/ParenthesesGroup.h>
+#include <monlang/SquareBracketsGroup.h>
+#include <monlang/CurlyBracketsGroup.h>
 
 Unparse::Unparse(std::ostream& out) : out(out) {}
 
