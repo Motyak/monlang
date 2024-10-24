@@ -76,7 +76,6 @@ void Unparse::operator()(CurlyBracketsGroup* cbg) {
     /* handle single term expression */
     if (cbg->term) {
         ConvenientVisitor::operator()(cbg->term->value());
-        return;
     }
     /* handle multiline expression */
     else {
