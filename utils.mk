@@ -51,10 +51,10 @@ endef
 define shouldrebuild
 $(shell echo \
 	$(shell
-		if [ ! -e $(1) ]; then { echo true; exit 0; }; fi; \
+		if [ ! -e $(1) ]; then { echo true; exit; }; fi; \
 		for lib in $(2); do \
-			if [ ! -e $$lib ]; then { echo true; exit 0; }; fi; \
-			if [ $$lib -nt $(1) ]; then { echo true; exit 0; }; fi; \
+			if [ ! -e $$lib ]; then { echo true; exit; }; fi; \
+			if [ $$lib -nt $(1) ]; then { echo true; exit; }; fi; \
 		done) \
 	$(__SHOULDREBUILD) # required in dry run mode
 )
