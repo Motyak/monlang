@@ -24,7 +24,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     //     ..
     // });
 
-#ifndef DISABLE_PG
+    #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_cast<Word>(consumeParenthesesGroup(input));
     }
@@ -32,9 +32,9 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         terminatorCharacters,
         ParenthesesGroup::RESERVED_CHARACTERS
     });
-#endif
+    #endif
 
-#ifndef DISABLE_SBG
+    #ifndef DISABLE_SBG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_cast<Word>(consumeSquareBracketsGroup(input));
     }
@@ -42,9 +42,9 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         terminatorCharacters,
         SquareBracketsGroup::RESERVED_CHARACTERS
     });
-#endif
+    #endif
 
-#ifndef DISABLE_CBG
+    #ifndef DISABLE_CBG
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_convert<Word>(consumeCurlyBracketsGroup(input)); // TODO: no convert should be needed
     }
@@ -52,7 +52,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         terminatorCharacters,
         CurlyBracketsGroup::RESERVED_CHARACTERS
     });
-#endif
+    #endif
 
     /* Atom is the "fall-through" Word */
     return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));

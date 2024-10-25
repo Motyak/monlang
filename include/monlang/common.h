@@ -124,12 +124,7 @@ class _TRACE_CUR_FUNC {
     ~_TRACE_CUR_FUNC();
 };
 
-#ifdef TRACE
-    #include <iostream>
-    #define TRACE_CUR_FUN() \
-        auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
-#else
-    #define TRACE_CUR_FUN()
-#endif
+#define TRACE_CUR_FUN() \
+    auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
 
 #endif // COMMON_H

@@ -3,10 +3,12 @@
 #include <utils/str-utils.h>
 
 #include <limits>
+#include <iostream>
 
 thread_local int _TRACE_CUR_FUNC::depth = 0;
 
 _TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
+#ifdef TRACE
     for (int i = 1; i <= depth - 1; ++i) {
         std::cerr << "│   ";
     }
@@ -27,9 +29,11 @@ _TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input
 
     std::cerr << std::endl;
     depth++;
+#endif // TRACE
 }
 
 _TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
+#ifdef TRACE
     depth--;
     for (int i = 1; i <= depth; ++i) {
         std::cerr << "│   ";
@@ -47,6 +51,7 @@ _TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
     }
 
     std::cerr << std::endl;
+#endif // TRACE
 }
 
 Error::operator int() const {

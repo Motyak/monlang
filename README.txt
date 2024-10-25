@@ -78,12 +78,46 @@ You can toggle a variable in order to track libs code change, by doing so we're 
 When parallel mode enabled, having multiple "goal" targets in the make command will run the goals in parallel rather than sequentially (which is probably not what you expect).
 If you want to run multiple goals in a row, use one make command per goal (you can even chain commands with `&&`).
 
+=== TWEAK IMPL W/ BUILD-TIME MACROS ===
+
+Macros allow to tweak the IMPLEMENTATION of ONE specific compilation unit through the build command.
+
+Rebuilding a compilation unit with a macro shouldn't require any other unit re-compilation since implementations depend on interfaces (headers) never on other implementations.
+
+---
+
+Enable trace on consumeXXX(..) functions:
+  -> make -B common.o TRACE=x
+Restore default value (no trace):
+  -> make -B common.o TRACE=
+
+Disable certain words in consumeWord(..) functions:
+  -> make -B Word.o DISABLE_WORDS=PG,SBG,CBG,
+Restore default value (enable all words):
+  -> make -B Word.o DISABLE_WORDS=
+
+Disable certain composed words in consumeAtom(..) functions:
+  -> make -B Atom.o DISABLE_POSTFIXES=SBG_IN_ATOM,PG_IN_ATOM,
+Restore default value (enable all postfixes):
+  -> make -B Atom.o DISABLE_POSTFIXES=
+
+---
+
+A more convenient way to pass the same set of parameters to each build command is to add them in the make alias in env.sh.
+e.g.:
+`local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE= DISABLE_WORDS=PG,SBG, DISABLE_POSTFIXES=PSBG_IN_ATOM"`
+
+Despite having "persisted" some parameters, it will remain possible to use a parameter default value by appending `DISABLE_WORDS=` for instance into the build command (the last set values will be taken into account).
+  -> make DISABLE_WORDS=PG -B Word.o DISABLE_WORDS=
+     <=>
+     make -B Word.o DISABLE_WORDS=
+
 === GENERATE INCLUDE GRAPH ===
 
 # Edit .clang-uml config file
 
 # Generate compile_commands.json file
-bear -- make bin/test/all.elf CLANG=y
+bear -- make bin/test/all.elf CLANG=x
 # Generate PlantUML diagrams
 clang-uml # read options from .clang-uml
 # Export .puml as svg image (vscode plugin)

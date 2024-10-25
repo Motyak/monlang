@@ -9,7 +9,7 @@ DEPFLAGS = -MMD -MP -MF .deps/$*.d
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
 ARFLAGS := rcsv
 
-BUILD_LIBS_ONCE ?= y # disable by passing `BUILD_LIBS_ONCE=`
+BUILD_LIBS_ONCE ?= x # disable by passing `BUILD_LIBS_ONCE=`
 DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= $(empty) # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 ifdef TRACE
