@@ -18,6 +18,7 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     static thread_local int indentLevel = 0;
+                      // UNUSED ??
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
