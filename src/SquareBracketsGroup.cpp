@@ -68,3 +68,8 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
     return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define SQUARE_BRACKETS_GROUP_CPP
+    #include "mayfail.tpp"
+#endif

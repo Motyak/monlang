@@ -74,3 +74,8 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
     return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input)); // TODO: TMP IMPL
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define PARENTHESES_GROUP_CPP
+    #include "mayfail.tpp"
+#endif

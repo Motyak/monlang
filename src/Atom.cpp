@@ -61,7 +61,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         accumulatedPostfixLeftPart = curr_ppg;
         goto BEGIN;
     }
-    #endif
+#endif
 
     #ifndef DISABLE_PSBG_IN_ATOM
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
@@ -76,10 +76,15 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         accumulatedPostfixLeftPart = curr_psbg;
         goto BEGIN;
     }
-    #endif
+#endif
 
     return std::visit(
         [](auto word) -> consumeAtom_RetType {return word;},
         accumulatedPostfixLeftPart
     );
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define ATOM_CPP
+    #include "mayfail.tpp"
+#endif

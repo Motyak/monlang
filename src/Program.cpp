@@ -24,3 +24,8 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
 
     return Program{sentences};
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define PROGRAM_CPP
+    #include "mayfail.tpp"
+#endif

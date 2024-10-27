@@ -18,6 +18,7 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     static thread_local int indentLevel = 0;
+                      // UNUSED ??
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
     };
@@ -114,3 +115,8 @@ CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sen
 }
 
 CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{toSentences(term), term} {}
+
+#if __has_include (<mayfail.hpp>)
+    #define CURLY_BRACKETS_GROUP_CPP
+    #include "mayfail.tpp"
+#endif

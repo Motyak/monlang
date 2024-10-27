@@ -83,3 +83,8 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
 
     return ProgramSentence{programWords};
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define PROGRAM_SENTENCE_CPP
+    #include "mayfail.tpp"
+#endif

@@ -47,3 +47,8 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
 
     return Term{words};
 }
+
+#if __has_include (<mayfail.hpp>)
+    #define TERM_CPP
+    #include "mayfail.tpp"
+#endif

@@ -9,12 +9,13 @@
 #include <optional>
 #include <variant>
 #include <expected>
-#include <string>
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
 constexpr char TAB = 9;
 constexpr char BACKSLASH = 92;
+
+////////////////////////////////////////////////////////////////
 
 struct Error {
     int code;
@@ -85,6 +86,23 @@ std::string serializeErr(MayFail<T> malformed) {
     return malformed.error().err.fmt;
 }
 
+#if __has_include (<mayfail.hpp>)
+    /*
+    Enable extern explicit template instanciations..
+    ..which will be provided by each Entity accordingly..
+    ..ONLY IF the <mayfail.hpp> header file is found.
+
+    There will be no desync possible since all Entities..
+    ..without exception depend on common.h (by design).
+
+    As long as common.cpp is recompiled after mayfail.hpp..
+    ..becomes available in include search path.
+    */
+    #include <mayfail.hpp>
+#endif
+
+////////////////////////////////////////////////////////////////
+
 struct Quantifier {
   private:
     int n;
@@ -111,6 +129,8 @@ size_t sequenceLen(const Sequence&);
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
+
+////////////////////////////////////////////////////////////////
 
 #define rdonly
 

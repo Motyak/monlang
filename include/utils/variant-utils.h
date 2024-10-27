@@ -2,7 +2,6 @@
 #define VARIANT_UTIL_H
 
 #include <variant>
-#include <type_traits>
 
 /* overload pattern */
 template <class... Fs> struct overload : Fs... { using Fs::operator()...; };
