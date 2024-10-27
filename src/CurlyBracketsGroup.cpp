@@ -1,3 +1,5 @@
+#define CURLY_BRACKETS_GROUP_CPP
+
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
@@ -116,7 +118,6 @@ CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sen
 
 CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{toSentences(term), term} {}
 
-#if __has_include (<mayfail.hpp>)
-    #define CURLY_BRACKETS_GROUP_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

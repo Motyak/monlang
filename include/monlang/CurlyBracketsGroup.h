@@ -29,4 +29,12 @@ struct CurlyBracketsTerm : public CurlyBracketsGroup {
 
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream&);
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef CURLY_BRACKETS_GROUP_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // CURLY_BRACKETS_GROUP_H

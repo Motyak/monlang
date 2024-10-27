@@ -1,3 +1,5 @@
+#define PARENTHESES_GROUP_CPP
+
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/Term.h>
 #include <monlang/common.h>
@@ -75,7 +77,6 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
     return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input)); // TODO: TMP IMPL
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define PARENTHESES_GROUP_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

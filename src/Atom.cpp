@@ -1,3 +1,5 @@
+#define ATOM_CPP
+
 #include <monlang/Atom.h>
 #include <monlang/common.h>
 
@@ -84,7 +86,6 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
     );
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define ATOM_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

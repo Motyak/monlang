@@ -1,3 +1,5 @@
+#define SQUARE_BRACKETS_GROUP_CPP
+
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/Term.h>
 #include <monlang/common.h>
@@ -69,7 +71,6 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
     return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define SQUARE_BRACKETS_GROUP_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

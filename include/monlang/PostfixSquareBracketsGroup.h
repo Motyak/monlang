@@ -10,4 +10,12 @@ struct PostfixSquareBracketsGroup {
     MayFail<SquareBracketsGroup> rightPart;
 };
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef POSTFIX_SQUARE_BRACKETS_GROUP_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H

@@ -26,4 +26,12 @@ using consumeSquareBracketsGroup_RetType = std::variant<
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef SQUARE_BRACKETS_GROUP_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // SQUARE_BRACKETS_GROUP_H

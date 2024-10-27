@@ -20,4 +20,12 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
 
 #define INDENT_SEQUENCE() (indentLevel * ProgramSentence::TAB_SEQUENCE)
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef PROGRAM_SENTENCE_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // PROGRAM_SENTENCE_H

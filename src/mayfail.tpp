@@ -1,5 +1,5 @@
-// THIS .TPP SHOULD ONLY BE INCLUDED BY ENTITIES .CPP
 // THIS .TPP SHOULD NOT BE COMPILED DIRECTLY
+// THIS .TPP SHOULD ONLY BE INCLUDED BY ENTITIES .CPP
 
 #ifdef PROGRAM_CPP
 template class Malformed<Program>;
@@ -20,6 +20,7 @@ template std::string serializeErr(MayFail<ProgramSentence>);
 #ifdef PROGRAM_WORD_CPP
 template class Malformed<ProgramWord>;
 template class std::expected<ProgramWord, Malformed<ProgramWord>>;
+template MayFail<ProgramWord> mayfail_cast(MayFail<Word>);
 template MayFail<Word> mayfail_cast(MayFail<ProgramWord>);
 template const ProgramWord& mayfail_unwrap(const MayFail<ProgramWord>&);
 template ProgramWord& mayfail_unwrap(MayFail<ProgramWord>&);
@@ -37,7 +38,7 @@ template std::string serializeErr(MayFail<Term>);
 #ifdef WORD_CPP
 template class Malformed<Word>;
 template class std::expected<Word, Malformed<Word>>;
-template MayFail<ProgramWord> mayfail_cast(MayFail<Word>);
+template MayFail<Word> mayfail_cast(MayFail<Atom*>);
 template const Word& mayfail_unwrap(const MayFail<Word>&);
 template Word& mayfail_unwrap(MayFail<Word>&);
 template std::string serializeErr(MayFail<Word>);
@@ -48,8 +49,6 @@ template std::string serializeErr(MayFail<Word>);
 #ifdef ATOM_CPP
 template class Malformed<Atom>;
 template class std::expected<Atom, Malformed<Atom>>;
-template MayFail<Word> mayfail_cast(MayFail<Atom>);
-template MayFail<Word> mayfail_convert(MayFail<Atom>);
 template const Atom& mayfail_unwrap(const MayFail<Atom>&);
 template Atom& mayfail_unwrap(MayFail<Atom>&);
 template std::string serializeErr(MayFail<Atom>);
@@ -58,7 +57,7 @@ template std::string serializeErr(MayFail<Atom>);
 #ifdef PARENTHESES_GROUP_CPP
 template class Malformed<ParenthesesGroup>;
 template class std::expected<ParenthesesGroup, Malformed<ParenthesesGroup>>;
-template MayFail<Word> mayfail_cast(MayFail<ParenthesesGroup>);
+template MayFail<Word> mayfail_cast(MayFail<ParenthesesGroup*>);
 template MayFail<Word> mayfail_convert(MayFail<ParenthesesGroup>);
 template const ParenthesesGroup& mayfail_unwrap(const MayFail<ParenthesesGroup>&);
 template ParenthesesGroup& mayfail_unwrap(MayFail<ParenthesesGroup>&);
@@ -68,7 +67,7 @@ template std::string serializeErr(MayFail<ParenthesesGroup>);
 #ifdef SQUARE_BRACKETS_GROUP_CPP
 template class Malformed<SquareBracketsGroup>;
 template class std::expected<SquareBracketsGroup, Malformed<SquareBracketsGroup>>;
-template MayFail<Word> mayfail_cast(MayFail<SquareBracketsGroup>);
+template MayFail<Word> mayfail_cast(MayFail<SquareBracketsGroup*>);
 template MayFail<Word> mayfail_convert(MayFail<SquareBracketsGroup>);
 template const SquareBracketsGroup& mayfail_unwrap(const MayFail<SquareBracketsGroup>&);
 template SquareBracketsGroup& mayfail_unwrap(MayFail<SquareBracketsGroup>&);
@@ -78,7 +77,7 @@ template std::string serializeErr(MayFail<SquareBracketsGroup>);
 #ifdef CURLY_BRACKETS_GROUP_CPP
 template class Malformed<CurlyBracketsGroup>;
 template class std::expected<CurlyBracketsGroup, Malformed<CurlyBracketsGroup>>;
-template MayFail<Word> mayfail_cast(MayFail<CurlyBracketsGroup>);
+template MayFail<Word> mayfail_cast(MayFail<CurlyBracketsGroup*>);
 template MayFail<Word> mayfail_convert(MayFail<CurlyBracketsGroup>);
 template const CurlyBracketsGroup& mayfail_unwrap(const MayFail<CurlyBracketsGroup>&);
 template CurlyBracketsGroup& mayfail_unwrap(MayFail<CurlyBracketsGroup>&);
@@ -88,7 +87,7 @@ template std::string serializeErr(MayFail<CurlyBracketsGroup>);
 #ifdef POSTFIX_PARENTHESES_GROUP_CPP
 template class Malformed<PostfixParenthesesGroup>;
 template class std::expected<PostfixParenthesesGroup, Malformed<PostfixParenthesesGroup>>;
-template MayFail<Word> mayfail_cast(MayFail<PostfixParenthesesGroup>);
+template MayFail<Word> mayfail_cast(MayFail<PostfixParenthesesGroup*>);
 template MayFail<Word> mayfail_convert(MayFail<PostfixParenthesesGroup>);
 template const PostfixParenthesesGroup& mayfail_unwrap(const MayFail<PostfixParenthesesGroup>&);
 template PostfixParenthesesGroup& mayfail_unwrap(MayFail<PostfixParenthesesGroup>&);
@@ -98,7 +97,7 @@ template std::string serializeErr(MayFail<PostfixParenthesesGroup>);
 #ifdef POSTFIX_SQUARE_BRACKETS_GROUP_CPP
 template class Malformed<PostfixSquareBracketsGroup>;
 template class std::expected<PostfixSquareBracketsGroup, Malformed<PostfixSquareBracketsGroup>>;
-template MayFail<Word> mayfail_cast(MayFail<PostfixSquareBracketsGroup>);
+template MayFail<Word> mayfail_cast(MayFail<PostfixSquareBracketsGroup*>);
 template MayFail<Word> mayfail_convert(MayFail<PostfixSquareBracketsGroup>);
 template const PostfixSquareBracketsGroup& mayfail_unwrap(const MayFail<PostfixSquareBracketsGroup>&);
 template PostfixSquareBracketsGroup& mayfail_unwrap(MayFail<PostfixSquareBracketsGroup>&);

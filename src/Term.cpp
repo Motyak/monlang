@@ -1,3 +1,5 @@
+#define TERM_CPP
+
 #include <monlang/Term.h>
 #include <monlang/Word.h>
 #include <monlang/common.h>
@@ -48,7 +50,6 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
     return Term{words};
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define TERM_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

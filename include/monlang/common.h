@@ -86,21 +86,6 @@ std::string serializeErr(MayFail<T> malformed) {
     return malformed.error().err.fmt;
 }
 
-#if __has_include (<mayfail.hpp>)
-    /*
-    Enable extern explicit template instanciations..
-    ..which will be provided by each Entity accordingly..
-    ..ONLY IF the <mayfail.hpp> header file is found.
-
-    There will be no desync possible since all Entities..
-    ..without exception depend on common.h (by design).
-
-    As long as common.cpp is recompiled after mayfail.hpp..
-    ..becomes available in include search path.
-    */
-    #include <mayfail.hpp>
-#endif
-
 ////////////////////////////////////////////////////////////////
 
 struct Quantifier {

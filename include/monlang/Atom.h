@@ -21,4 +21,12 @@ using consumeAtom_RetType = std::variant<
 >;
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef ATOM_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // ATOM_H

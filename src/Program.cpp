@@ -1,3 +1,5 @@
+#define PROGRAM_CPP
+
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/common.h>
@@ -25,7 +27,6 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
     return Program{sentences};
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define PROGRAM_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif

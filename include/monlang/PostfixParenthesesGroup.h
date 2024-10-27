@@ -10,4 +10,12 @@ struct PostfixParenthesesGroup {
     MayFail<ParenthesesGroup> rightPart;
 };
 
+#if __has_include (<monlang/mayfail.hpp>)
+#ifdef POSTFIX_PARENTHESES_GROUP_CPP
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include <monlang/mayfail.hpp>
+#endif
+#endif
+
 #endif // POSTFIX_PARENTHESES_GROUP_H

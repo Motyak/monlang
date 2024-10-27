@@ -1,3 +1,5 @@
+#define WORD_CPP
+
 #include <monlang/Word.h>
 #include <monlang/common.h>
 
@@ -58,7 +60,6 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
 }
 
-#if __has_include (<mayfail.hpp>)
-    #define WORD_CPP
+#if __has_include (<monlang/mayfail.hpp>)
     #include "mayfail.tpp"
 #endif
