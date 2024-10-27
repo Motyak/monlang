@@ -1,8 +1,27 @@
 TODO
 
-- Inventer une notation pour les erreurs qui ne peuvent pas arriver en scénario normal (initié par le consumeProgram).
+- refactor l'algo de chaque entité (consumeXXX(..))
+  -> il ne devrait pas y avoir plusieurs endroits dans le code qui retourne un même Error code
 
-- Réordonner correctement les tests de telle sorte à avoir d'abord les scénarios nominaux (positifs/happy-path) puis les scénarios négatifs
+- refactor les tests (y'a trop de tests dans wbh.cpp maintenant, il faut avoir le moins de tests possibles)
+  -> dans chaque test .cpp, on couvre le strict minimum en terme de feature PUIS les erreurs. Pas d'intégration.
+  -> dans int.cpp, on met tous les tests d'intégration
+    -> intégrations type <Entité>-Word (typiquement les nested entities)
+  -> dans bigbang.cpp, intégrations "big bang" (des programmes complets) <=> tests système
+  -> dans whitebox_bug_hunting.cpp on peut mettre autant de tests qu'on veut
+  		, qui vont plus loin que le "example as specification"
+		, on va plutôt tester la robustesse des algorithmes (d'où le whitebox)
+		, ces tests ne doivent pas être inclus dans le all.cpp
+    -> typiquement tous les tests utiles mais qui ne se limitent pas à du "example as specification" => on les met ici
+	-> tous les bugs qu'on découvrent dans la playground => on les déplace ici aussi (pour check non-régression)
+
+	=> [int][sbg]     -- pour une intégration type SquareBracketsGroup-Word
+	=> [bigbang] -- pour une intégration type big bang
+	=> du coup on peut lancer
+	  => bin/test/all.elf [sbg][~int]
+	  => bin/test/all.elf [sbg] -- inclus les tests de nesting, etc..
+	  => bin/test/all.elf [int][~bigbang]
+	  => bin/test/all.elf [int][bigbang]
 
 ---
 
@@ -30,6 +49,14 @@ WHEN
 
 
 ---
+
+cloc . --exclude-dir=lib,.vscode,.deps,dist
+
+# lister tous les test ids d'un binaire catch2
+bin/test/all.elf --list-tests | grep -oP 'test-\d{4}'
+
+# récupérer les identifiants de tests avec leur fichier respectif
+grep 'test-' src/test/[!_]*.cpp | perl -pe 's/src\/test\/(.*)\.cpp:.*\[test-(\d{4})\].*/$1 $2/g' | column -s' ' -t | sort -k2 -n
 
 # récupérer tous les appels de fonctions utils dans Makefile
 perl -ne 'print "$1\n" if /\$\(call (\w+),/' Makefile | sort | uniq | sed -z 's/\n/, /g'
