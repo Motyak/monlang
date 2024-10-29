@@ -8,6 +8,13 @@
 #include <utils/vec-utils.h>
 #include <utils/defer-util.h>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 #define until(x) while(!(x))
 
 const Sequence CurlyBracketsGroup::INITIATOR_SEQUENCE = {'{'};
@@ -117,7 +124,3 @@ CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sen
 }
 
 CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{toSentences(term), term} {}
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

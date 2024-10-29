@@ -9,6 +9,13 @@
 
 #include <algorithm>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 const Sequence Term::CONTINUATOR_SEQUENCE = { SPACE };
 
 const std::vector<char> Term::RESERVED_CHARACTERS = {
@@ -49,7 +56,3 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
 
     return Term{words};
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

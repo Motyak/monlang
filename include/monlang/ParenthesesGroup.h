@@ -28,12 +28,4 @@ using consumeParenthesesGroup_RetType = std::variant<
 >;
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 
-#if __has_include (<monlang/mayfail.hpp>)
-#ifdef PARENTHESES_GROUP_CPP
-    // enable extern explicit instanciations..
-    // ..for common.h 'mayfail' templates
-    #include <monlang/mayfail.hpp>
-#endif
-#endif
-
 #endif // PARENTHESES_GROUP_H

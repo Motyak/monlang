@@ -21,12 +21,4 @@ using Word = std::variant<
 
 MayFail<Word> consumeWord(std::istringstream&);
 
-#if __has_include (<monlang/mayfail.hpp>)
-#ifdef WORD_CPP
-    // enable extern explicit instanciations..
-    // ..for common.h 'mayfail' templates
-    #include <monlang/mayfail.hpp>
-#endif
-#endif
-
 #endif // WORD_H

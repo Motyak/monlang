@@ -9,6 +9,13 @@
 
 #include <algorithm>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 const Sequence ProgramSentence::TAB_SEQUENCE = {{ SPACE, 4_ }};
 // const Sequence ProgramSentence::TAB_SEQUENCE = { '+' };
 
@@ -85,7 +92,3 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
 
     return ProgramSentence{programWords};
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

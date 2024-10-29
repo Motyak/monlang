@@ -4,6 +4,13 @@
 #include <monlang/ProgramSentence.h>
 #include <monlang/common.h>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 MayFail<Program> consumeProgram(std::istringstream& input) {
     TRACE_CUR_FUN();
 
@@ -26,7 +33,3 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
 
     return Program{sentences};
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

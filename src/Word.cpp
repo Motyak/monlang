@@ -13,6 +13,13 @@
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters;
 
@@ -59,7 +66,3 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     /* Atom is the "fall-through" Word */
     return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

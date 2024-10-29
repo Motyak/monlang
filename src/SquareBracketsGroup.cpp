@@ -11,6 +11,12 @@
 
 #include <algorithm>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
 
 const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = {'['};
 const Sequence SquareBracketsGroup::CONTINUATOR_SEQUENCE = {',', SPACE};
@@ -70,7 +76,3 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
     return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

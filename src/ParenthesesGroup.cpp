@@ -12,6 +12,13 @@
 
 #include <algorithm>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 const Sequence ParenthesesGroup::INITIATOR_SEQUENCE = {'('};
 const Sequence ParenthesesGroup::CONTINUATOR_SEQUENCE = {',', SPACE};
 const Sequence ParenthesesGroup::TERMINATOR_SEQUENCE = {')'};
@@ -76,7 +83,3 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
     return mayfail_convert<ParenthesesGroup*>(consumeParenthesesGroupStrictly(input)); // TODO: TMP IMPL
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

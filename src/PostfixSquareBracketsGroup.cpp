@@ -2,8 +2,11 @@
 
 #include <monlang/PostfixSquareBracketsGroup.h>
 
-// dummy cpp file in order for it to get its own object file
-
-#if __has_include (<monlang/mayfail.hpp>)
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
     #include "mayfail.tpp"
 #endif
+
+// dummy cpp file in order for it to get its own object file

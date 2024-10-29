@@ -15,6 +15,13 @@
 
 #include <algorithm>
 
+#if __has_include ("mayfail.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'mayfail' templates
+    #include "mayfail.hpp"
+    #include "mayfail.tpp"
+#endif
+
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
 
@@ -85,7 +92,3 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         accumulatedPostfixLeftPart
     );
 }
-
-#if __has_include (<monlang/mayfail.hpp>)
-    #include "mayfail.tpp"
-#endif

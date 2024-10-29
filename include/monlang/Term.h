@@ -16,12 +16,4 @@ struct Term {
 
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
-#if __has_include (<monlang/mayfail.hpp>)
-#ifdef TERM_CPP
-    // enable extern explicit instanciations..
-    // ..for common.h 'mayfail' templates
-    #include <monlang/mayfail.hpp>
-#endif
-#endif
-
 #endif // TERM_H
