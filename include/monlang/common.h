@@ -93,6 +93,7 @@ struct Quantifier {
     int n;
 
   public:
+    Quantifier() = default;
     explicit Quantifier(int);
     operator int() const; // accessor
 };
@@ -101,6 +102,7 @@ Quantifier operator "" _(unsigned long long int);
 struct CharacterAppearance {
     char c;
     Quantifier ntimes;
+    CharacterAppearance() = default;
     CharacterAppearance(char c, Quantifier ntimes = 1_);
 };
 

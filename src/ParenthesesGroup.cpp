@@ -12,6 +12,13 @@
 
 #include <algorithm>
 
+#if __has_include ("sequence.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'sequence' templates
+    #include "sequence.hpp"
+    #include "sequence.tpp"
+#endif
+
 #if __has_include ("mayfail.hpp")
     // enable extern explicit instanciations..
     // ..for common.h 'mayfail' templates

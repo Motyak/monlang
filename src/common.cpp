@@ -1,3 +1,5 @@
+#define COMMON_CPP
+
 #include <monlang/common.h>
 
 #include <utils/str-utils.h>
@@ -5,54 +7,12 @@
 #include <limits>
 #include <iostream>
 
-thread_local int _TRACE_CUR_FUNC::depth = 0;
-
-_TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
-#ifdef TRACE
-    for (int i = 1; i <= depth - 1; ++i) {
-        std::cerr << "│   ";
-    }
-    if (depth >= 1) {
-        std::cerr << "├───";
-    }
-
-    std::cerr << funcName << " BEGIN";
-
-    std::string remaining = input.str().substr(input.tellg());
-    auto remainingAsLines = split(remaining, "\n");
-    ASSERT(remainingAsLines.size() > 0);
-    std::cerr << " `" << remainingAsLines[0] << "`";
-    if (remainingAsLines.size() > 1) {
-        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
-        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
-    }
-
-    std::cerr << std::endl;
-    depth++;
-#endif // TRACE
-}
-
-_TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
-#ifdef TRACE
-    depth--;
-    for (int i = 1; i <= depth; ++i) {
-        std::cerr << "│   ";
-    }
-
-    std::cerr << funcName << " END";
-
-    std::string remaining = input.tellg() == -1? "" : input.str().substr(input.tellg());
-    auto remainingAsLines = split(remaining, "\n");
-    ASSERT(remainingAsLines.size() > 0);
-    std::cerr << " `" << remainingAsLines[0] << "`";
-    if (remainingAsLines.size() > 1) {
-        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
-        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
-    }
-
-    std::cerr << std::endl;
-#endif // TRACE
-}
+#if __has_include ("sequence.hpp")
+    // enable extern explicit instanciations..
+    // ..for common.h 'sequence' templates
+    #include "sequence.hpp"
+    #include "sequence.tpp"
+#endif
 
 Error::operator int() const {
     return this->code;
@@ -61,6 +21,8 @@ Error::operator int() const {
 std::ostream& operator<<(std::ostream& os, Error err) {
     return os << err.fmt;
 }
+
+////////////////////////////////////////////////////////////////
 
 Quantifier::Quantifier(int n) : n(n) {
     ;
@@ -172,4 +134,55 @@ bool peekAnyChar(const std::vector<char>& chars, std::istringstream& input) {
         }
     }
     return false;
+}
+
+////////////////////////////////////////////////////////////////
+
+thread_local int _TRACE_CUR_FUNC::depth = 0;
+
+_TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
+#ifdef TRACE
+    for (int i = 1; i <= depth - 1; ++i) {
+        std::cerr << "│   ";
+    }
+    if (depth >= 1) {
+        std::cerr << "├───";
+    }
+
+    std::cerr << funcName << " BEGIN";
+
+    std::string remaining = input.str().substr(input.tellg());
+    auto remainingAsLines = split(remaining, "\n");
+    ASSERT(remainingAsLines.size() > 0);
+    std::cerr << " `" << remainingAsLines[0] << "`";
+    if (remainingAsLines.size() > 1) {
+        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
+        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
+    }
+
+    std::cerr << std::endl;
+    depth++;
+#endif // TRACE
+}
+
+_TRACE_CUR_FUNC::~_TRACE_CUR_FUNC() {
+#ifdef TRACE
+    depth--;
+    for (int i = 1; i <= depth; ++i) {
+        std::cerr << "│   ";
+    }
+
+    std::cerr << funcName << " END";
+
+    std::string remaining = input.tellg() == -1? "" : input.str().substr(input.tellg());
+    auto remainingAsLines = split(remaining, "\n");
+    ASSERT(remainingAsLines.size() > 0);
+    std::cerr << " `" << remainingAsLines[0] << "`";
+    if (remainingAsLines.size() > 1) {
+        std::cerr << " (" << remainingAsLines.size() - 1 << " more ";
+        std::cerr << (remainingAsLines.size() > 2? "lines" : "line") << ")";
+    }
+
+    std::cerr << std::endl;
+#endif // TRACE
 }
