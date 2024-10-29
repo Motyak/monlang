@@ -15,6 +15,8 @@ constexpr char NEWLINE = 10;
 constexpr char TAB = 9;
 constexpr char BACKSLASH = 92;
 
+////////////////////////////////////////////////////////////////
+
 struct Error {
     int code;
     std::string fmt;
@@ -84,6 +86,8 @@ std::string serializeErr(MayFail<T> malformed) {
     return malformed.error().err.fmt;
 }
 
+////////////////////////////////////////////////////////////////
+
 struct Quantifier {
   private:
     int n;
@@ -110,6 +114,8 @@ size_t sequenceLen(const Sequence&);
 std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
+
+////////////////////////////////////////////////////////////////
 
 #define rdonly
 
