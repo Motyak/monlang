@@ -1,7 +1,9 @@
-#ifndef MAYFAIL_HPP
-#define MAYFAIL_HPP
+// #define DEBUG //toggle
 
 #ifdef PROGRAM_H
+#ifdef DEBUG
+#warning PROGRAM_H
+#endif
 extern template class Malformed<Program>;
 extern template class std::expected<Program, Malformed<Program>>;
 extern template const Program& mayfail_unwrap(const MayFail<Program>&);
@@ -10,6 +12,9 @@ extern template std::string serializeErr(MayFail<Program>);
 #endif
 
 #ifdef PROGRAM_SENTENCE_H
+#ifdef DEBUG
+#warning PROGRAM_SENTENCE_H
+#endif
 extern template class Malformed<ProgramSentence>;
 extern template class std::expected<ProgramSentence, Malformed<ProgramSentence>>;
 extern template const ProgramSentence& mayfail_unwrap(const MayFail<ProgramSentence>&);
@@ -18,6 +23,9 @@ extern template std::string serializeErr(MayFail<ProgramSentence>);
 #endif
 
 #ifdef PROGRAM_WORD_H
+#ifdef DEBUG
+#warning PROGRAM_WORD_H
+#endif
 extern template class Malformed<ProgramWord>;
 extern template class std::expected<ProgramWord, Malformed<ProgramWord>>;
 extern template MayFail<ProgramWord> mayfail_cast(MayFail<Word>);
@@ -28,6 +36,9 @@ extern template std::string serializeErr(MayFail<ProgramWord>);
 #endif
 
 #ifdef TERM_H
+#ifdef DEBUG
+#warning TERM_H
+#endif
 extern template class Malformed<Term>;
 extern template class std::expected<Term, Malformed<Term>>;
 extern template const Term& mayfail_unwrap(const MayFail<Term>&);
@@ -36,6 +47,9 @@ extern template std::string serializeErr(MayFail<Term>);
 #endif
 
 #ifdef WORD_H
+#ifdef DEBUG
+#warning WORD_H
+#endif
 extern template class Malformed<Word>;
 extern template class std::expected<Word, Malformed<Word>>;
 extern template MayFail<Word> mayfail_cast(MayFail<Atom*>);
@@ -47,6 +61,9 @@ extern template std::string serializeErr(MayFail<Word>);
 ////////////////////////////////////////////////////////////////
 
 #ifdef ATOM_H
+#ifdef DEBUG
+#warning ATOM_H
+#endif
 extern template class Malformed<Atom>;
 extern template class std::expected<Atom, Malformed<Atom>>;
 extern template const Atom& mayfail_unwrap(const MayFail<Atom>&);
@@ -55,6 +72,9 @@ extern template std::string serializeErr(MayFail<Atom>);
 #endif
 
 #ifdef PARENTHESES_GROUP_H
+#ifdef DEBUG
+#warning PARENTHESES_GROUP_H
+#endif
 extern template class Malformed<ParenthesesGroup>;
 extern template class std::expected<ParenthesesGroup, Malformed<ParenthesesGroup>>;
 extern template MayFail<Word> mayfail_cast(MayFail<ParenthesesGroup*>);
@@ -65,6 +85,9 @@ extern template std::string serializeErr(MayFail<ParenthesesGroup>);
 #endif
 
 #ifdef SQUARE_BRACKETS_GROUP_H
+#ifdef DEBUG
+#warning SQUARE_BRACKETS_GROUP_H
+#endif
 extern template class Malformed<SquareBracketsGroup>;
 extern template class std::expected<SquareBracketsGroup, Malformed<SquareBracketsGroup>>;
 extern template MayFail<Word> mayfail_cast(MayFail<SquareBracketsGroup*>);
@@ -75,6 +98,9 @@ extern template std::string serializeErr(MayFail<SquareBracketsGroup>);
 #endif
 
 #ifdef CURLY_BRACKETS_GROUP_H
+#ifdef DEBUG
+#warning CURLY_BRACKETS_GROUP_H
+#endif
 extern template class Malformed<CurlyBracketsGroup>;
 extern template class std::expected<CurlyBracketsGroup, Malformed<CurlyBracketsGroup>>;
 extern template MayFail<Word> mayfail_cast(MayFail<CurlyBracketsGroup*>);
@@ -85,6 +111,9 @@ extern template std::string serializeErr(MayFail<CurlyBracketsGroup>);
 #endif
 
 #ifdef POSTFIX_PARENTHESES_GROUP_H
+#ifdef DEBUG
+#warning POSTFIX_PARENTHESES_GROUP_H
+#endif
 extern template class Malformed<PostfixParenthesesGroup>;
 extern template class std::expected<PostfixParenthesesGroup, Malformed<PostfixParenthesesGroup>>;
 extern template MayFail<Word> mayfail_cast(MayFail<PostfixParenthesesGroup*>);
@@ -95,6 +124,9 @@ extern template std::string serializeErr(MayFail<PostfixParenthesesGroup>);
 #endif
 
 #ifdef POSTFIX_SQUARE_BRACKETS_GROUP_H
+#ifdef DEBUG
+#warning POSTFIX_SQUARE_BRACKETS_GROUP_H
+#endif
 extern template class Malformed<PostfixSquareBracketsGroup>;
 extern template class std::expected<PostfixSquareBracketsGroup, Malformed<PostfixSquareBracketsGroup>>;
 extern template MayFail<Word> mayfail_cast(MayFail<PostfixSquareBracketsGroup*>);
@@ -103,5 +135,3 @@ extern template const PostfixSquareBracketsGroup& mayfail_unwrap(const MayFail<P
 extern template PostfixSquareBracketsGroup& mayfail_unwrap(MayFail<PostfixSquareBracketsGroup>&);
 extern template std::string serializeErr(MayFail<PostfixSquareBracketsGroup>);
 #endif
-
-#endif // MAYFAIL_HPP
