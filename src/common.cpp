@@ -1,18 +1,9 @@
-#define COMMON_CPP
-
 #include <monlang/common.h>
 
 #include <utils/str-utils.h>
 
 #include <limits>
 #include <iostream>
-
-#if __has_include ("sequence.hpp")
-    // enable extern explicit instanciations..
-    // ..for common.h 'sequence' templates
-    #include "sequence.hpp"
-    #include "sequence.tpp"
-#endif
 
 Error::operator int() const {
     return this->code;
