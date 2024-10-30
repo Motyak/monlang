@@ -32,8 +32,6 @@ ENTITIES := \
 Atom \
 CurlyBracketsGroup \
 ParenthesesGroup \
-PostfixParenthesesGroup \
-PostfixSquareBracketsGroup \
 Program \
 ProgramSentence \
 ProgramWord \

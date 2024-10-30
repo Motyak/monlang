@@ -7,14 +7,14 @@
 
 #include <algorithm>
 
-const Sequence ProgramSentence::TAB_SEQUENCE = {{ SPACE, 4_ }};
-// const Sequence ProgramSentence::TAB_SEQUENCE = { '+' };
+const Sequence ProgramSentence::TAB_SEQUENCE = {{SPACE, 4_}};
+// const Sequence ProgramSentence::TAB_SEQUENCE = {'+'};
 
-const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = { SPACE };
-// const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = { '_' };
+const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {SPACE};
+// const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {'_'};
 
-const Sequence ProgramSentence::TERMINATOR_SEQUENCE = { NEWLINE };
-// const Sequence ProgramSentence::TERMINATOR_SEQUENCE = { SPACE };
+const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {NEWLINE};
+// const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {SPACE};
 
 const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TAB_SEQUENCE).value(),

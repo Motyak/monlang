@@ -1,3 +1,5 @@
+#ifndef LOOP_UTILS_H
+#define LOOP_UTILS_H
 
 #define until(x) while(!(x))
 
@@ -7,3 +9,5 @@
 inline thread_local bool __first_it;
 #define LOOP __first_it = true;
 #define ENDLOOP __first_it = false;
+
+#endif // LOOP_UTILS_H

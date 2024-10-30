@@ -32,7 +32,7 @@ class Unparse : public ConvenientVisitor<void> {
 #include <utils/tommystring.h>
 
 // g++ -x c++ -D UNPARSE_H_MAIN -c include/monlang/visitors/Unparse.h -o main.o --std=c++23 -Wall -Wextra -I include
-// g++ main.o src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp  obj/*.o -o main.elf --std=c++23 -I include
+// g++ main.o src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp  obj/*.o -o main.elf --std=c++23 -Wall -Wextra -I include
 int main()
 {
     auto input = tommy_str(R"EOF(

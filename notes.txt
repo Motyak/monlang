@@ -21,7 +21,7 @@ TODO
 	  => bin/test/all.elf [sbg][~int]
 	  => bin/test/all.elf [sbg] -- inclus les tests de nesting, etc..
 	  => bin/test/all.elf [int][~bigbang]
-	  => bin/test/all.elf [int][bigbang]
+	  => bin/test/all.elf [bigbang]
 
 ---
 

@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-const Sequence Term::CONTINUATOR_SEQUENCE = { SPACE };
+const Sequence Term::CONTINUATOR_SEQUENCE = {SPACE};
 
 const std::vector<char> Term::RESERVED_CHARACTERS = {
     sequenceFirstChar(CONTINUATOR_SEQUENCE).value()
