@@ -1,4 +1,4 @@
-include utils.mk # askmake, buildmake, not, shell_onrun, shouldrebuild
+include utils.mk # buildmacros, askmake, buildmake, not, shell_onrun, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -10,11 +10,9 @@ DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
 ARFLAGS := rcsv
 
 BUILD_LIBS_ONCE ?= x # disable by passing `BUILD_LIBS_ONCE=`
+TRACE ?= $(empty) # enable by passing `TRACE=x`
 DISABLE_WORDS ?= $(empty) # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= $(empty) # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
-ifdef TRACE
-	CXXFLAGS += -D TRACE
-endif
 ifdef CLANG
 	CXX := clang++
 #	ugly workaround to support clang
@@ -77,14 +75,16 @@ mrproper:
 
 ###########################################################
 
-word_macros := $(addprefix -D DISABLE_,$(subst $(comma),$(space),$(DISABLE_WORDS)))
-postfix_macros := $(addprefix -D DISABLE_P,$(subst $(comma),$(space),$(DISABLE_POSTFIXES)))
+obj/common.o: trace_macro? := $(if $(TRACE), -D TRACE)
+obj/Word.o: word_macros? := $(call buildmacros, DISABLE_, $(DISABLE_WORDS))
+obj/Atom.o: postfix_macros? := $(call buildmacros, DISABLE_P, $(filter-out %_IN_ATOM,$(DISABLE_POSTFIXES)))
+macros? = $(strip $(trace_macro?) $(word_macros?) $(postfix_macros?))
 
 $(OBJS): obj/%.o: src/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(word_macros) $(postfix_macros)
+	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros?)
 
 $(RELEASE_OBJS): obj/release/%.o: src/%.cpp
-	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(word_macros) $(postfix_macros)
+	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(macros?)
 
 $(TEST_BINS): bin/test/%.elf: src/test/%.cpp $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $< $(OBJS) lib/test-libs.a $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)

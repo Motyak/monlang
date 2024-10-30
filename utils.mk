@@ -2,11 +2,19 @@ comma := ,
 empty :=
 space := $(empty) $(empty)
 
+# buildmacros: build gcc macro arguments from a var
+# $(1): macro prefix
+# $(2): macro list var
+# returns: macro list formatted as gcc arguments
+define buildmacros
+$(addprefix -D $(strip $(1)),$(subst $(comma),$(space),$(2)))
+endef
+
 # shell_onrun: same as $(shell) but doesn't evaluate during make autocompletion
 # $(1): code to evaluate
 # returns: evaluated code on run, the empty str otherwise
 define shell_onrun
-$(if $(filter .DEFAULT,$(MAKECMDGOALS)),,$(shell $(strip $(1))))
+$(if $(filter .DEFAULT,$(MAKECMDGOALS)),,$(shell $(1)))
 endef
 
 # not: logical not
