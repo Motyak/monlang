@@ -27,6 +27,14 @@ struct CurlyBracketsTerm : public CurlyBracketsGroup {
     CurlyBracketsTerm(MayFail<Term> term);
 };
 
-MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream&);
+MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream&);
+
+using consumeCurlyBracketsGroup_RetType = std::variant<
+    MayFail<CurlyBracketsGroup*>,
+    MayFail<PostfixParenthesesGroup*>,
+    MayFail<PostfixSquareBracketsGroup*>
+>;
+
+consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

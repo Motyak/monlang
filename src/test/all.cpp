@@ -5,8 +5,8 @@
 
 #include "cbg.cpp" // CurlyBracketsGroup
 
-#include "postfix.cpp" // PostfixParenthesesGroup..
-                         // .., PostfixSquareBracketsGroup
+#include "postfix.cpp" // PostfixSquareBracketsGroup..
+                       // .., PostfixParenthesesGroup
 
 #include "int.cpp" // <entity>-Word integrations, nested entities
 

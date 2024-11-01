@@ -29,7 +29,7 @@ TEST_CASE ("nested curly brackets group", "[test-1000][int]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
     auto output_word = mayfail_convert<Word>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -42,8 +42,8 @@ TEST_CASE ("postfix pg", "[test-1001][int]") {
 
     auto expect = tommy_str(R"EOF(
        |-> PostfixParenthesesGroup
-       |  -> PostfixParenthesesGroup
-       |    -> Atom: `fds`
+       |  -> Word: PostfixParenthesesGroup
+       |    -> Word: Atom: `fds`
        |    -> ParenthesesGroup
        |      -> Term
        |        -> Word: Atom: `a`

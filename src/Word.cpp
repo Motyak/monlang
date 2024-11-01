@@ -46,7 +46,7 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
     #ifndef DISABLE_CBG
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_convert<Word>(consumeCurlyBracketsGroup(input)); // TODO: no convert should be needed
+        return mayfail_cast<Word>(consumeCurlyBracketsGroup(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,

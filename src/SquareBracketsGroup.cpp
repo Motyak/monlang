@@ -6,6 +6,7 @@
 #include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/loop-utils.h>
+#include <utils/variant-utils.h>
 
 #include <algorithm>
 
@@ -65,5 +66,31 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
 }
 
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
-    return mayfail_convert<SquareBracketsGroup*>(consumeSquareBracketsGroupStrictly(input)); // TODO: TMP IMPL
+    auto sbg = consumeSquareBracketsGroupStrictly(input);
+
+    if (!sbg.has_value()) {
+        return mayfail_convert<SquareBracketsGroup*>(sbg);
+    }
+
+    using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
+
+    #ifndef DISABLE_PSBG_IN_SBG
+    while (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
+        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
+            variant_cast(accumulatedPostfixLeftPart),
+            whats_right_behind
+        });
+        if (!whats_right_behind.has_value()) {
+            return std::unexpected(Malformed(curr_psbg, ERR(329)));
+        }
+        accumulatedPostfixLeftPart = curr_psbg;
+    }
+    #endif
+
+    return std::visit(
+        [](auto word) -> consumeSquareBracketsGroup_RetType {return word;},
+        accumulatedPostfixLeftPart
+    );
 }

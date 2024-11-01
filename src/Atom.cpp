@@ -43,7 +43,7 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         return mayfail_convert<Atom*>(atom);
     }
 
-    using PostfixLeftPart = std::variant<Atom*, PostfixSquareBracketsGroup*, PostfixParenthesesGroup*>;
+    using PostfixLeftPart = std::variant<Atom*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
     [[maybe_unused]]
