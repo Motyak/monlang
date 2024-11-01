@@ -237,7 +237,11 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     /* handle single term */
     if (cbg->term) {
         auto term = cbg->term.value();
+        auto savedStack = numbering;
+        // add `Term: ` prefix in tree
+        numbering = std::stack<int>({NO_NUMBERING});
         handleTerm(term);
+        numbering = savedStack; // restore stack
         if (term.has_value() && !curWord_.has_value()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
@@ -284,8 +288,9 @@ void Print::operator()(Atom* atom) {
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
-    // add `Word: ` prefix in tree
+    /* add `Word: ` prefix in tree */
     numbering = std::stack<int>({NO_NUMBERING});
+    areProgramWords = false;
 
     currIndent++;
     operator()(MayFail<Word>(psbg->leftPart));
@@ -299,8 +304,9 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
 void Print::operator()(PostfixParenthesesGroup* ppg) {
     outputLine("PostfixParenthesesGroup");
 
-    // add `Word: ` prefix in tree
+    /* add `Word: ` prefix in tree */
     numbering = std::stack<int>({NO_NUMBERING});
+    areProgramWords = false;
 
     currIndent++;
     operator()(MayFail<Word>(ppg->leftPart));

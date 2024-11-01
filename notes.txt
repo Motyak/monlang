@@ -2,6 +2,7 @@ TODO
 
 - refactor l'algo de chaque entité (consumeXXX(..))
   -> il ne devrait pas y avoir plusieurs endroits dans le code qui retourne un même Error code
+  -> OK
 
 - refactor les tests (y'a trop de tests dans wbh.cpp maintenant, il faut avoir le moins de tests possibles)
   -> dans chaque test .cpp, on couvre le strict minimum en terme de feature PUIS les erreurs. Pas d'intégration.
@@ -22,6 +23,7 @@ TODO
 	  => bin/test/all.elf [sbg] -- inclus les tests de nesting, etc..
 	  => bin/test/all.elf [int][~bigbang]
 	  => bin/test/all.elf [bigbang]
+  -> OK
 
 ---
 
