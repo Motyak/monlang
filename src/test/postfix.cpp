@@ -11,7 +11,7 @@ TEST_CASE ("postfix sbg", "[test-3211][int][postfix]") {
 
     auto expect = tommy_str(R"EOF(
        |-> PostfixSquareBracketsGroup
-       |  -> Atom: `fds`
+       |  -> Word: Atom: `fds`
        |  -> SquareBracketsGroup (empty)
     )EOF");
 

@@ -284,11 +284,8 @@ void Print::operator()(Atom* atom) {
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
-    // this is a hack, we save the stack and empty it before the calls..
-    // ..so that we get rid of the `Word: ` prefix. We restore the stack..
-    // ..after the calls
-    auto save_stack = numbering;
-    numbering = std::stack<int>();
+    // add `Word: ` prefix in tree
+    numbering = std::stack<int>({NO_NUMBERING});
 
     currIndent++;
     operator()(MayFail<Word>(psbg->leftPart));
@@ -297,9 +294,6 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     currIndent++;
     operator()(MayFail<Word>(&mayfail_unwrap(psbg->rightPart)));
     currIndent--;
-
-    // restore the stack
-    numbering = save_stack;
 }
 
 void Print::operator()(PostfixParenthesesGroup* ppg) {
