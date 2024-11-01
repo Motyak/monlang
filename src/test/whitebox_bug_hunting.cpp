@@ -133,7 +133,7 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
         -> ParenthesesGroup
           -> Term
             -> Word #1: PostfixParenthesesGroup
-              -> Atom: `a`
+              -> Word: Atom: `a`
               -> ParenthesesGroup
                 -> Term
                   -> Word: Atom: `b`

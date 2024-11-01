@@ -43,12 +43,6 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     std::vector<MayFail<Term>> terms;
     MayFail<Term> currentTerm;
 
-    currentTerm = consumeTerm(termTerminatorChars, input);
-    terms.push_back(currentTerm);
-    if (!currentTerm.has_value()) {
-        return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(429)));
-    }
-
     LOOP until (input.peek() == EOF || peekAnyChar(terminatorCharacters, input)) {
     if (!__first_it)
     {

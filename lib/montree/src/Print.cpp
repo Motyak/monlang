@@ -44,6 +44,8 @@ void (Print::output)(const char* strs...) {
     startOfNewLine = false;
 }
 
+///////////////////////////////////////////////////////////////
+
 void Print::operator()(const MayFail<Program>& program) {
     const Program& prog = mayfail_unwrap(program);
     outputLine(program.has_value()? "-> Program" : "~> Program");
@@ -288,6 +290,7 @@ void Print::operator()(Atom* atom) {
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
+    auto savedStack = numbering;
     /* add `Word: ` prefix in tree */
     numbering = std::stack<int>({NO_NUMBERING});
     areProgramWords = false;
@@ -299,11 +302,14 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     currIndent++;
     operator()(MayFail<Word>(&mayfail_unwrap(psbg->rightPart)));
     currIndent--;
+
+    numbering = savedStack;
 }
 
 void Print::operator()(PostfixParenthesesGroup* ppg) {
     outputLine("PostfixParenthesesGroup");
 
+    auto savedStack = numbering;
     /* add `Word: ` prefix in tree */
     numbering = std::stack<int>({NO_NUMBERING});
     areProgramWords = false;
@@ -315,6 +321,8 @@ void Print::operator()(PostfixParenthesesGroup* ppg) {
     currIndent++;
     operator()(MayFail<Word>(&mayfail_unwrap(ppg->rightPart)));
     currIndent--;
+
+    numbering = savedStack;
 }
 
 void Print::operator()(auto) {

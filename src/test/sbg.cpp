@@ -103,6 +103,17 @@ TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
 // ERR
 //==============================================================
 
+TEST_CASE ("Term ERR hit EOF", "[test-4331][int][err]") {
+    auto input = "";
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeTerm({}, input_iss);
+    REQUIRE (!output.has_value());
+    REQUIRE (output.error().err.fmt == "ERR-135");
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg][err]") {
     auto input = "";
     

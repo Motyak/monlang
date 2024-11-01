@@ -149,6 +149,8 @@ TEST_CASE ("ProgramSentence ERR trailing atom right after a non-atom", "[test-10
     REQUIRE (output_str == expect);
 }
 
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("Term ERR trailing atom right after a non-atom", "[test-1003][int][err]") {
     auto input = "[[]fds]";
 

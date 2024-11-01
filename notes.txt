@@ -52,7 +52,11 @@ WHEN
 
 ---
 
-cloc . --exclude-dir=lib,.vscode,.deps,dist
+cloc . --exclude-dir=.vscode,.deps,dist --fullpath --not-match-d=lib/catch2
+
+## identifier les codes d'erreur qui sont dans le code source mais couvert dans aucun test ##
+perl -ne 's/ERR\((\d{2}[0-8])\)/$1/ and print "$1\n"' src/[A-Z]*.cpp > allerrscpp.txt
+for errcode in $(< allerrscpp.txt); do if ! grep -q "ERR-${errcode}" src/test/*.cpp; then echo $errcode; fi; done
 
 # lister tous les test ids d'un binaire catch2
 bin/test/all.elf --list-tests | grep -oP 'test-\d{4}'
