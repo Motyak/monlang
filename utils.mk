@@ -5,9 +5,10 @@ space := $(empty) $(empty)
 # buildmacros: build gcc macro arguments from a var
 # $(1): macro prefix
 # $(2): macro list var
+# $(3): OPTIONAL filter to apply on macro list var
 # returns: macro list formatted as gcc arguments
 define buildmacros
-$(addprefix -D $(strip $(1)),$(subst $(comma),$(space),$(2)))
+$(addprefix -D $(strip $(1)),$(filter $(if $(3),$(3),%), $(subst $(comma),$(space),$(2))))
 endef
 
 # shell_onrun: same as $(shell) but doesn't evaluate during make autocompletion

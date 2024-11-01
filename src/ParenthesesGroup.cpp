@@ -78,7 +78,7 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
 
     [[maybe_unused]]
     BEGIN:
-    #ifndef DISABLE_PPG_IN_ATOM
+    #ifndef DISABLE_PPG_IN_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
         auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
@@ -93,7 +93,7 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
     }
     #endif
 
-    #ifndef DISABLE_PSBG_IN_ATOM
+    #ifndef DISABLE_PSBG_IN_PG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
         auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{

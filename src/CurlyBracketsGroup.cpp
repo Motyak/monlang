@@ -97,7 +97,7 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
 
     [[maybe_unused]]
     BEGIN:
-    #ifndef DISABLE_PPG_IN_ATOM
+    #ifndef DISABLE_PPG_IN_CBG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeParenthesesGroupStrictly(input);
         auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
@@ -112,7 +112,7 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
     }
     #endif
 
-    #ifndef DISABLE_PSBG_IN_ATOM
+    #ifndef DISABLE_PSBG_IN_CBG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
         auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
