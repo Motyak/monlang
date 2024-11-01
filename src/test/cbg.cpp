@@ -39,7 +39,7 @@ TEST_CASE ("single word curly brackets term", "[test-4112][cbg]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("curly brackets term", "[test-4113][cbg]") {
+TEST_CASE ("two words curly brackets term", "[test-4113][cbg]") {
     auto input = "{fds sdf}";
 
     auto expect = tommy_str(R"EOF(
@@ -81,7 +81,9 @@ TEST_CASE ("curly brackets group", "[test-4114][cbg]") {
     REQUIRE (output_str == expect);
 }
 
-////////////////////////////////////////////////////////////////
+//==============================================================
+// ERR
+//==============================================================
 
 TEST_CASE ("ERR cbg missing initiator", "[test-4115][cbg][err]") {
     auto input = "";
@@ -100,14 +102,14 @@ TEST_CASE ("ERR cbg missing initiator", "[test-4115][cbg][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR cbg missing terminator", "[test-4116][cbg][err]") {
+TEST_CASE ("ERR curly brackets term missing terminator", "[test-4116][cbg][err]") {
     auto input = "{fds";
 
     auto expect = tommy_str(R"EOF(
        |~> CurlyBracketsGroup
        |  -> Term
        |    -> Word: Atom: `fds`
-       |  ~> ERR-410
+       |  ~> ERR-510
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -119,7 +121,45 @@ TEST_CASE ("ERR cbg missing terminator", "[test-4116][cbg][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR multiline cbg must contain at least one sentence", "[test-4117][cbg][err]") {
+TEST_CASE ("ERR curly brackets term leading space", "[test-4141][cbg][err]") {
+    auto input = "{ fds}";
+
+    auto expect = tommy_str(R"EOF(
+       |~> CurlyBracketsGroup
+       |  ~> Term
+       |    ~> ERR-131
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("ERR curly brackets term trailing space", "[test-4142][cbg][err]") {
+    auto input = "{fds }";
+
+    auto expect = tommy_str(R"EOF(
+       |~> CurlyBracketsGroup
+       |  ~> Term
+       |    -> Word #1: Atom: `fds`
+       |    ~> Word #2: Atom: ``
+       |      ~> ERR-992
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output_word = mayfail_convert<Word>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("ERR cbg missing indented newline after initiator", "[test-4117][cbg][err]") {
     auto input = tommy_str(R"EOF(
        |{
        |}
@@ -183,11 +223,11 @@ TEST_CASE ("ERR prog sentence wrong indent", "[test-4118][cbg][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR cbg terminator wrong indent <=> missing terminator", "[test-4119][cbg][err]") {
+TEST_CASE ("ERR cbg missing terminator", "[test-4119][cbg][err]") {
     auto input = tommy_str(R"EOF(
        |{
        |    fds
-       |  }
+       |
     )EOF");
 
     auto expect = tommy_str(R"EOF(

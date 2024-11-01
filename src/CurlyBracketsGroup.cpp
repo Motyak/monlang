@@ -18,10 +18,6 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     static thread_local int indentLevel = 0;
-                      // UNUSED ??
-    std::vector<char> terminatorCharacters = {
-        sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value()
-    };
     auto indentedTerminatorSeq = vec_concat({INDENT_SEQUENCE(), CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
     if (!consumeSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
@@ -39,8 +35,11 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
             sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value(),
         };
         auto term = consumeTerm(termTerminatorChars, input);
+        if (!term.has_value()) {
+            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(519)));
+        }
         if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(410)));
+            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(510)));
         }
         return CurlyBracketsTerm(term);
     }
@@ -57,17 +56,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     std::vector<MayFail<ProgramSentence>> sentences;
     MayFail<ProgramSentence> currentSentence;
 
-    currentSentence = consumeProgramSentence(input, indentLevel);
-    if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
-        goto LOOP; // ignore empty sentences
-    }
-    sentences.push_back(currentSentence);
-    if (!currentSentence.has_value()) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
-    }
-
-    LOOP:
-    until (input.peek() == EOF || !peekSequence(INDENT_SEQUENCE(), input)) {
+    until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
         if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
             continue; // ignore empty sentences
@@ -89,6 +78,17 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroup(std::istringstream& input)
     return CurlyBracketsGroup{sentences};
 }
 
+////////////////////////////////////////////////////////////////
+
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences) {
+    this->sentences = sentences;
+}
+
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences, std::optional<MayFail<Term>> term) {
+    this->sentences = sentences;
+    this->term = term;
+}
+
 static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
     Term term_ = mayfail_unwrap(term);
 
@@ -103,15 +103,6 @@ static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
     }
 
     return {ProgramSentence{programWords}};
-}
-
-CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences) {
-    this->sentences = sentences;
-}
-
-CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences, std::optional<MayFail<Term>> term) {
-    this->sentences = sentences;
-    this->term = term;
 }
 
 CurlyBracketsTerm::CurlyBracketsTerm(MayFail<Term> term) : CurlyBracketsGroup{toSentences(term), term} {}

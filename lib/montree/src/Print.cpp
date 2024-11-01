@@ -238,7 +238,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     if (cbg->term) {
         auto term = cbg->term.value();
         handleTerm(term);
-        if (!curWord_.has_value()) {
+        if (term.has_value() && !curWord_.has_value()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
         currIndent--;

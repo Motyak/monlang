@@ -17,7 +17,7 @@ struct CurlyBracketsGroup {
     std::optional<MayFail<Term>> term;
 
     CurlyBracketsGroup() = default;
-    CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sentences);
+    CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>>);
   protected:
     CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>>, std::optional<MayFail<Term>>);
 };

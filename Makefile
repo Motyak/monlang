@@ -77,7 +77,7 @@ mrproper:
 
 obj/common.o: trace_macro? := $(if $(TRACE), -D TRACE)
 obj/Word.o: word_macros? := $(call buildmacros, DISABLE_, $(DISABLE_WORDS))
-obj/Atom.o: postfix_macros? := $(call buildmacros, DISABLE_P, $(filter-out %_IN_ATOM,$(DISABLE_POSTFIXES)))
+obj/Atom.o: postfix_macros? := $(call buildmacros, DISABLE_P, $(filter-out %_IN_ATOM, $(DISABLE_POSTFIXES)))
 macros? = $(strip $(trace_macro?) $(word_macros?) $(postfix_macros?))
 
 $(OBJS): obj/%.o: src/%.cpp

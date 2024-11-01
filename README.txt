@@ -2,14 +2,6 @@
 
 --- Error code pattern
 
-0xy -> missing initiator
-x0y -> missing continuator
-xy0 -> missing terminator
-xy9 -> malformed sub-element
-xyz -> custom error (refer to manual)
-
----
-
 11 Program
 12 ProgramSentence
 13 Term
@@ -26,10 +18,17 @@ xyz -> custom error (refer to manual)
 42 ParenthesesGroup
 43 SquareBracketsGroup
 
-51 SquareBracketsTerm
-52 Quotation
+51 CurlyBracketsTerm
+52 SquareBracketsTerm
+53 Quotation
 
 99 Atom
+
+0xy -> missing initiator
+x0y -> missing continuator
+xy0 -> missing terminator
+xy9 -> malformed sub-element
+xyz -> custom error (refer to manual)
 
 --- Manual (specific error codes)
 
@@ -39,8 +38,8 @@ xyz -> custom error (refer to manual)
 
 131 Term can't start with a continuator (leading continuator met)
 
-412 multiline CurlyBracketsGroup must contain at least one sentence (hit terminator right after initiator)
-413 multiline CurlyBracketsGroup must contain at least one sentence (block with empty lines exclusively)
+412 multiline CurlyBracketsGroup expect empty newline after initiator
+413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
 
 992 Atom cannot be empty (hit a reserved character)
 
@@ -58,11 +57,14 @@ xyz -> custom error (refer to manual)
 011 => Program has no initiator seq
 012 => ProgramSentence has no initiator seq
 013 => Term has no initiator seq
+099 => Atom has no initiator seq
 
 101 => Program has no continuator seq
+909 => Atom has no continuator seq
 
 110 => Program has no terminator seq
 130 => Term has no terminator seq
+990 => Atom has no terminator seq
 
 === MAKEFILE DESIGN ===
 
@@ -98,8 +100,11 @@ Restore default value (enable all words):
 
 Disable certain composed words in consumeAtom(..) functions:
   -> make -B Atom.o DISABLE_POSTFIXES=SBG_IN_ATOM,PG_IN_ATOM,
-Restore default value (enable all postfixes):
+Restore default value for Atom (enable all postfixes in Atom):
   -> make -B Atom.o DISABLE_POSTFIXES=
+
+Restore default value everywhere:
+  -> make -B main TRACE= DISABLE_WORDS= DISABLE_POSTFIXES=
 
 ---
 
