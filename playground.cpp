@@ -9,6 +9,8 @@
 #include <utils/assert-utils.h>
 #include <utils/vec-utils.h>
 
+#include <cstdint>
+
 #define UINT uint32_t
 #define INT int32_t
 
@@ -57,8 +59,7 @@ Operator optr(Term term, INT nth) {
         pos = term.words.size() - 2 * abs(nth);
     }
 
-    // word is either an Atom or a ParenthesesGroup
-    return Operator{stringify(term.words.at(pos)), pos};
+    return Operator{Atom_(term.words.at(pos)).value, pos};
 }
 
 std::string left_opnd(Term term, Operator op) {
