@@ -24,6 +24,17 @@ void Unparse::operator()(const ProgramSentence& programSentence) {
     out << ProgramSentence::TERMINATOR_SEQUENCE;
 }
 
+void Unparse::operator()(const Term& term) {
+    if (term.words.size() >= 2) {
+        continuator = Term::CONTINUATOR_SEQUENCE;
+    }
+
+    ConvenientVisitor::operator()(term);
+
+    continuator = {};
+    succeedsAContinuator = false;
+}
+
 void Unparse::operator()(const Word& word) {
     if (continuator) {
         if (succeedsAContinuator) {
@@ -43,6 +54,9 @@ void Unparse::operator()(Atom* atom) {
 }
 
 void Unparse::operator()(ParenthesesGroup* pg) {
+    auto saved_ContinuatorSeq = continuator; // backup curr continuator
+    auto saved_SucceedsAContinuator = succeedsAContinuator; // backup curr `succeeds a continuator`
+
     out << ParenthesesGroup::INITIATOR_SEQUENCE;
     if (pg->terms.size() >= 2) {
         continuator = ParenthesesGroup::CONTINUATOR_SEQUENCE;
@@ -51,12 +65,16 @@ void Unparse::operator()(ParenthesesGroup* pg) {
 
     ConvenientVisitor::operator()(pg);
 
-    continuator = {};
-    succeedsAContinuator = false;
+    continuator = saved_ContinuatorSeq;
+    succeedsAContinuator = saved_SucceedsAContinuator;
+
     out << ParenthesesGroup::TERMINATOR_SEQUENCE;
 }
 
 void Unparse::operator()(SquareBracketsGroup* sbg) {
+    auto saved_ContinuatorSeq = continuator; // backup curr continuator
+    auto saved_SucceedsAContinuator = succeedsAContinuator; // backup curr `succeeds a continuator`
+
     out << SquareBracketsGroup::INITIATOR_SEQUENCE;
     if (sbg->terms.size() >= 2) {
         continuator = SquareBracketsGroup::CONTINUATOR_SEQUENCE;
@@ -65,8 +83,9 @@ void Unparse::operator()(SquareBracketsGroup* sbg) {
 
     ConvenientVisitor::operator()(sbg);
 
-    continuator = {};
-    succeedsAContinuator = false;
+    continuator = saved_ContinuatorSeq;
+    succeedsAContinuator = saved_SucceedsAContinuator;
+
     out << SquareBracketsGroup::TERMINATOR_SEQUENCE;
 }
 

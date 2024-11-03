@@ -10,6 +10,7 @@ class Unparse : public ConvenientVisitor<void> {
     using ConvenientVisitor::operator();
 
     void operator()(const ProgramSentence&) override;
+    void operator()(const Term&) override;
     void operator()(const Word&) override;
 
     void operator()(Atom*) override;
