@@ -134,8 +134,13 @@ std::ostream& operator<<(std::ostream& os, Term term) {
     auto pg = ParenthesesGroup{{MayFail<Term>(term)}};
     auto word = mayfail_convert<Word>(MayFail<ParenthesesGroup>(pg));
 
-    visitAst(Unparse(os), word);
-    return os;
+    std::ostringstream oss;
+    visitAst(Unparse(oss), word);
+
+    /* then remove extra parentheses */
+    std::string tmp = oss.str();
+    auto res = std::string(tmp.begin() + 1, tmp.end() - 1);
+    return os << res;
 }
 
 #ifdef TEST_OPTR
@@ -164,9 +169,9 @@ int main()
         std::cout << "#6 <=> [" << op.pos << "]: " << op.val << std::endl;
     }
 }
-#endif // TEST_OPTR
+// end of TEST_OPTR
 
-#ifdef TEST_OPND
+#elif defined TEST_OPND
 // g++ -D TEST_OPND -o playground.elf playground.cpp --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
@@ -182,9 +187,9 @@ int main()
         std::cout << "#-1: " << left_opnd(input, op) << " " << op.val << " " << right_opnd(input, op) << std::endl;
     }
 }
-#endif // TEST_OPND
+// end of TEST_OPND
 
-#ifdef TEST_PREV_NEXT_OPTR
+#elif defined TEST_PREV_NEXT_OPTR
 // g++ -D TEST_PREV_NEXT_OPTR -o playground.elf playground.cpp --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
@@ -218,9 +223,9 @@ int main()
     //     std::cout << "<next>: " << next_optr(input, op).val << std::endl;
     // }
 }
-#endif // TEST_PREV_NEXT_OPTR
+// end of TEST_PREV_NEXT_OPTR
 
-#ifdef TEST_PARENTHESIZE
+#elif defined TEST_PARENTHESIZE
 // g++ -D TEST_PARENTHESIZE -o playground.elf playground.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
@@ -242,25 +247,20 @@ int main()
     std::cout << "Term: " << input << std::endl;
 
 }
-#endif // TEST_PARENTHESIZE
+// end of TEST_PARENTHESIZE
 
-#ifdef MAIN
+#else
 
 enum Associativity {
     LEFT_ASSOCIATIVE,
     RIGHT_ASSOCIATIVE,
 };
 
-std::vector<std::pair<std::string, Associativity>> prec_table = {
+std::vector<std::pair<std::vector<std::string>, Associativity>> prec_table = {
     /* ordered from highest precedence to lowest */
-
-    {"^", RIGHT_ASSOCIATIVE},
-
-    {"*", LEFT_ASSOCIATIVE},
-    {"/", LEFT_ASSOCIATIVE},
-
-    {"+", LEFT_ASSOCIATIVE},
-    {"-", LEFT_ASSOCIATIVE},
+    {{"^"}, RIGHT_ASSOCIATIVE},
+    {{"*", "/", "%"}, LEFT_ASSOCIATIVE},
+    {{"+", "-"}, LEFT_ASSOCIATIVE},
 };
 
 enum Direction {
@@ -269,13 +269,9 @@ enum Direction {
 };
 
 // returns false if no op found, true otherwise
-bool parenthesizeFirstEncounteredOp(Term* term, std::string opval, Direction direction) {
+bool parenthesizeFirstEncounteredOp(Term* term, std::vector<std::string> opvals, Direction direction) {
     std::optional<Operator> op;
     std::optional<Operator> (*next)(Term, Operator);
-
-    if (term->words.size() <= 2) {
-        return false; // no operation can be found
-    }
 
     if (direction == ITERATE_LEFT_TO_RIGHT) {
         op = optr(*term, 1);
@@ -288,7 +284,7 @@ bool parenthesizeFirstEncounteredOp(Term* term, std::string opval, Direction dir
     }
 
     while (op) {
-        if (op->val == opval) {
+        if (vec_contains(opvals, op->val)) {
             parenthesize_optn(/*OUT*/term, *op);
             return true;
         }
@@ -298,18 +294,20 @@ bool parenthesizeFirstEncounteredOp(Term* term, std::string opval, Direction dir
     return false; // no op found
 }
 
-// g++ -D MAIN -o playground.elf playground.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -o playground.elf playground.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
-    Term input = Term_("1 + 2 * 2 ^ 3 ^ 2 + 91 ^ 1");
+    Term input = Term_("2 - 1 + 1 * 2 ^ 3 ^ 2 + 91 ^ 1");
+    // Term input = Term_("2 - 1 + 1"); // test associativity for operators of same precedence
     std::cout << "Term: " << input << std::endl;
 
     for (auto [optr, assoc]: prec_table) {
         auto direction = assoc == LEFT_ASSOCIATIVE? ITERATE_LEFT_TO_RIGHT : ITERATE_RIGHT_TO_LEFT;
-        while (parenthesizeFirstEncounteredOp(&input, optr, direction))
+        while (input.words.size() > 3 && parenthesizeFirstEncounteredOp(&input, optr, direction))
             ; // until no more operator found
     }
 
     std::cout << "Term: " << input << std::endl;
 }
-#endif // MAIN
+
+#endif

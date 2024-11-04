@@ -6,6 +6,12 @@
 #include <set>
 
 template <typename T>
+bool vec_contains(const std::vector<T>& vec, const T& elem) {
+    auto res = std::find(vec.begin(), vec.end(), elem);
+    return res == vec.end()? false : true;
+}
+
+template <typename T>
 std::vector<T> vec_union(const std::initializer_list<std::vector<T>>& vecs) {
     std::set<T> tmp;
     for (auto vec: vecs) {
