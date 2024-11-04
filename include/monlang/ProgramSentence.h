@@ -1,7 +1,7 @@
 #ifndef PROGRAM_SENTENCE_H
 #define PROGRAM_SENTENCE_H
 
-#include <monlang/ProgramWord.h>
+#include <monlang/Word.h>
 #include <monlang/common.h>
 
 #include <vector>

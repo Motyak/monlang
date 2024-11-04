@@ -33,7 +33,6 @@ CurlyBracketsGroup \
 ParenthesesGroup \
 Program \
 ProgramSentence \
-ProgramWord \
 SquareBracketsGroup \
 SquareBracketsTerm \
 Term \

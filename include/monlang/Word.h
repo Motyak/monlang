@@ -23,4 +23,9 @@ using Word = std::variant<
 
 MayFail<Word> consumeWord(std::istringstream&);
 
+// PROGRAM WORD ///////////////////////////////////////////
+
+struct ProgramWord : public Word {};
+MayFail<ProgramWord> consumeProgramWord(std::istringstream&);
+
 #endif // WORD_H

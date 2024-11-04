@@ -113,7 +113,7 @@ TEST_CASE ("ERR leading term continuator", "[test-5217][sbt][err]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("ERR leading term continuator", "[test-5218][sbt][err]") {
+TEST_CASE ("ERR trailing term continuator", "[test-5218][sbt][err]") {
     auto input = tommy_str(R"EOF(
         [ fds\s ]
     )EOF");

@@ -67,6 +67,7 @@ xyz -> custom error (refer to manual)
 
 110 => Program has no terminator seq
 130 => Term has no terminator seq
+520 => Error would be catched by inner Term first
 990 => Atom has no terminator seq
 
 === MAKEFILE DESIGN ===

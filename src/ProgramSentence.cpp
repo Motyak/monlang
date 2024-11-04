@@ -1,5 +1,5 @@
 #include <monlang/ProgramSentence.h>
-#include <monlang/ProgramWord.h>
+#include <monlang/Word.h>
 #include <monlang/common.h>
 
 #include <utils/assert-utils.h>

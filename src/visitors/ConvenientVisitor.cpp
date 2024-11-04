@@ -4,7 +4,7 @@
 
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
-#include <monlang/ProgramWord.h>
+#include <monlang/Word.h>
 #include <monlang/Term.h>
 #include <monlang/Word.h>
 
