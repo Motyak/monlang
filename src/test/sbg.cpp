@@ -103,17 +103,6 @@ TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
 // ERR
 //==============================================================
 
-TEST_CASE ("Term ERR hit EOF", "[test-4331][int][err]") {
-    auto input = "";
-
-    auto input_iss = std::istringstream(input);
-    auto output = consumeTerm({}, input_iss);
-    REQUIRE (!output.has_value());
-    REQUIRE (output.error().err.fmt == "ERR-135");
-}
-
-////////////////////////////////////////////////////////////////
-
 TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg][err]") {
     auto input = "";
     
@@ -216,23 +205,6 @@ TEST_CASE ("ERR empty second term", "[test-4321][sbg][err]") {
        |  ~> Term #2
        |    ~> Word: Atom: ``
        |      ~> ERR-992
-    )EOF");
-
-    auto input_iss = std::istringstream(input);
-    auto output = consumeSquareBracketsGroupStrictly(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
-    auto output_str = montree::astToString(output_word);
-    REQUIRE (output_str == expect);
-}
-
-////////////////////////////////////////////////////////////////
-
-TEST_CASE ("ERR leading term continuator", "[test-4322][sbg][err]") {
-    auto input = "[ fds]";
-
-    auto expect = tommy_str(R"EOF(
-       |~> SquareBracketsGroup
-       |  ~> ERR-043
     )EOF");
 
     auto input_iss = std::istringstream(input);

@@ -13,7 +13,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
     sequenceFirstChar(CONTINUATOR_SEQUENCE).value()
 };
 
-MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+static MayFail<Term> _consumeTerm(const std::vector<Sequence>& terminatorSequences, std::istringstream& input) {
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
@@ -43,7 +43,23 @@ MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::is
 
         ENDLOOP
     }
-    until (input.peek() == EOF || peekAnyChar(terminatorCharacters, input));
+    until (input.peek() == EOF || peekAnySeq(terminatorSequences, input));
 
     return Term{words};
+}
+
+MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+    std::vector<Sequence> terminatorSequences;
+    for (auto c: terminatorCharacters) {
+        terminatorSequences.push_back({c});
+    }
+    return _consumeTerm(terminatorSequences, input);
+}
+
+MayFail<Term> consumeTerm(const Sequence& terminatorSequence, std::istringstream& input) {
+    return _consumeTerm({terminatorSequence}, input);
+}
+
+MayFail<Term> consumeTerm(std::istringstream& input) {
+    return _consumeTerm({}, input);
 }

@@ -20,17 +20,6 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         ProgramSentence::RESERVED_CHARACTERS
     });
 
-    #ifndef DISABLE_SBT
-    if (peekSequence(SquareBracketsTerm::INITIATOR_SEQUENCE, input)) {
-        // we use _convert instead of _cast because SBT isn't a composable word
-        return mayfail_convert<Word>(consumeSquareBracketsTerm(input));
-    }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        SquareBracketsTerm::RESERVED_CHARACTERS
-    });
-    #endif
-
     #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_cast<Word>(consumeParenthesesGroup(input));

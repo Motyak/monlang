@@ -152,6 +152,7 @@ void Print::operator()(SquareBracketsTerm* sbt) {
 
     if (!curWord_.has_value() && sbt->term.has_value()) {
         outputLine("~> ", SERIALIZE_ERR(curWord_));
+        return;
     }
 
     numbering.push(NO_NUMBERING);

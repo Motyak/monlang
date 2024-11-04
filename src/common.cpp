@@ -127,6 +127,15 @@ bool peekAnyChar(const std::vector<char>& chars, std::istringstream& input) {
     return false;
 }
 
+bool peekAnySeq(const std::vector<Sequence>& seqs, std::istringstream& input) {
+    for (auto seq: seqs) {
+        if (peekSequence(seq, input)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ////////////////////////////////////////////////////////////////
 
 thread_local int _TRACE_CUR_FUNC::depth = 0;

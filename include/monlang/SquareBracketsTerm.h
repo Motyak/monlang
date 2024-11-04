@@ -7,7 +7,6 @@
 struct SquareBracketsTerm {
     static const Sequence INITIATOR_SEQUENCE;
     static const Sequence TERMINATOR_SEQUENCE;
-    static const std::vector<char> RESERVED_CHARACTERS;
 
     MayFail<Term> term;
 };

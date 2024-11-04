@@ -1,6 +1,6 @@
 #include "base.cpp" // Program/ProgramSentence/ProgramWord/Atom
 
-// include sbt
+# include "sbt.cpp" // SquareBracketsTerm
 
 #include "sbg.cpp" // SquareBracketsGroup/Term/Word..
                    // .., covers ParenthesesGroup as well

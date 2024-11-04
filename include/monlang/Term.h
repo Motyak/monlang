@@ -14,6 +14,13 @@ struct Term {
     std::vector<MayFail<Word>> words;
 };
 
+// for SquareBracketsTerm only (very special case)..
+MayFail<Term> consumeTerm(const Sequence& terminatorSequence, std::istringstream& input);
+
+// ..for others
 MayFail<Term> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);
+
+// (no terminator at all)
+MayFail<Term> consumeTerm(std::istringstream& input);
 
 #endif // TERM_H
