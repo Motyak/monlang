@@ -17,9 +17,13 @@ std::string montree::astToString(Ast ast) {
     return res;
 }
 
-////////////////////////////////////////////////////////////////
-
-std::string montree::debug::astToString(Ast ast) {
-    visitAst(Print(std::cout), ast);
-    return "debug";
+std::string montree::astToString(Ast ast, int TAB_SIZE) {
+    std::ostringstream oss;
+    visitAst(Print(oss, TAB_SIZE), ast);
+    auto res = oss.str();
+    // remove potential trailing newline
+    if (!res.empty() && res.back() == NEWLINE) {
+        res.pop_back();
+    }
+    return res;
 }

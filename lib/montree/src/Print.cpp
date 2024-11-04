@@ -347,7 +347,7 @@ void Print::operator()(auto) {
 
 ///////////////////////////////////////////////////////////////
 
-Print::Print(std::ostream& os) : out(os){}
+Print::Print(std::ostream& os, int TAB_SIZE) : TAB_SIZE(TAB_SIZE), out(os){}
 
 void Print::handleTerm(const MayFail<Term>& term) {
     Term term_;

@@ -17,23 +17,23 @@ class ConvenientVisitor;
 template <>
 class ConvenientVisitor<void> : public AstVisitor<void> {
   public:
-    virtual void operator()(const MayFail<Program>& prog) override;
-    virtual void operator()(const MayFail<ProgramSentence>& progSentence) override;
-    virtual void operator()(const MayFail<Word>& word) override;
+    virtual void operator()(const MayFail<Program>&) override;
+    virtual void operator()(const MayFail<ProgramSentence>&) override;
+    virtual void operator()(const MayFail<Word>&) override;
 
-    virtual void operator()(const Program& prog);
-    virtual void operator()(const ProgramSentence& progSentence);
-    virtual void operator()(const ProgramWord& progWord);
-    virtual void operator()(const Term& term);
-    virtual void operator()(const Word& word);
+    virtual void operator()(const Program&);
+    virtual void operator()(const ProgramSentence&);
+    virtual void operator()(const ProgramWord&);
+    virtual void operator()(const Term&);
+    virtual void operator()(const Word&);
 
     virtual void operator()(Atom*);
-    virtual void operator()(SquareBracketsTerm* sbg);
-    virtual void operator()(ParenthesesGroup* pg);
-    virtual void operator()(SquareBracketsGroup* sbg);
-    virtual void operator()(CurlyBracketsGroup* cbg);
-    virtual void operator()(PostfixParenthesesGroup* ppg);
-    virtual void operator()(PostfixSquareBracketsGroup* psbg);
+    virtual void operator()(SquareBracketsTerm*);
+    virtual void operator()(ParenthesesGroup*);
+    virtual void operator()(SquareBracketsGroup*);
+    virtual void operator()(CurlyBracketsGroup*);
+    virtual void operator()(PostfixParenthesesGroup*);
+    virtual void operator()(PostfixSquareBracketsGroup*);
 };
 
 template <typename T>

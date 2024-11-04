@@ -61,7 +61,7 @@ test: bin/test/all.elf
 
 # performs "sanity" check
 check: bin/test/bigbang.elf
-	bin/test/bigbang.elf --allow-running-no-tests
+	bin/test/bigbang.elf
 
 dist: $(RELEASE_OBJS)
 	./release.sh

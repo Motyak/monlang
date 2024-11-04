@@ -18,13 +18,13 @@ happy_scenarios_results="0/4 base happy scenarios => KO"
 
 # run "entity-word" integration tests
 {
-    bin/test/all.elf '[int]~[bigbang]~[err]' \
+    bin/test/all.elf '[int]~[err]' \
         && happy_scenarios_results="3/4 integration tests => OK"
 } && \
 
 # run "big bang" integration tests
 {
-    bin/test/all.elf '[bigbang]' --allow-running-no-tests \
+    bin/test/all.elf '[bigbang]' \
         && happy_scenarios_results="4/4 system tests => OK"
 } && \
 

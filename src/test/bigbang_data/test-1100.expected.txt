@@ -1,0 +1,39 @@
+-> Program
+    -> ProgramSentence #1
+        -> ProgramWord #1: Atom: `do`
+        -> ProgramWord #2: CurlyBracketsGroup
+            -> ProgramSentence #1
+                -> ProgramWord #1: Atom: `let`
+                -> ProgramWord #2: Atom: `curr`
+                -> ProgramWord #3: PostfixParenthesesGroup
+                    -> Word: Atom: `next`
+                    -> ParenthesesGroup
+                        -> Term
+                            -> Word: Atom: `&stream`
+            -> ProgramSentence #2
+                -> ProgramWord #1: Atom: `unless`
+                -> ProgramWord #2: SquareBracketsTerm
+                    -> Term
+                        -> Word: Atom: `$first_it`
+                -> ProgramWord #3: CurlyBracketsGroup
+                    -> ProgramSentence
+                        -> ProgramWord: PostfixParenthesesGroup
+                            -> Word: Atom: `print`
+                            -> ParenthesesGroup
+                                -> Term
+                                    -> Word: Atom: `SPACE`
+            -> ProgramSentence #3
+                -> ProgramWord: PostfixParenthesesGroup
+                    -> Word: Atom: `print`
+                    -> ParenthesesGroup
+                        -> Term
+                            -> Word: Atom: `curr`
+    -> ProgramSentence #2
+        -> ProgramWord #1: Atom: `until`
+        -> ProgramWord #2: SquareBracketsTerm
+            -> Term
+                -> Word: PostfixParenthesesGroup
+                    -> Word: Atom: `eof?`
+                    -> ParenthesesGroup
+                        -> Term
+                            -> Word: Atom: `stream`

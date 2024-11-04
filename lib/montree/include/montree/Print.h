@@ -14,7 +14,7 @@
 
 class Print : public AstVisitor<void> {
   public:
-    Print(std::ostream&);
+    Print(std::ostream&, int TAB_SIZE=2);
 
     void operator()(const MayFail<Program>&) override;
     void operator()(const MayFail<ProgramSentence>&) override;
@@ -31,9 +31,9 @@ class Print : public AstVisitor<void> {
     void operator()(auto); // fall-through
 
   private:
-    static constexpr int TAB_SIZE = 2;
     static constexpr int NO_NUMBERING = -1;
-    
+    const int TAB_SIZE;
+
     void handleTerm(const MayFail<Term>&);
     void output(const char* strs...);
     void outputLine(const char* strs...);
