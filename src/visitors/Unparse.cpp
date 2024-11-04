@@ -3,6 +3,7 @@
 
 /* impl only */
 #include <monlang/Atom.h>
+#include <monlang/SquareBracketsTerm.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
@@ -69,6 +70,21 @@ void Unparse::operator()(ParenthesesGroup* pg) {
     succeedsAContinuator = saved_SucceedsAContinuator;
 
     out << ParenthesesGroup::TERMINATOR_SEQUENCE;
+}
+
+void Unparse::operator()(SquareBracketsTerm* sbt) {
+    auto saved_ContinuatorSeq = continuator; // backup curr continuator
+    auto saved_SucceedsAContinuator = succeedsAContinuator; // backup curr `succeeds a continuator`
+
+    out << SquareBracketsTerm::INITIATOR_SEQUENCE;
+    succeedsAContinuator = false;
+
+    ConvenientVisitor::operator()(sbt);
+
+    continuator = saved_ContinuatorSeq;
+    succeedsAContinuator = saved_SucceedsAContinuator;
+
+    out << SquareBracketsTerm::TERMINATOR_SEQUENCE;
 }
 
 void Unparse::operator()(SquareBracketsGroup* sbg) {

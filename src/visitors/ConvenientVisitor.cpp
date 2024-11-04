@@ -9,6 +9,7 @@
 #include <monlang/Word.h>
 
 /* impl only */
+#include <monlang/SquareBracketsTerm.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
@@ -60,6 +61,10 @@ void ConvenientVisitor<void>::operator()(const Word& word) {
 ////////////////////////////////////////////////////////////////
 
 void ConvenientVisitor<void>::operator()(Atom*){} // operation-specific
+
+void ConvenientVisitor<void>::operator()(SquareBracketsTerm* sbt) {
+    operator()(*sbt->term);
+}
 
 void ConvenientVisitor<void>::operator()(ParenthesesGroup* pg) {
     for (auto term: pg->terms) {
