@@ -20,6 +20,7 @@ class Print : public AstVisitor<void> {
     void operator()(const MayFail<ProgramSentence>&) override;
     void operator()(const MayFail<Word>&) override;
 
+    void operator()(SquareBracketsTerm*);
     void operator()(SquareBracketsGroup*);
     void operator()(ParenthesesGroup*);
     void operator()(CurlyBracketsGroup*);

@@ -7,6 +7,7 @@
 #include <variant>
 
 struct Atom;
+struct SquareBracketsTerm;
 struct ParenthesesGroup;
 struct SquareBracketsGroup;
 struct CurlyBracketsGroup;
@@ -15,6 +16,7 @@ struct PostfixSquareBracketsGroup;
 
 using Word = std::variant<
     Atom*,
+    SquareBracketsTerm*,
     ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*,
     PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 >;

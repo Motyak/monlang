@@ -232,8 +232,7 @@ TEST_CASE ("ERR leading term continuator", "[test-4322][sbg][err]") {
 
     auto expect = tommy_str(R"EOF(
        |~> SquareBracketsGroup
-       |  ~> Term
-       |    ~> ERR-131
+       |  ~> ERR-043
     )EOF");
 
     auto input_iss = std::istringstream(input);

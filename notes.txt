@@ -29,12 +29,12 @@ TODO
 
 Pour ajouter une entité grammaticale:
 - Ajouter le header file dans include/monlang/
-- Ajouter le source file dans src/
+- Ajouter le source file dans src/ (si il définit des fonctions)
 - Ajouter le nouveau type dans le variant Word dans Word.h
 - Compléter Word::consumeWord dans Word.cpp: ajouter bloc de code appelant la fonction consumeXXX
 - Dans toutes les implémentations de AstVisitor, ajouter une nouvelle opération pour le nouveau type
   -> .h ET .cpp
-- Ajouter l'entité en haut du Makefile monlang/
+- Ajouter l'entité en haut du Makefile monlang/ (si il a un .cpp)
 
 ---
 

@@ -36,14 +36,15 @@ TEST_CASE ("empty ProgramSentences == empty Program as well", "[wbh-0020][wbh]")
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("ERR nested malformed sbg", "[wbh-0001][wbh]") {
-    auto input = "[[ ]]";
+    auto input = "[[,]]";
 
     auto expect = tommy_str(R"EOF(
        |~> SquareBracketsGroup
        |  ~> Term
        |    ~> Word: SquareBracketsGroup
        |      ~> Term
-       |        ~> ERR-131
+       |        ~> Word: Atom: ``
+       |          ~> ERR-992
     )EOF");
 
     auto input_iss = std::istringstream(input);

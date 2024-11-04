@@ -3,6 +3,7 @@
 
 /* in impl only */
 #include <monlang/ProgramSentence.h>
+#include <monlang/SquareBracketsTerm.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
@@ -19,10 +20,16 @@ MayFail<Word> consumeWord(std::istringstream& input) {
         ProgramSentence::RESERVED_CHARACTERS
     });
 
-    // terminatorCharacters = vec_union({
-    //     terminatorCharacters,
-    //     ..
-    // });
+    #ifndef DISABLE_SBT
+    if (peekSequence(SquareBracketsTerm::INITIATOR_SEQUENCE, input)) {
+        // we use _convert instead of _cast because SBT isn't a composable word
+        return mayfail_convert<Word>(consumeSquareBracketsTerm(input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        SquareBracketsTerm::RESERVED_CHARACTERS
+    });
+    #endif
 
     #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {

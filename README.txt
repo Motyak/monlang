@@ -41,6 +41,8 @@ xyz -> custom error (refer to manual)
 412 multiline CurlyBracketsGroup expect empty newline after initiator
 413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
 
+521 SquareBracketsTerm cannot be empty
+
 992 Atom cannot be empty (hit a reserved character)
 
 --- Errors that can't happen from a program consumption context, with justification
@@ -60,6 +62,7 @@ xyz -> custom error (refer to manual)
 099 => Atom has no initiator seq
 
 101 => Program has no continuator seq
+502 => SquareBracketsTerm has no continuator seq
 909 => Atom has no continuator seq
 
 110 => Program has no terminator seq

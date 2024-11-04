@@ -35,6 +35,7 @@ Program \
 ProgramSentence \
 ProgramWord \
 SquareBracketsGroup \
+SquareBracketsTerm \
 Term \
 Word \
 

@@ -8,6 +8,7 @@
 
 /* impl only */
 #include <monlang/Atom.h>
+#include <monlang/SquareBracketsTerm.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
@@ -142,6 +143,23 @@ void Print::operator()(const MayFail<Word>& word) {
 
 ///////////////////////////////////////////////////////////////
 
+void Print::operator()(SquareBracketsTerm* sbt) {
+    auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
+                             // ..(which calls operator()(Word))
+
+    outputLine("SquareBracketsTerm");
+    currIndent++;
+
+    if (!curWord_.has_value() && sbt->term.has_value()) {
+        outputLine("~> ", SERIALIZE_ERR(curWord_));
+    }
+
+    numbering.push(NO_NUMBERING);
+    handleTerm(sbt->term);
+
+    currIndent--;
+}
+
 void Print::operator()(SquareBracketsGroup* sbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
@@ -239,11 +257,8 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     /* handle single term */
     if (cbg->term) {
         auto term = cbg->term.value();
-        auto savedStack = numbering;
-        // add `Term: ` prefix in tree
-        numbering = std::stack<int>({NO_NUMBERING});
+        numbering.push(NO_NUMBERING);
         handleTerm(term);
-        numbering = savedStack; // restore stack
         if (term.has_value() && !curWord_.has_value()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }

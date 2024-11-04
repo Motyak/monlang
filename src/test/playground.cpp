@@ -9,27 +9,19 @@
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("fds") {
-    // auto input = tommy_str(R"EOF(
-    //    |{
-    //    |    let foo {
-    //    |        bar
-    //    |    }
-    //    |    fds
-    //    |}
-    // )EOF");
-    auto input = "{ +let_foo_{ ++bar +} +fds } ";
-
-    auto expect = tommy_str(R"EOF(
-        -> CurlyBracketsGroup
-          -> ProgramSentence #1
-            -> ProgramWord #1: Atom: `let`
-            -> ProgramWord #2: Atom: `foo`
-            -> ProgramWord #3: CurlyBracketsGroup
-              -> ProgramSentence
-                -> ProgramWord: Atom: `bar`
-          -> ProgramSentence #2
-            -> ProgramWord: Atom: `fds`
+    auto input = tommy_str(R"EOF(
+       |{
+       |    if [ blabla ] {
+       |        A
+       |    }
+       |
+       |    else {
+       |        B
+       |    }
+       |}
     )EOF");
+
+    auto expect = "whatever";
 
     auto input_iss = std::istringstream(input);
     auto output_word = consumeWord(input_iss);
