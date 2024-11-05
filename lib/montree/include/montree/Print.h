@@ -18,7 +18,7 @@ class Print : public AstVisitor<void> {
 
     void operator()(const MayFail<Program>&) override;
     void operator()(const MayFail<ProgramSentence>&) override;
-    void operator()(const MayFail<ProgramWord>&) override;
+    void operator()(const MayFail<ProgramWord>& word) override;
 
     void operator()(SquareBracketsTerm*);
     void operator()(SquareBracketsGroup*);

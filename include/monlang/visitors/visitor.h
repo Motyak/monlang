@@ -18,7 +18,7 @@ class AstVisitor<void> {
 
     virtual void operator()(const MayFail<Program>&) = 0;
     virtual void operator()(const MayFail<ProgramSentence>&) = 0;
-    virtual void operator()(const MayFail<ProgramWord>&) = 0;
+    virtual void operator()(const MayFail<ProgramWord>& word) = 0;
 };
 
 template <typename T>

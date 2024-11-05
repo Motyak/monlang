@@ -55,7 +55,7 @@ void ConvenientVisitor<void>::operator()(const Term& term) {
 }
 
 void ConvenientVisitor<void>::operator()(const Word& word) {
-    operator()((ProgramWord)variant_cast(word));
+    std::visit(*this, word);
 }
 
 ////////////////////////////////////////////////////////////////

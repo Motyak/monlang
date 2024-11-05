@@ -119,14 +119,14 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
 }
 
-void Print::operator()(const MayFail<ProgramWord>& progWord) {
-    this->curWord = progWord; // needed by word handlers
-    const ProgramWord& progWord_ = mayfail_unwrap(progWord);
-    output(progWord.has_value()? "-> " : "~> ");
+void Print::operator()(const MayFail<ProgramWord>& word) {
+    this->curWord = word; // needed by word handlers
+    const ProgramWord& word_ = mayfail_unwrap(word);
+    output(word.has_value()? "-> " : "~> ");
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
-        std::visit(*this, progWord_);
+        std::visit(*this, word_);
         return;
     }
 
@@ -137,7 +137,7 @@ void Print::operator()(const MayFail<ProgramWord>& progWord) {
     numbering.pop();
     output(": ");
 
-    std::visit(*this, progWord_); // in case of malformed word,...
+    std::visit(*this, word_); // in case of malformed word,...
                               // ...will still print its partial value
 }
 

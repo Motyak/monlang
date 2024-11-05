@@ -19,7 +19,7 @@ class ConvenientVisitor<void> : public AstVisitor<void> {
   public:
     virtual void operator()(const MayFail<Program>&) override;
     virtual void operator()(const MayFail<ProgramSentence>&) override;
-    virtual void operator()(const MayFail<ProgramWord>&) override;
+    virtual void operator()(const MayFail<ProgramWord>& word) override;
 
     virtual void operator()(const Program&);
     virtual void operator()(const ProgramSentence&);
