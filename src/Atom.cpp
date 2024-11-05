@@ -2,16 +2,10 @@
 #include <monlang/common.h>
 
 /* in impl only */
-#include <monlang/ParenthesesGroup.h>
 #include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/SquareBracketsGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 
-#include <utils/mem-utils.h>
-#include <utils/variant-utils.h>
 #include <utils/loop-utils.h>
-
-#include <algorithm>
 
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
@@ -43,40 +37,32 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         return mayfail_convert<Atom*>(atom);
     }
 
+    /* look behind */
+
     using PostfixLeftPart = std::variant<Atom*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
-    [[maybe_unused]]
-    BEGIN:
-    #ifndef DISABLE_PPG_IN_ATOM
-    if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeParenthesesGroupStrictly(input);
-        auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
-            variant_cast(accumulatedPostfixLeftPart),
-            whats_right_behind
-        });
-        if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_ppg, ERR(319)));
+    for (;;) {
+        #ifndef DISABLE_PPG_IN_ATOM
+        if (auto whats_right_behind = tryConsumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input)) {
+            if (!whats_right_behind->has_value()) {
+                return *whats_right_behind; // malformed postfix
+            }
+            continue;
         }
-        accumulatedPostfixLeftPart = curr_ppg;
-        goto BEGIN;
-    }
-    #endif
+        #endif
 
-    #ifndef DISABLE_PSBG_IN_ATOM
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
-            variant_cast(accumulatedPostfixLeftPart),
-            whats_right_behind
-        });
-        if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_psbg, ERR(329)));
+        #ifndef DISABLE_PSBG_IN_ATOM
+        if (auto whats_right_behind = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
+            if (!whats_right_behind->has_value()) {
+                return *whats_right_behind; // malformed postfix
+            }
+            continue;
         }
-        accumulatedPostfixLeftPart = curr_psbg;
-        goto BEGIN;
+        #endif
+
+        break;
     }
-    #endif
 
     return std::visit(
         [](auto word) -> consumeAtom_RetType {return word;},
