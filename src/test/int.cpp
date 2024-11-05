@@ -23,7 +23,7 @@ TEST_CASE ("nested square brackets group", "[test-1000][int]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -51,7 +51,7 @@ TEST_CASE ("nested curly brackets group", "[test-1001][int]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -74,7 +74,7 @@ TEST_CASE ("nested postfix parentheses group", "[test-1002][int]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -125,7 +125,7 @@ TEST_CASE ("all words in a same term", "[test-1004][int]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -162,7 +162,7 @@ TEST_CASE ("Term ERR trailing atom right after a non-atom", "[test-1003][int][er
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }

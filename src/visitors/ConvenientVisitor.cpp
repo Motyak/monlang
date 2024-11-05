@@ -26,8 +26,8 @@ void ConvenientVisitor<void>::operator()(const MayFail<ProgramSentence>& progSen
     operator()(progSentence.value());
 }
 
-void ConvenientVisitor<void>::operator()(const MayFail<Word>& word) {
-    operator()(word.value());
+void ConvenientVisitor<void>::operator()(const MayFail<ProgramWord>& progWord) {
+    operator()(progWord.value());
 }
 
 ////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ void ConvenientVisitor<void>::operator()(const ProgramSentence& progSentence) {
 }
 
 void ConvenientVisitor<void>::operator()(const ProgramWord& progWord){
-    operator()(static_cast<Word>(progWord));
+    std::visit(*this, progWord);
 }
 
 void ConvenientVisitor<void>::operator()(const Term& term) {
@@ -55,7 +55,7 @@ void ConvenientVisitor<void>::operator()(const Term& term) {
 }
 
 void ConvenientVisitor<void>::operator()(const Word& word) {
-    std::visit(*this, word);
+    operator()((ProgramWord)variant_cast(word));
 }
 
 ////////////////////////////////////////////////////////////////

@@ -65,7 +65,7 @@ TEST_CASE ("std::async tasks with 'async' policy", "[test-2000][async]") {
 
     /* check each task result sequentially */
     for (int i = 0; i < NB_OF_TASKS; ++i) {
-        auto output_word = mayfail_convert<Word>(output[i]);
+        auto output_word = mayfail_convert<ProgramWord>(output[i]);
         auto output_str = montree::astToString(output_word);
         REQUIRE (output_str == expect);
     }

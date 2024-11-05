@@ -18,7 +18,7 @@ TEST_CASE ("one word term in square brackets term", "[test-5211][sbt]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -37,7 +37,7 @@ TEST_CASE ("two words term in square brackets term", "[test-5212][sbt]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -67,7 +67,7 @@ TEST_CASE ("ERR missing sbt initiator", "[test-5214][sbt][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -86,7 +86,7 @@ TEST_CASE ("ERR empty sbt", "[test-5216][sbt][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -106,7 +106,7 @@ TEST_CASE ("ERR leading term continuator", "[test-5217][sbt][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -128,7 +128,7 @@ TEST_CASE ("ERR trailing term continuator", "[test-5218][sbt][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsTerm(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }

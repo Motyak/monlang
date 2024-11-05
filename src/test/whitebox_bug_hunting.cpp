@@ -49,7 +49,7 @@ TEST_CASE ("ERR nested malformed sbg", "[wbh-0001][wbh]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroupStrictly(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -100,7 +100,7 @@ TEST_CASE ("multiple terms in sbg", "[wbh-0003][wbh]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroupStrictly(input_iss);
-    auto output_word = mayfail_convert<Word>(output);
+    auto output_word = mayfail_convert<ProgramWord>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -121,7 +121,7 @@ TEST_CASE ("sbg in the middle of sbg", "[wbh-0004][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output_word = consumeWord(input_iss);
+    auto output_word = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -143,7 +143,7 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -188,7 +188,7 @@ TEST_CASE ("discard in-between indented empty lines in cbg", "[wbh-0009][wbh]") 
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
@@ -212,7 +212,7 @@ TEST_CASE ("discard in-between non-indented empty lines in cbg", "[wbh-0010][wbh
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeWord(input_iss);
+    auto output = consumeProgramWord(input_iss);
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }

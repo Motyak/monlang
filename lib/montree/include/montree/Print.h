@@ -18,7 +18,7 @@ class Print : public AstVisitor<void> {
 
     void operator()(const MayFail<Program>&) override;
     void operator()(const MayFail<ProgramSentence>&) override;
-    void operator()(const MayFail<Word>&) override;
+    void operator()(const MayFail<ProgramWord>&) override;
 
     void operator()(SquareBracketsTerm*);
     void operator()(SquareBracketsGroup*);
@@ -43,7 +43,7 @@ class Print : public AstVisitor<void> {
     bool startOfNewLine = true;
     int currIndent = 0;
     bool areProgramWords = false;
-    MayFail<Word> curWord;
+    MayFail<ProgramWord> curWord; // May be a ProgramWord or a Word, so let's name it `word`
 };
 
 #endif // PRINT_H

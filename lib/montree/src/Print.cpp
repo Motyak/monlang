@@ -103,7 +103,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     int malformedProgramWords = 0;
     for (auto programWord: progSentence.programWords) {
         areProgramWords = true;
-        operator()(mayfail_cast<Word>(programWord));
+        operator()(MayFail<ProgramWord>(programWord));
         if (!programWord.has_value()) {
             malformedProgramWords += 1;
         }
@@ -119,14 +119,14 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
 }
 
-void Print::operator()(const MayFail<Word>& word) {
-    this->curWord = word; // needed by word handlers
-    const Word& word_ = mayfail_unwrap(word);
-    output(word.has_value()? "-> " : "~> ");
+void Print::operator()(const MayFail<ProgramWord>& progWord) {
+    this->curWord = progWord; // needed by word handlers
+    const ProgramWord& progWord_ = mayfail_unwrap(progWord);
+    output(progWord.has_value()? "-> " : "~> ");
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
-        std::visit(*this, word_);
+        std::visit(*this, progWord_);
         return;
     }
 
@@ -137,7 +137,7 @@ void Print::operator()(const MayFail<Word>& word) {
     numbering.pop();
     output(": ");
 
-    std::visit(*this, word_); // in case of malformed word,...
+    std::visit(*this, progWord_); // in case of malformed word,...
                               // ...will still print its partial value
 }
 
@@ -312,11 +312,11 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<Word>(psbg->leftPart));
+    operator()(MayFail<ProgramWord>(variant_cast(psbg->leftPart)));
     currIndent--;
 
     currIndent++;
-    operator()(MayFail<Word>(&mayfail_unwrap(psbg->rightPart)));
+    operator()(MayFail<ProgramWord>(&mayfail_unwrap(psbg->rightPart)));
     currIndent--;
 
     numbering = savedStack;
@@ -331,11 +331,11 @@ void Print::operator()(PostfixParenthesesGroup* ppg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<Word>(ppg->leftPart));
+    operator()(MayFail<ProgramWord>(variant_cast(ppg->leftPart)));
     currIndent--;
 
     currIndent++;
-    operator()(MayFail<Word>(&mayfail_unwrap(ppg->rightPart)));
+    operator()(MayFail<ProgramWord>(&mayfail_unwrap(ppg->rightPart)));
     currIndent--;
 
     numbering = savedStack;
@@ -388,7 +388,7 @@ void Print::handleTerm(const MayFail<Term>& term) {
         if (!word.has_value()) {
             nb_of_malformed_words++;
         }
-        operator()(mayfail_cast<Word>(word));
+        operator()(mayfail_cast<ProgramWord>(word));
     }
 
     if (nb_of_malformed_words == 0 && !term.has_value()) {
