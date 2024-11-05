@@ -12,6 +12,18 @@
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>
 
+MayFail<ProgramWord> consumeProgramWord(std::istringstream& input) {
+
+    #ifndef DISABLE_SBT
+    if (peekSequence(SquareBracketsTerm::INITIATOR_SEQUENCE, input)) {
+        // we use _convert instead of _cast because SBT isn't a composable word
+        return mayfail_convert<ProgramWord>(consumeSquareBracketsTerm(input));
+    }
+    #endif
+
+    return mayfail_cast<ProgramWord>(consumeWord(input));
+}
+
 MayFail<Word> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters;
 
@@ -54,16 +66,23 @@ MayFail<Word> consumeWord(std::istringstream& input) {
     return mayfail_cast<Word>(consumeAtom(terminatorCharacters, input));
 }
 
-// PROGRAM WORD ///////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
-MayFail<ProgramWord> consumeProgramWord(std::istringstream& input) {
+template <>
+MayFail<ProgramWord> mayfail_cast<ProgramWord>(MayFail<Word> inputMayfail) {
+    return inputMayfail.transform([](auto t) -> ProgramWord {return variant_cast(t);})
+            .transform_error([](auto e) -> Malformed<ProgramWord> {return {variant_cast(e.val), e.err};});
+}
 
-    #ifndef DISABLE_SBT
-    if (peekSequence(SquareBracketsTerm::INITIATOR_SEQUENCE, input)) {
-        // we use _convert instead of _cast because SBT isn't a composable word
-        return mayfail_convert<ProgramWord>(consumeSquareBracketsTerm(input));
-    }
-    #endif
+static Word pw2w(ProgramWord pw) {
+    return std::visit(overload{
+        [](SquareBracketsTerm*) -> Word {SHOULD_NOT_HAPPEN();},
+        [](auto word) -> Word {return word;},
+    }, pw);
+}
 
-    return mayfail_cast<ProgramWord>(consumeWord(input));
+template <>
+MayFail<Word> mayfail_cast<Word>(MayFail<ProgramWord> inputMayfail) {
+    return inputMayfail.transform([](auto t) -> Word {return pw2w(t);})
+        .transform_error([](auto e) -> Malformed<Word> {return {pw2w(e.val), e.err};});
 }
