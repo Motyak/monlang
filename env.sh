@@ -13,7 +13,7 @@ function make {
     #local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE= CXX='ccache g++'"
     local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE="
 
-    local target_args="$($MAKE -q -E '$(info $(MAKECMDGOALS))' "$@" | head -n1)"
+    local target_args="$($MAKE --no-print-directory -q -E '$(info $(MAKECMDGOALS))' "$@" | head -n1)"
     local opt_args=""
 
     # find non-target arguments, append them to opt_args

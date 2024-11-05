@@ -9,8 +9,8 @@
 
 TEST_CASE ("<catch2 section wrapper>", "[bigbang]") {
 
-    constexpr int TAB_SIZE = 4;
-    const std::string DIR = "src/test/bigbang_data";
+    static constexpr int TAB_SIZE = 4;
+    static const std::string DIR = "src/test/bigbang_data";
 
     SECTION ("do..until loop with inner if") {
         auto input = tommy_str(R"EOF(
