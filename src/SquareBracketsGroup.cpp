@@ -72,22 +72,23 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
         return mayfail_convert<SquareBracketsGroup*>(sbg);
     }
 
+    /* look behind */
+
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
 
-    #ifndef DISABLE_PSBG_IN_SBG
-    while (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
-            variant_cast(accumulatedPostfixLeftPart),
-            whats_right_behind
-        });
-        if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_psbg, ERR(329)));
+    for (;;) {
+        #ifndef DISABLE_PSBG_IN_SBG
+        if (auto whats_right_behind = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
+            if (!whats_right_behind->has_value()) {
+                return *whats_right_behind; // malformed postfix
+            }
+            continue;
         }
-        accumulatedPostfixLeftPart = curr_psbg;
+        #endif
+
+        break;
     }
-    #endif
 
     return std::visit(
         [](auto word) -> consumeSquareBracketsGroup_RetType {return word;},
