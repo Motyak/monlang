@@ -1,11 +1,11 @@
-include utils.mk # buildmacros, askmake, buildmake, not, shell_onrun, shouldrebuild
+include utils.mk # buildmacros, askmake, not, shell_onrun, shouldrebuild
 
-export CXX := ccache g++
+export CXX := ccache g++ #
 
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
-CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -Werror -O3 -I include
+CXXFLAGS += --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+CXXFLAGS_RELEASE += --std=c++23 -Wall -Wextra -Werror -O3 -I include
 CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 DEPFLAGS = -MMD -MP -MF .deps/$*.d
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
@@ -17,14 +17,15 @@ DISABLE_WORDS ?= # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 
 ifdef CLANG
-	CXX := clang++
+CXX := ccache clang++
 #	ugly workaround to support clang
-	CXXFLAGS += -D__cpp_concepts=202002L
-	LDFLAGS += -lstdc++
+CXXFLAGS += -D__cpp_concepts=202002L
+LDFLAGS += -lstdc++
 endif
+
 ifdef X86
-	CXXFLAGS += -m32
-	LDFLAGS += -m32
+CXXFLAGS += -m32
+LDFLAGS += -m32
 endif
 
 ###########################################################
@@ -47,8 +48,6 @@ RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
 
 TEST_FILENAMES := base sbt sbg cbg postfix int bigbang
 TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
-TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
-TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
@@ -70,10 +69,10 @@ dist: $(RELEASE_OBJS)
 	./release.sh
 
 clean:
-	$(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
+	$(RM) obj .deps
 
 mrproper:
-	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
+	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
 .PHONY: all main test check dist clean mrproper
 
@@ -87,22 +86,26 @@ mrproper:
 %/CurlyBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_CBG)
 macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros))
 
-$(OBJS): obj/%.o: src/%.cpp
+obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)
 
-$(RELEASE_OBJS): obj/release/%.o: src/%.cpp
+obj/release/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(macros)
 
-$(TEST_OBJS): obj/test/%.o: src/test/%.cpp
+obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
-$(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
+bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+
+# separate_test_bins := $(filter-out bin/test/all.elf, bin/test/*.elf)
+# $(separate_test_bins): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
+# 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 bin/test/all.elf: $(TEST_OBJS) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
--include $(DEPS) $(TEST_DEPS)
+-include .deps/*.d .deps/test/*.d
 
 ############################################################
 # libs
@@ -123,14 +126,14 @@ lib/test-libs.a: $$(test_lib_objects)
 ## compiles lib used for testing (catch2) ##
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-	$(call buildmake, lib/catch2)
+	$(MAKE) -C lib/catch2
 
 ## compiles our own lib used for testing (montree) ##
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
 	.PHONY: lib/montree/obj/montree.o)
 lib/montree/obj/montree.o:
-	$(call buildmake, lib/montree)
+	$(MAKE) -C lib/montree
 
 ###########################################################
 
