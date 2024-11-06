@@ -1,4 +1,4 @@
-include utils.mk # buildmacros, askmake, buildmake, not, shell_onrun, shouldrebuild
+include utils.mk # buildmacros, askmake, not, shell_onrun, shouldrebuild
 
 SHELL := /bin/bash
 RM := rm -rf
@@ -15,14 +15,15 @@ DISABLE_WORDS ?= # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 
 ifdef CLANG
-	CXX := clang++
-#	ugly workaround to support clang
-	CXXFLAGS += -D__cpp_concepts=202002L
-	LDFLAGS += -lstdc++
+CXX := clang++
+# ugly workaround to support clang
+CXXFLAGS += -D__cpp_concepts=202002L
+LDFLAGS += -lstdc++
 endif
+
 ifdef X86
-	CXXFLAGS += -m32
-	LDFLAGS += -m32
+CXXFLAGS += -m32
+LDFLAGS += -m32
 endif
 
 ###########################################################
@@ -67,10 +68,10 @@ dist: $(RELEASE_OBJS)
 	./release.sh
 
 clean:
-	$(RM) $(OBJS) $(RELEASE_OBJS) $(TEST_OBJS) $(DEPS) $(TEST_DEPS)
+	$(RM) obj/* .deps/*
 
 mrproper:
-	$(RM) bin dist obj .deps lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
+	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
 .PHONY: all main test check dist clean mrproper
 
@@ -114,14 +115,14 @@ lib/test-libs.a: $$(test_lib_objects)
 ## compiles lib used for testing (catch2) ##
 test_lib_objects += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
-	$(call buildmake, lib/catch2)
+	$(MAKE) -C lib/catch2
 
 ## compiles our own lib used for testing (montree) ##
 test_lib_objects += lib/montree/obj/montree.o
 $(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
 	.PHONY: lib/montree/obj/montree.o)
 lib/montree/obj/montree.o:
-	$(call buildmake, lib/montree)
+	$(MAKE) -C lib/montree
 
 ###########################################################
 

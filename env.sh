@@ -10,7 +10,6 @@
 #return 0
 function make {
     local MAKE="/usr/bin/make"
-    #local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE= CXX='ccache g++'"
     local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE="
 
     local target_args="$($MAKE --no-print-directory -q -E '$(info $(MAKECMDGOALS))' "$@" | head -n1)"

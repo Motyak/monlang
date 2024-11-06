@@ -1,11 +1,11 @@
 include utils.mk # buildmacros, askmake, not, shell_onrun, shouldrebuild
 
-export CXX := ccache g++ #
+export CXX := ccache g++
 
 SHELL := /bin/bash
 RM := rm -rf
-CXXFLAGS += --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
-CXXFLAGS_RELEASE += --std=c++23 -Wall -Wextra -Werror -O3 -I include
+CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -Werror -O3 -I include
 CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 DEPFLAGS = -MMD -MP -MF .deps/$*.d
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
@@ -18,7 +18,7 @@ DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 
 ifdef CLANG
 CXX := ccache clang++
-#	ugly workaround to support clang
+# ugly workaround to support clang
 CXXFLAGS += -D__cpp_concepts=202002L
 LDFLAGS += -lstdc++
 endif
@@ -46,8 +46,9 @@ DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 
 RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
 
-TEST_FILENAMES := base sbt sbg cbg postfix int bigbang
+TEST_FILENAMES := $(foreach file,$(wildcard src/test/[!all]*.cpp),$(file:src/test/%.cpp=%))
 TEST_OBJS := $(TEST_FILENAMES:%=obj/test/%.o)
+TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
@@ -69,7 +70,7 @@ dist: $(RELEASE_OBJS)
 	./release.sh
 
 clean:
-	$(RM) obj .deps
+	$(RM) obj/* .deps/*
 
 mrproper:
 	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
@@ -86,26 +87,22 @@ mrproper:
 %/CurlyBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_CBG)
 macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros))
 
-obj/%.o: src/%.cpp
+$(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)
 
-obj/release/%.o: src/%.cpp
+$(RELEASE_OBJS): obj/release/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_RELEASE) $(DEPFLAGS) $(macros)
 
-obj/test/%.o: src/test/%.cpp
+$(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS_TEST) $(DEPFLAGS_TEST)
 
-bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
+$(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-# separate_test_bins := $(filter-out bin/test/all.elf, bin/test/*.elf)
-# $(separate_test_bins): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
-# 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 bin/test/all.elf: $(TEST_OBJS) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
--include .deps/*.d .deps/test/*.d
+-include $(DEPS) $(TEST_DEPS)
 
 ############################################################
 # libs
