@@ -43,7 +43,7 @@ struct Operator {
 
 std::string stringify(MayFail<Word> word) {
     std::ostringstream oss;
-    visitAst(Unparse(oss), word);
+    visitAst(Unparse(oss), mayfail_cast<ProgramWord>(word));
     return oss.str();
 }
 
@@ -132,7 +132,7 @@ void parenthesize_optn(Term* term, Operator op) {
 std::ostream& operator<<(std::ostream& os, Term term) {
     /* first wrap term into parentheses group, to convert it into an AST (Word) */
     auto pg = ParenthesesGroup{{MayFail<Term>(term)}};
-    auto word = mayfail_convert<Word>(MayFail<ParenthesesGroup>(pg));
+    auto word = mayfail_convert<ProgramWord>(MayFail<ParenthesesGroup>(pg));
 
     std::ostringstream oss;
     visitAst(Unparse(oss), word);

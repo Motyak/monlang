@@ -36,7 +36,7 @@ void Unparse::operator()(const Term& term) {
     succeedsAContinuator = false;
 }
 
-void Unparse::operator()(const ProgramWord& progWord) {
+void Unparse::operator()(const Word& word) {
     if (continuator) {
         if (succeedsAContinuator) {
             out << continuator.value();
@@ -45,7 +45,7 @@ void Unparse::operator()(const ProgramWord& progWord) {
         }
     }
 
-    ConvenientVisitor::operator()(progWord);
+    ConvenientVisitor::operator()(word);
 }
 
 ///////////////////////////////////////////////////////////
