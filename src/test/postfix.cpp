@@ -9,7 +9,7 @@
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix pg off of Atom", "[test-3311][int][postfix]") {
+TEST_CASE ("postfix pg off of Atom", "[test-3311][postfix]") {
     auto input = "func()";
 
     auto expect = tommy_str(R"EOF(
@@ -19,14 +19,15 @@ TEST_CASE ("postfix pg off of Atom", "[test-3311][int][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output_word = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output_word);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg off of Atom", "[test-3312][int][postfix]") {
+TEST_CASE ("postfix sbg off of Atom", "[test-3312][postfix]") {
     auto input = "arr[index]";
 
     auto expect = tommy_str(R"EOF(
@@ -38,14 +39,15 @@ TEST_CASE ("postfix sbg off of Atom", "[test-3312][int][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output_word = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output_word);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg off of sbg", "[test-3313][int][postfix]") {
+TEST_CASE ("postfix sbg off of sbg", "[test-3313][postfix]") {
     auto input = "[elems][index]";
 
     auto expect = tommy_str(R"EOF(
@@ -67,7 +69,7 @@ TEST_CASE ("postfix sbg off of sbg", "[test-3313][int][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix pg off of pg", "[test-3314][int][postfix]") {
+TEST_CASE ("postfix pg off of pg", "[test-3314][postfix]") {
     auto input = "(func)(arg)";
 
     auto expect = tommy_str(R"EOF(
@@ -89,7 +91,7 @@ TEST_CASE ("postfix pg off of pg", "[test-3314][int][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg off of pg", "[test-3315][int][postfix]") {
+TEST_CASE ("postfix sbg off of pg", "[test-3315][postfix]") {
     auto input = "(arr)[index]";
 
     auto expect = tommy_str(R"EOF(
@@ -111,7 +113,7 @@ TEST_CASE ("postfix sbg off of pg", "[test-3315][int][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix pg off of cbg", "[test-3316][int][postfix]") {
+TEST_CASE ("postfix pg off of cbg", "[test-3316][postfix]") {
     auto input = "{func}(arg)";
 
     auto expect = tommy_str(R"EOF(
@@ -133,7 +135,7 @@ TEST_CASE ("postfix pg off of cbg", "[test-3316][int][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg off of cbg", "[test-3317][int][postfix]") {
+TEST_CASE ("postfix sbg off of cbg", "[test-3317][postfix]") {
     auto input = "{arr}[index]";
 
     auto expect = tommy_str(R"EOF(

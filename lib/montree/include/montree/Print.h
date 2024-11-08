@@ -27,7 +27,7 @@ class Print : public AstVisitor<void> {
     void operator()(Atom*);
     void operator()(PostfixSquareBracketsGroup*);
     void operator()(PostfixParenthesesGroup*);
-    // void operator()(Association*);
+    void operator()(Association*);
 
     void operator()(auto); // fall-through
 

@@ -121,8 +121,9 @@ TEST_CASE ("sbg in the middle of sbg", "[wbh-0004][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output_word = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output_word);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
@@ -143,8 +144,9 @@ TEST_CASE ("postfixes words should always be unnumbered", "[wbh-0007][wbh]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
@@ -188,8 +190,9 @@ TEST_CASE ("discard in-between indented empty lines in cbg", "[wbh-0009][wbh]") 
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
@@ -212,7 +215,48 @@ TEST_CASE ("discard in-between non-indented empty lines in cbg", "[wbh-0010][wbh
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("postfix propagate err", "[wbh-0011][wbh]") {
+    auto input = "fds( )";
+
+    auto expect = tommy_str(R"EOF(
+       |~> PostfixParenthesesGroup
+       |  -> Word: Atom: `fds`
+       |  ~> ParenthesesGroup
+       |    ~> Term
+       |      ~> ERR-131
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("association propagate err", "[wbh-0012][wbh]") {
+    auto input = "fds:( )";
+
+    auto expect = tommy_str(R"EOF(
+       |~> Association
+       |  -> Word: Atom: `fds`
+       |  ~> Word: ParenthesesGroup
+       |    ~> Term
+       |      ~> ERR-131
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }

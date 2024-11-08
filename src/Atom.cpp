@@ -7,6 +7,7 @@
 #include <monlang/Association.h>
 
 #include <utils/loop-utils.h>
+#include <utils/vec-utils.h>
 
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
@@ -31,7 +32,13 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
     return Atom{value};
 }
 
-consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
+consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::istringstream& input) {
+    #ifndef DISABLE_ASSOC_IN_ATOM
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        Association::RESERVED_CHARACTERS
+    });
+    #endif
     auto atom = consumeAtomStrictly(terminatorCharacters, input);
 
     if (!atom.has_value()) {

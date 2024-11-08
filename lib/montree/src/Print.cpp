@@ -317,7 +317,7 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     currIndent--;
 
     currIndent++;
-    operator()(MayFail<ProgramWord>(&mayfail_unwrap(psbg->rightPart)));
+    operator()(mayfail_convert<ProgramWord>(psbg->rightPart));
     currIndent--;
 
     numbering = savedStack;
@@ -336,15 +336,35 @@ void Print::operator()(PostfixParenthesesGroup* ppg) {
     currIndent--;
 
     currIndent++;
-    operator()(MayFail<ProgramWord>(&mayfail_unwrap(ppg->rightPart)));
+    operator()(mayfail_convert<ProgramWord>(ppg->rightPart));
     currIndent--;
 
     numbering = savedStack;
 }
 
-// void Print::operator()(Association* assoc) {
-//     ;//todo
-// }
+void Print::operator()(Association* assoc) {
+    outputLine("Association");
+
+    auto savedStack = numbering;
+
+    /* add `Word: ` prefix in tree */
+    numbering = std::stack<int>({NO_NUMBERING});
+    areProgramWords = false;
+
+    currIndent++;
+    operator()(MayFail<ProgramWord>(variant_cast(assoc->leftPart)));
+    currIndent--;
+
+    /* add `Word: ` prefix in tree */
+    numbering = std::stack<int>({NO_NUMBERING});
+    areProgramWords = false;
+
+    currIndent++;
+    operator()(mayfail_cast<ProgramWord>(assoc->rightPart));
+    currIndent--;
+
+    numbering = savedStack;
+}
 
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");

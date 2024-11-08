@@ -134,8 +134,9 @@ TEST_CASE ("atom hit EOF", "[test-1511][base][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeProgramWord(input_iss);
-    auto output_str = montree::astToString(output);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
 
