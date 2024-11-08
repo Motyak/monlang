@@ -15,6 +15,7 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/Association.h>
 
 #include <utils/mem-utils.h>
 
@@ -92,4 +93,9 @@ void ConvenientVisitor<void>::operator()(PostfixParenthesesGroup* ppg) {
 void ConvenientVisitor<void>::operator()(PostfixSquareBracketsGroup* psbg) {
     operator()(psbg->leftPart);
     operator()(move_to_heap(psbg->rightPart.value()));
+}
+
+void ConvenientVisitor<void>::operator()(Association* assoc) {
+    operator()((Word)variant_cast(assoc->leftPart));
+    operator()(assoc->rightPart.value());
 }

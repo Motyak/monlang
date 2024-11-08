@@ -34,6 +34,9 @@ Pour ajouter une entité grammaticale:
 - Compléter Word::consumeWord dans Word.cpp: ajouter bloc de code appelant la fonction consumeXXX
 - Dans toutes les implémentations de AstVisitor, ajouter une nouvelle opération pour le nouveau type
   -> .h ET .cpp
+    -> visitor/ConvenientVisitor
+    -> visitor/Unparse
+    -> lib/montree/Print
 - Ajouter l'entité en haut du Makefile monlang/ (si il a un .cpp)
 
 ---

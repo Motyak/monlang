@@ -14,6 +14,7 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/PostfixParenthesesGroup.h>
+#include <monlang/Association.h>
 
 #include <utils/nb-utils.h>
 #include <utils/str-utils.h>
@@ -340,6 +341,10 @@ void Print::operator()(PostfixParenthesesGroup* ppg) {
 
     numbering = savedStack;
 }
+
+// void Print::operator()(Association* assoc) {
+//     ;//todo
+// }
 
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");

@@ -1,4 +1,3 @@
-
 #include <monlang/Term.h>
 #include <monlang/Atom.h>
 #include <monlang/ParenthesesGroup.h>
@@ -294,7 +293,7 @@ bool parenthesizeFirstEncounteredOp(Term* term, std::vector<std::string> opvals,
     return false; // no op found
 }
 
-// g++ -o playground.elf playground.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     Term input = Term_("2 - 1 + 1 * 2 ^ 3 ^ 2 + 91 ^ 1");

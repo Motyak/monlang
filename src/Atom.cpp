@@ -4,6 +4,7 @@
 /* in impl only */
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/Association.h>
 
 #include <utils/loop-utils.h>
 
@@ -44,24 +45,30 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_ATOM
-        if (auto whats_right_behind = tryConsumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!whats_right_behind->has_value()) {
-                return *whats_right_behind; // malformed postfix
+        if (auto ppg = tryConsumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input)) {
+            if (!ppg->has_value()) {
+                return *ppg; // malformed postfix
             }
             continue;
         }
         #endif
 
         #ifndef DISABLE_PSBG_IN_ATOM
-        if (auto whats_right_behind = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!whats_right_behind->has_value()) {
-                return *whats_right_behind; // malformed postfix
+        if (auto psbg = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
+            if (!psbg->has_value()) {
+                return *psbg; // malformed postfix
             }
             continue;
         }
         #endif
 
         break;
+    }
+
+    if (auto assoc = tryConsumeAssociation(accumulatedPostfixLeftPart, input)) {
+        return *assoc; // early return assoc (malformed or not).
+                       // Association can contain a PostfixLeftPart..
+                       // .., but not the other way around! (precedence rule)
     }
 
     return std::visit(

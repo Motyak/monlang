@@ -34,6 +34,7 @@ class ConvenientVisitor<void> : public AstVisitor<void> {
     virtual void operator()(CurlyBracketsGroup*);
     virtual void operator()(PostfixParenthesesGroup*);
     virtual void operator()(PostfixSquareBracketsGroup*);
+    virtual void operator()(Association*);
 };
 
 template <typename T>

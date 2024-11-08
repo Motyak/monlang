@@ -29,6 +29,7 @@ endif
 ###########################################################
 
 ENTITIES := \
+Association \
 Atom \
 CurlyBracketsGroup \
 ParenthesesGroup \

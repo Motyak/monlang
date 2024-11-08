@@ -7,6 +7,7 @@
 
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
+struct Association;
 
 struct Atom {
     std::string value;
@@ -17,7 +18,8 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 using consumeAtom_RetType = std::variant<
     MayFail<Atom*>,
     MayFail<PostfixParenthesesGroup*>,
-    MayFail<PostfixSquareBracketsGroup*>
+    MayFail<PostfixSquareBracketsGroup*>,
+    MayFail<Association*>
 >;
 consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
