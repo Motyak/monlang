@@ -13,6 +13,7 @@ BUILD_LIBS_ONCE ?= x # disable by passing `BUILD_LIBS_ONCE=`
 TRACE ?= # enable by passing `TRACE=x`
 DISABLE_WORDS ?= # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
+DISABLE_ASSOCS ?= # e.g.: DISABLE_ASSOCSS=ATOM,
 
 ifdef CLANG
 CXX := clang++
@@ -81,10 +82,11 @@ mrproper:
 %/common.o: trace_macro := $(if $(TRACE), -D TRACE)
 %/Word.o: word_macros := $(call buildmacros, DISABLE_, $(DISABLE_WORDS))
 %/Atom.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_ATOM)
+%/Atom.o: assoc_macro := $(call buildmacros, DISABLE_ASSOC_IN_, $(DISABLE_ASSOCS), ATOM)
 %/ParenthesesGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_PG)
 %/SquareBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_SBG)
 %/CurlyBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_CBG)
-macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros))
+macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros) $(assoc_macro))
 
 $(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)

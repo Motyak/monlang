@@ -65,11 +65,13 @@ consumeAtom_RetType consumeAtom(const std::vector<char>& terminatorCharacters, s
         break;
     }
 
+    #ifndef DISABLE_ASSOC_IN_ATOM
     if (auto assoc = tryConsumeAssociation(accumulatedPostfixLeftPart, input)) {
         return *assoc; // early return assoc (malformed or not).
                        // Association can contain a PostfixLeftPart..
                        // .., but not the other way around! (precedence rule)
     }
+    #endif
 
     return std::visit(
         [](auto word) -> consumeAtom_RetType {return word;},
