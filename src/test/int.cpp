@@ -84,8 +84,28 @@ TEST_CASE ("nested postfix parentheses group", "[test-1002][int]") {
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("nested association", "[test-1051][int]") {
+    auto input = "a:b:c";
+
+    auto expect = tommy_str(R"EOF(
+       |-> Association
+       |  -> Word: Atom: `a`
+       |  -> Word: Association
+       |    -> Word: Atom: `b`
+       |    -> Word: Atom: `c`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_pw = mayfail_cast<ProgramWord>(output);
+    auto output_str = montree::astToString(output_pw);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("all words in a same program sentence", "[test-1003][int]") {
-    auto input = "atom (pg) {cbg} ppg()\n";
+    auto input = "atom (pg) {cbg} ppg() a:b\n";
 
     auto expect = tommy_str(R"EOF(
        |-> ProgramSentence
@@ -99,6 +119,9 @@ TEST_CASE ("all words in a same program sentence", "[test-1003][int]") {
        |  -> ProgramWord #4: PostfixParenthesesGroup
        |    -> Word: Atom: `ppg`
        |    -> ParenthesesGroup (empty)
+       |  -> ProgramWord #5: Association
+       |    -> Word: Atom: `a`
+       |    -> Word: Atom: `b`
     )EOF");
 
     auto input_iss = std::istringstream(input);
@@ -110,7 +133,7 @@ TEST_CASE ("all words in a same program sentence", "[test-1003][int]") {
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("all words in a same term", "[test-1004][int]") {
-    auto input = "[atom (pg) {cbg} ppg()]";
+    auto input = "[atom (pg) {cbg} ppg() a:b]";
 
     auto expect = tommy_str(R"EOF(
        |-> SquareBracketsGroup
@@ -125,6 +148,9 @@ TEST_CASE ("all words in a same term", "[test-1004][int]") {
        |    -> Word #4: PostfixParenthesesGroup
        |      -> Word: Atom: `ppg`
        |      -> ParenthesesGroup (empty)
+       |    -> Word #5: Association
+       |      -> Word: Atom: `a`
+       |      -> Word: Atom: `b`
     )EOF");
 
     auto input_iss = std::istringstream(input);

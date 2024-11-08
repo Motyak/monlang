@@ -46,5 +46,3 @@ function make {
 ## add (back) make autocompletion for our new definition of make
 source tools/bash_completion_make # exports _make function
 complete -F _make make
-
-alias mkfast='make -f fast.mk'
