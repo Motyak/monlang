@@ -79,14 +79,8 @@ mrproper:
 
 ###########################################################
 
-%/common.o: trace_macro := $(if $(TRACE), -D TRACE)
-%/Word.o: word_macros := $(call buildmacros, DISABLE_, $(DISABLE_WORDS))
-%/Atom.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_ATOM)
-%/Atom.o: assoc_macro := $(call buildmacros, DISABLE_ASSOC_IN_, $(DISABLE_ASSOCS), ATOM)
-%/ParenthesesGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_PG)
-%/SquareBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_SBG)
-%/CurlyBracketsGroup.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_CBG)
-macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros) $(assoc_macro))
+macros = # filled by below makefile inclusion
+include handle_macros.mk # uses $(TRACE) $(DISABLE_WORDS) $(DISABLE_POSTFIXES) $(DISABLE_ASSOCS)
 
 $(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)
