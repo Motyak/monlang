@@ -70,8 +70,10 @@ MayFail<Word> consumeWord(std::istringstream& input) {
 
 template <>
 MayFail<ProgramWord> mayfail_cast<ProgramWord>(MayFail<Word> inputMayfail) {
-    return inputMayfail.transform([](auto t) -> ProgramWord {return variant_cast(t);})
-            .transform_error([](auto e) -> Malformed<ProgramWord> {return {variant_cast(e.val), e.err};});
+    return MayFail(
+        inputMayfail.transform([](auto t) -> ProgramWord {return variant_cast(t);})
+            .transform_error([](auto e) -> Malformed<ProgramWord> {return {variant_cast(e.val), e.err};})
+    );
 }
 
 static Word pw2w(ProgramWord pw) {
@@ -83,6 +85,8 @@ static Word pw2w(ProgramWord pw) {
 
 template <>
 MayFail<Word> mayfail_cast<Word>(MayFail<ProgramWord> inputMayfail) {
-    return inputMayfail.transform([](auto t) -> Word {return pw2w(t);})
-        .transform_error([](auto e) -> Malformed<Word> {return {pw2w(e.val), e.err};});
+    return MayFail(
+        inputMayfail.transform([](auto t) -> Word {return pw2w(t);})
+            .transform_error([](auto e) -> Malformed<Word> {return {pw2w(e.val), e.err};})
+    );
 }
