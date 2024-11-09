@@ -1,7 +1,5 @@
 #include "base.cpp" // Program/ProgramSentence/ProgramWord/Atom
 
-#include "sbt.cpp" // SquareBracketsTerm
-
 #include "sbg.cpp" // SquareBracketsGroup/Term/Word..
                    // .., covers ParenthesesGroup as well
 
@@ -11,5 +9,7 @@
                        // .., PostfixParenthesesGroup
 
 #include "int.cpp" // <entity>-Word integrations, nested entities
+
+#include "sbt.cpp" // SquareBracketsTerm is a ProgramWord (not a Word)
 
 #include "bigbang.cpp" // complete programs

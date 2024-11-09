@@ -25,8 +25,7 @@ struct Association {
 };
 
 template <typename T>
-MayFail<Association*>
-consumeAssociation(T assocLeftPart, std::istringstream& input) {
+MayFail<Association*> consumeAssociation(T assocLeftPart, std::istringstream& input) {
     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE));
     auto whats_right_behind = consumeWord(input);
     auto assoc = move_to_heap(Association{

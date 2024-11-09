@@ -96,7 +96,7 @@ $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-bin/test/all.elf: TEST_FILENAMES = base sbt sbg cbg postfix int bigbang
+bin/test/all.elf: TEST_FILENAMES = base sbg cbg postfix int sbt bigbang
 .SECONDEXPANSION:
 bin/test/all.elf: $$(TEST_OBJS) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
