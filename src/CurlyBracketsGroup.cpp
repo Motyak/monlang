@@ -96,18 +96,20 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_CBG
-        if (auto whats_right_behind = tryConsumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!whats_right_behind->has_value()) {
-                return *whats_right_behind; // malformed postfix
+        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
+            if (!ppg.has_value()) {
+                return ppg; // malformed postfix
             }
             continue;
         }
         #endif
 
         #ifndef DISABLE_PSBG_IN_CBG
-        if (auto whats_right_behind = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!whats_right_behind->has_value()) {
-                return *whats_right_behind; // malformed postfix
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
+            if (!psbg.has_value()) {
+                return psbg; // malformed postfix
             }
             continue;
         }

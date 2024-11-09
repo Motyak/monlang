@@ -52,18 +52,20 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_ATOM
-        if (auto ppg = tryConsumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!ppg->has_value()) {
-                return *ppg; // malformed postfix
+        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
+            if (!ppg.has_value()) {
+                return ppg; // malformed postfix
             }
             continue;
         }
         #endif
 
         #ifndef DISABLE_PSBG_IN_ATOM
-        if (auto psbg = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!psbg->has_value()) {
-                return *psbg; // malformed postfix
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
+            if (!psbg.has_value()) {
+                return psbg; // malformed postfix
             }
             continue;
         }
@@ -73,10 +75,12 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     }
 
     #ifndef DISABLE_ASSOC_IN_ATOM
-    if (auto assoc = tryConsumeAssociation(accumulatedPostfixLeftPart, input)) {
-        return *assoc; // early return assoc (malformed or not).
-                       // Association can contain a PostfixLeftPart..
-                       // .., but not the other way around! (precedence rule)
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        return consumeAssociation(accumulatedPostfixLeftPart, input); /*
+            early return assoc (malformed or not).
+            Association can contain a PostfixLeftPart..
+            .., but not the other way around! (precedence rule)
+        */
     }
     #endif
 

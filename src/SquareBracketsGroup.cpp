@@ -79,9 +79,10 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 
     for (;;) {
         #ifndef DISABLE_PSBG_IN_SBG
-        if (auto whats_right_behind = tryConsumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input)) {
-            if (!whats_right_behind->has_value()) {
-                return *whats_right_behind; // malformed postfix
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
+            if (!psbg.has_value()) {
+                return psbg; // malformed postfix
             }
             continue;
         }

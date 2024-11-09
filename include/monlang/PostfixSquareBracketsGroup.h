@@ -14,21 +14,18 @@ struct PostfixSquareBracketsGroup {
 };
 
 template <typename T>
-std::optional<MayFail<PostfixSquareBracketsGroup*>>
-tryConsumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
-    if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-        auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
-            variant_cast(*accumulatedPostfixLeftPart),
-            whats_right_behind
-        });
-        if (!whats_right_behind.has_value()) {
-            return std::unexpected(Malformed(curr_psbg, ERR(329)));
-        }
-        *accumulatedPostfixLeftPart = curr_psbg;
-        return std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart);
+MayFail<PostfixSquareBracketsGroup*>
+consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
+    auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
+    auto curr_psbg = move_to_heap(PostfixSquareBracketsGroup{
+        variant_cast(*accumulatedPostfixLeftPart),
+        whats_right_behind
+    });
+    if (!whats_right_behind.has_value()) {
+        return std::unexpected(Malformed(curr_psbg, ERR(329)));
     }
-    return {}; // nothing found
+    *accumulatedPostfixLeftPart = curr_psbg;
+    return std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart);
 }
 
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H
