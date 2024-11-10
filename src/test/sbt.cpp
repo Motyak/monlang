@@ -51,7 +51,7 @@ TEST_CASE ("Term ERR hit EOF", "[test-5213][sbt][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeTerm(input_iss);
-    REQUIRE (!output.has_value());
+    REQUIRE (output.has_error());
     REQUIRE (output.error().err.fmt == "ERR-135");
 }
 

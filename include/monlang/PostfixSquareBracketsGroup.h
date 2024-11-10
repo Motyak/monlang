@@ -21,8 +21,8 @@ consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstr
         variant_cast(*accumulatedPostfixLeftPart),
         whats_right_behind
     });
-    if (!whats_right_behind.has_value()) {
-        return std::unexpected(Malformed(curr_psbg, ERR(329)));
+    if (whats_right_behind.has_error()) {
+        return Malformed(curr_psbg, ERR(329));
     }
     *accumulatedPostfixLeftPart = curr_psbg;
     return std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart);

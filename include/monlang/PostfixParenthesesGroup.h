@@ -21,8 +21,8 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
         variant_cast(*accumulatedPostfixLeftPart),
         whats_right_behind
     });
-    if (!whats_right_behind.has_value()) {
-        return std::unexpected(Malformed(curr_ppg, ERR(319)));
+    if (whats_right_behind.has_error()) {
+        return Malformed(curr_ppg, ERR(319));
     }
     *accumulatedPostfixLeftPart = curr_ppg;
     return std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart);

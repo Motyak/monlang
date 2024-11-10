@@ -1,5 +1,6 @@
 #include <monlang/common.h>
 
+#include <utils/assert-utils.h>
 #include <utils/str-utils.h>
 
 #include <limits>
@@ -69,18 +70,18 @@ size_t sequenceLen(const std::vector<CharacterAppearance>& sequence) {
     return len;
 }
 
-std::expected<void, Error> consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
+MayFail<void> consumeSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
-                return std::unexpected(ERR(100));
+                return ERR(100);
             }
             continue;
         }
 
         for (int i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
-                return std::unexpected(ERR(101));
+                return ERR(101);
             }
             input.ignore(1);
         }

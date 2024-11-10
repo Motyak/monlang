@@ -50,7 +50,7 @@ int main()
 
     auto prog = consumeProgram(input_iss);
 
-    if (!prog.has_value()) {
+    if (prog.has_error()()) {
         std::cout << "wtf" << std::endl;
         return 1;
     }

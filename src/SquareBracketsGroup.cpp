@@ -31,7 +31,7 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     };
 
     if (!consumeSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{}, ERR(043)));
+        return Malformed(SquareBracketsGroup{}, ERR(043));
     }
 
     if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
@@ -46,20 +46,20 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     if (!__first_it)
     {
         if (!consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(403)));
+            return Malformed(SquareBracketsGroup{terms}, ERR(403));
         }
     }
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
-        if (!currentTerm.has_value()) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(439)));
+        if (currentTerm.has_error()) {
+            return Malformed(SquareBracketsGroup{terms}, ERR(439));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(430)));
+        return Malformed(SquareBracketsGroup{terms}, ERR(430));
     }
 
     return SquareBracketsGroup{terms};
@@ -68,20 +68,20 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
     auto sbg = consumeSquareBracketsGroupStrictly(input);
 
-    if (!sbg.has_value()) {
+    if (sbg.has_error()) {
         return mayfail_convert<SquareBracketsGroup*>(sbg);
     }
 
     /* look behind */
 
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.val);
 
     for (;;) {
         #ifndef DISABLE_PSBG_IN_SBG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (!psbg.has_value()) {
+            if (psbg.has_error()) {
                 return psbg; // malformed postfix
             }
             continue;

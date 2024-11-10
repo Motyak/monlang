@@ -8,21 +8,21 @@ MayFail<SquareBracketsTerm> consumeSquareBracketsTerm(std::istringstream& input)
     const Sequence termTerminatorSeq = SquareBracketsTerm::TERMINATOR_SEQUENCE;
 
     if (!consumeSequence(SquareBracketsTerm::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsTerm{}, ERR(052)));
+        return Malformed(SquareBracketsTerm{}, ERR(052));
     }
 
     // shouldn't be empty
     if (peekSequence(SquareBracketsTerm::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsTerm{}, ERR(521)));
+        return Malformed(SquareBracketsTerm{}, ERR(521));
     }
 
     MayFail<Term> term = consumeTerm(termTerminatorSeq, input);
-    if (!term.has_value()) {
-        return std::unexpected(Malformed(SquareBracketsTerm{term}, ERR(529)));
+    if (term.has_error()) {
+        return Malformed(SquareBracketsTerm{term}, ERR(529));
     }
 
     if (!consumeSequence(SquareBracketsTerm::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsTerm{term}, ERR(520)));
+        return Malformed(SquareBracketsTerm{term}, ERR(520));
     }
 
     return SquareBracketsTerm{term};

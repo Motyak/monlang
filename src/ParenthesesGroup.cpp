@@ -32,7 +32,7 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     };
 
     if (!consumeSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ParenthesesGroup{}, ERR(042)));
+        return Malformed(ParenthesesGroup{}, ERR(042));
     }
 
     if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
@@ -47,20 +47,20 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     if (!__first_it)
     {
         if (!consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(402)));
+            return Malformed(ParenthesesGroup{terms}, ERR(402));
         }
     }
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
-        if (!currentTerm.has_value()) {
-            return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(429)));
+        if (currentTerm.has_error()) {
+            return Malformed(ParenthesesGroup{terms}, ERR(429));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ParenthesesGroup{terms}, ERR(420)));
+        return Malformed(ParenthesesGroup{terms}, ERR(420));
     }
 
     return ParenthesesGroup{terms};
@@ -69,20 +69,20 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
     auto pg = consumeParenthesesGroupStrictly(input);
 
-    if (!pg.has_value()) {
+    if (pg.has_error()) {
         return mayfail_convert<ParenthesesGroup*>(pg);
     }
 
     /* look behind */
 
     using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.value());
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.val);
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_PG
         if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
             auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (!ppg.has_value()) {
+            if (ppg.has_error()) {
                 return ppg; // malformed postfix
             }
             continue;
@@ -92,7 +92,7 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
         #ifndef DISABLE_PSBG_IN_PG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (!psbg.has_value()) {
+            if (psbg.has_error()) {
                 return psbg; // malformed postfix
             }
             continue;

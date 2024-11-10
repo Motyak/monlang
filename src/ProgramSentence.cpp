@@ -26,7 +26,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(ProgramSentence{}, ERR(125)));
+        return Malformed(ProgramSentence{}, ERR(125));
     }
 
     // empty sentences are valid, just discarded by the Program
@@ -36,7 +36,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     }
 
     if (indentLevel > 0 && !consumeSequence(INDENT_SEQUENCE(), input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, ERR(123)));
+        return Malformed(ProgramSentence{}, ERR(123));
     }
 
     // indented empty sentences are valid, just discarded by the Program
@@ -46,7 +46,7 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     }
 
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{}, ERR(121)));
+        return Malformed(ProgramSentence{}, ERR(121));
     }
 
     std::vector<MayFail<ProgramWord>> programWords;
@@ -57,23 +57,23 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             // this happens when we have an Atom right after a non-Atom (without a space in between)
-            return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(102)));
+            return Malformed(ProgramSentence{programWords}, ERR(102));
         }
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(122)));
+            return Malformed(ProgramSentence{programWords}, ERR(122));
         }
     }
         currentWord = consumeProgramWord(input);
         programWords.push_back(currentWord);
-        if (!currentWord.has_value()) {
-            return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(129)));
+        if (currentWord.has_error()) {
+            return Malformed(ProgramSentence{programWords}, ERR(129));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(ProgramSentence{programWords}, ERR(120)));
+        return Malformed(ProgramSentence{programWords}, ERR(120));
     }
 
     // eat and discard trailing newlines as well

@@ -25,7 +25,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
     auto indentedTerminatorSeq = vec_concat({INDENT_SEQUENCE(), CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
     if (!consumeSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(041)));
+        return Malformed(CurlyBracketsGroup{}, ERR(041));
     }
 
     if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
@@ -39,11 +39,11 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
             sequenceFirstChar(CurlyBracketsGroup::TERMINATOR_SEQUENCE).value(),
         };
         auto term = consumeTerm(termTerminatorChars, input);
-        if (!term.has_value()) {
-            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(519)));
+        if (term.has_error()) {
+            return Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(519));
         }
         if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(510)));
+            return Malformed<CurlyBracketsGroup>(CurlyBracketsTerm(term), ERR(510));
         }
         return CurlyBracketsTerm(term);
     }
@@ -51,7 +51,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
     input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
 
     if (peekSequence(indentedTerminatorSeq, input)) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(412)));
+        return Malformed(CurlyBracketsGroup{}, ERR(412));
     }
 
     indentLevel++;
@@ -62,21 +62,21 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
 
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
-        if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
+        if (!currentSentence.has_error() && currentSentence.val.programWords.size() == 0) {
             continue; // ignore empty sentences
         }
         sentences.push_back(currentSentence);
-        if (!currentSentence.has_value()) {
-            return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(419)));
+        if (currentSentence.has_error()) {
+            return Malformed(CurlyBracketsGroup{sentences}, ERR(419));
         }
     }
 
     if (!consumeSequence(indentedTerminatorSeq, input)) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{sentences}, ERR(410)));
+        return Malformed(CurlyBracketsGroup{sentences}, ERR(410));
     }
 
     if (sentences.size() == 0) {
-        return std::unexpected(Malformed(CurlyBracketsGroup{}, ERR(413)));
+        return Malformed(CurlyBracketsGroup{}, ERR(413));
     }
 
     return CurlyBracketsGroup{sentences};
@@ -85,20 +85,20 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& input) {
     auto cbg = consumeCurlyBracketsGroupStrictly(input);
 
-    if (!cbg.has_value()) {
+    if (cbg.has_error()) {
         return mayfail_convert<CurlyBracketsGroup*>(cbg);
     }
 
     /* look behind */
 
     using PostfixLeftPart = std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(cbg.value());
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(cbg.val);
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_CBG
         if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
             auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (!ppg.has_value()) {
+            if (ppg.has_error()) {
                 return ppg; // malformed postfix
             }
             continue;
@@ -108,7 +108,7 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
         #ifndef DISABLE_PSBG_IN_CBG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (!psbg.has_value()) {
+            if (psbg.has_error()) {
                 return psbg; // malformed postfix
             }
             continue;
@@ -136,16 +136,14 @@ CurlyBracketsGroup::CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>> sen
 }
 
 static std::vector<MayFail<ProgramSentence>> toSentences(MayFail<Term> term) {
-    Term term_ = mayfail_unwrap(term);
-
     std::vector<MayFail<ProgramWord>> programWords;
-    for (auto word: term_.words) {
+    for (auto word: term.val.words) {
         programWords.push_back(mayfail_cast<ProgramWord>(word));
     }
 
-    if (!term.has_value()) {
+    if (term.has_error()) {
         // vector containing one malformed program sentence with term error code
-        return {std::unexpected(Malformed(ProgramSentence{programWords}, term.error().err))};
+        return {Malformed(ProgramSentence{programWords}, term.error())};
     }
 
     return {ProgramSentence{programWords}};

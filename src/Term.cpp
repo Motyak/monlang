@@ -17,11 +17,11 @@ static MayFail<Term> _consumeTerm(const std::vector<Sequence>& terminatorSequenc
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Term{}, ERR(135)));
+        return Malformed(Term{}, ERR(135));
     }
 
     if (peekSequence(Term::CONTINUATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(Term{}, ERR(131)));
+        return Malformed(Term{}, ERR(131));
     }
 
     std::vector<MayFail<Word>> words;
@@ -32,13 +32,13 @@ static MayFail<Term> _consumeTerm(const std::vector<Sequence>& terminatorSequenc
     {
         if (!consumeSequence(Term::CONTINUATOR_SEQUENCE, input)) {
             // this happens when we have an Atom right after a non-Atom (without a space in between)
-            return std::unexpected(Malformed(Term{words}, ERR(103)));
+            return Malformed(Term{words}, ERR(103));
         }
     }
         currentWord = consumeWord(input);
         words.push_back(currentWord);
-        if (!currentWord.has_value()) {
-            return std::unexpected(Malformed(Term{words}, ERR(139)));
+        if (currentWord.has_error()) {
+            return Malformed(Term{words}, ERR(139));
         }
 
         ENDLOOP
