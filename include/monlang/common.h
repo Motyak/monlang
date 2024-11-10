@@ -25,75 +25,30 @@ struct Error {
 };
 #define ERR(x) Error{atoi(#x), "ERR-"#x}
 
-// #define OK() return std::expected<void, Error>()
-
-// template <typename T>
-// struct Malformed {
-//     static_assert(!std::is_void_v<T>);
-//     T val;
-//     Error err;
-// };
+#define OK() return std::expected<void, Error>()
 
 template <typename T>
-struct MayFail;
-
-template <>
-class MayFail<void> {
-  public:
-    MayFail() = default;
-    MayFail(Error err) : err(err){}
-    bool has_error() {return err.has_value();}
-    Error error() {return err.value();}
-
-  private:
-    std::optional<Error> err;
-};
-
-template <typename T>
-class MayFail : public MayFail<void>{
-  public:
-    MayFail(T val) : val(val){}
-    bool has_value() {return !err.has_value();}
-    T value() {return val;}
-
-  private:
+struct Malformed {
+    static_assert(!std::is_void_v<T>);
     T val;
+    Error err;
 };
 
 template <typename T>
-MayFail<T> Malformed(T val, Error err) {
-    return MayFail(val, err);
-}
-
-// /*
-//     I'm using inheritance instead of alias because..
-//     ..I can't do class template specialization..
-//     ..("typedef may not be used in an elaborated type specifier")
-// */
-// template <typename T>
-// struct MayFail : public std::expected<T, Malformed<T>> {
-//     MayFail() : std::expected<T, Malformed<T>>(){}
-//     MayFail(T val) : std::expected<T, Malformed<T>>(val){}
-//     explicit MayFail(std::expected<T, Malformed<T>> exp) : std::expected<T, Malformed<T>>(exp){}
-//     MayFail(std::unexpected<Malformed<T>> err) : std::expected<T, Malformed<T>>(err){}
-// };
+using MayFail = std::expected<T, Malformed<T>>;
 
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
-    return MayFail(
-        inputMayfail.transform([](auto t){return R{t};})
-            .transform_error([](auto e){return Malformed(R{e.val}, e.err);})
-    );
+    return inputMayfail.transform([](auto t){return R{t};})
+            .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
 }
 
 template <typename R, typename... Targs>
 MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
     return std::visit(
         [](auto inputMayfail){
-            return MayFail(
-                inputMayfail.transform([](auto t){return R{t};})
-                    .transform_error([](auto e){return Malformed(R{e.val}, e.err);})
-            );
+            return inputMayfail.transform([](auto t){return R{t};})
+                    .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
         },
         inputMayfailVariant
     );
@@ -101,18 +56,14 @@ MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
 
 template <typename R, typename T>
 MayFail<R> mayfail_convert(MayFail<T> inputMayfail) {
-    return MayFail(
-            inputMayfail.transform([](auto t){return R{move_to_heap(t)};})
-                .transform_error([](auto e){return Malformed(R{move_to_heap(e.val)}, e.err);})
-        );
+    return inputMayfail.transform([](auto t){return R{move_to_heap(t)};})
+            .transform_error([](auto e){return Malformed(R{move_to_heap(e.val)}, e.err);});
 }
 
 template <typename R, typename T>
 MayFail<R> mayfail_convert(MayFail<T> inputMayfail, auto converter) {
-    return MayFail(
-            inputMayfail.transform([&converter](auto t){return R{converter(t)};})
-                .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);})
-        );
+    return inputMayfail.transform([&converter](auto t){return R{converter(t)};})
+            .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);});
 }
 
 template <typename T>

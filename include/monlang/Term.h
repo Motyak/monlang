@@ -11,10 +11,6 @@ struct Term {
     static const Sequence CONTINUATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<Word> words;
-};
-
-struct MayFail<Term> {
     std::vector<MayFail<Word>> words;
 };
 

@@ -11,15 +11,14 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
     while (input.peek() != EOF) {
         currentSentence = consumeProgramSentence(input);
 
-        if (!currentSentence.has_error() && currentSentence.programWords.size() == 0) {
+        if (currentSentence.has_value() && currentSentence.value().programWords.size() == 0) {
             continue; // ignore empty sentences
         }
 
         sentences.push_back(currentSentence);
 
-        if (currentSentence.has_error()) {
-            // return std::unexpected(Malformed(Program{sentences}, ERR(119)));
-            return MayFail<Program>(sentences, ERR(119));
+        if (!currentSentence.has_value()) {
+            return std::unexpected(Malformed(Program{sentences}, ERR(119)));
         }
     }
 
