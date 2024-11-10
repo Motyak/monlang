@@ -25,27 +25,58 @@ struct Error {
 };
 #define ERR(x) Error{atoi(#x), "ERR-"#x}
 
-#define OK() return std::expected<void, Error>()
+// #define OK() return std::expected<void, Error>()
+
+// template <typename T>
+// struct Malformed {
+//     static_assert(!std::is_void_v<T>);
+//     T val;
+//     Error err;
+// };
 
 template <typename T>
-struct Malformed {
-    static_assert(!std::is_void_v<T>);
+struct MayFail;
+
+template <>
+class MayFail<void> {
+  public:
+    MayFail() = default;
+    MayFail(Error err) : err(err){}
+    bool has_error() {return err.has_value();}
+    Error error() {return err.value();}
+
+  private:
+    std::optional<Error> err;
+};
+
+template <typename T>
+class MayFail : public MayFail<void>{
+  public:
+    MayFail(T val) : val(val){}
+    bool has_value() {return !err.has_value();}
+    T value() {return val;}
+
+  private:
     T val;
-    Error err;
 };
 
-/*
-    I'm using inheritance instead of alias because..
-    ..I can't do class template specialization..
-    ..("typedef may not be used in an elaborated type specifier")
-*/
 template <typename T>
-struct MayFail : public std::expected<T, Malformed<T>> {
-    MayFail() : std::expected<T, Malformed<T>>(){}
-    MayFail(T val) : std::expected<T, Malformed<T>>(val){}
-    explicit MayFail(std::expected<T, Malformed<T>> exp) : std::expected<T, Malformed<T>>(exp){}
-    MayFail(std::unexpected<Malformed<T>> err) : std::expected<T, Malformed<T>>(err){}
-};
+MayFail<T> Malformed(T val, Error err) {
+    return MayFail(val, err);
+}
+
+// /*
+//     I'm using inheritance instead of alias because..
+//     ..I can't do class template specialization..
+//     ..("typedef may not be used in an elaborated type specifier")
+// */
+// template <typename T>
+// struct MayFail : public std::expected<T, Malformed<T>> {
+//     MayFail() : std::expected<T, Malformed<T>>(){}
+//     MayFail(T val) : std::expected<T, Malformed<T>>(val){}
+//     explicit MayFail(std::expected<T, Malformed<T>> exp) : std::expected<T, Malformed<T>>(exp){}
+//     MayFail(std::unexpected<Malformed<T>> err) : std::expected<T, Malformed<T>>(err){}
+// };
 
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {

@@ -17,14 +17,30 @@ struct CurlyBracketsGroup {
     std::optional<MayFail<Term>> term;
 
     CurlyBracketsGroup() = default;
-    CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>>);
+    CurlyBracketsGroup(std::vector<ProgramSentence>);
   protected:
-    CurlyBracketsGroup(std::vector<MayFail<ProgramSentence>>, std::optional<MayFail<Term>>);
+    CurlyBracketsGroup(std::vector<ProgramSentence>, std::optional<Term>);
 };
 using Subprogram = CurlyBracketsGroup;
 
+template <>
+struct MayFail<CurlyBracketsGroup> {
+    std::vector<ProgramSentence> sentences;
+    std::optional<Term> term;
+
+    MayFail<CurlyBracketsGroup>() = default;
+    MayFail<CurlyBracketsGroup>(std::vector<MayFail<ProgramSentence>>);
+  protected:
+    MayFail<CurlyBracketsGroup>(std::vector<MayFail<ProgramSentence>>, std::optional<MayFail<Term>>);
+};
+
 struct CurlyBracketsTerm : public CurlyBracketsGroup {
-    CurlyBracketsTerm(MayFail<Term> term);
+    CurlyBracketsTerm(Term term);
+};
+
+template <>
+struct MayFail<CurlyBracketsTerm> : public MayFail<CurlyBracketsGroup> {
+    MayFail<CurlyBracketsTerm>(MayFail<Term> term);
 };
 
 MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream&);

@@ -16,6 +16,11 @@ struct ParenthesesGroup {
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
+    std::vector<Term> terms;
+};
+
+template <>
+struct MayFail<ParenthesesGroup> {
     std::vector<MayFail<Term>> terms;
 };
 
