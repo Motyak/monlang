@@ -62,7 +62,7 @@ MayFail<CurlyBracketsGroup> consumeCurlyBracketsGroupStrictly(std::istringstream
 
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
-        if (!currentSentence.has_error() && currentSentence.val.programWords.size() == 0) {
+        if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
             continue; // ignore empty sentences
         }
         sentences.push_back(currentSentence);
@@ -92,7 +92,7 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
     /* look behind */
 
     using PostfixLeftPart = std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(cbg.val);
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(cbg.value());
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_CBG

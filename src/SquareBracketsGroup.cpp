@@ -75,7 +75,7 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
     /* look behind */
 
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.val);
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
 
     for (;;) {
         #ifndef DISABLE_PSBG_IN_SBG

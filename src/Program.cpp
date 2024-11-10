@@ -11,7 +11,7 @@ MayFail<Program> consumeProgram(std::istringstream& input) {
     while (input.peek() != EOF) {
         currentSentence = consumeProgramSentence(input);
 
-        if (!currentSentence.has_error() && currentSentence.val.programWords.size() == 0) {
+        if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
             continue; // ignore empty sentences
         }
 

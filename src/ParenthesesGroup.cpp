@@ -76,7 +76,7 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
     /* look behind */
 
     using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.val);
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.value());
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_PG

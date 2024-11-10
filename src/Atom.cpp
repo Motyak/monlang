@@ -48,7 +48,7 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     /* look behind */
 
     using PostfixLeftPart = std::variant<Atom*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.val);
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_ATOM
