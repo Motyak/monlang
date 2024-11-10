@@ -16,18 +16,18 @@ class Print : public AstVisitor<void> {
   public:
     Print(std::ostream&, int TAB_SIZE=2);
 
-    void operator()(const MayFail<Program>&) override;
-    void operator()(const MayFail<ProgramSentence>&) override;
+    void operator()(const MayFail<MayFail_<Program>>&) override;
+    void operator()(const MayFail<MayFail_<ProgramSentence>>&) override;
     void operator()(const MayFail<ProgramWord>& word) override;
 
-    void operator()(SquareBracketsTerm*);
-    void operator()(SquareBracketsGroup*);
-    void operator()(ParenthesesGroup*);
-    void operator()(CurlyBracketsGroup*);
+    // void operator()(SquareBracketsTerm*);
+    // void operator()(SquareBracketsGroup*);
+    // void operator()(ParenthesesGroup*);
+    // void operator()(CurlyBracketsGroup*);
     void operator()(Atom*);
-    void operator()(PostfixSquareBracketsGroup*);
-    void operator()(PostfixParenthesesGroup*);
-    void operator()(Association*);
+    // void operator()(PostfixSquareBracketsGroup*);
+    // void operator()(PostfixParenthesesGroup*);
+    // void operator()(Association*);
 
     void operator()(auto); // fall-through
 

@@ -8,9 +8,18 @@
 #include <sstream>
 
 struct Program {
-    std::vector<MayFail<ProgramSentence>> sentences;
+    std::vector<ProgramSentence> sentences;
 };
 
-MayFail<Program> consumeProgram(std::istringstream&);
+template<>
+struct MayFail_<Program> {
+    std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
+
+    explicit operator Program() const {
+        return Program{vec_convert<ProgramSentence>(sentences)};
+    }
+};
+
+MayFail<MayFail_<Program>> consumeProgram(std::istringstream&);
 
 #endif // PROGRAM_H

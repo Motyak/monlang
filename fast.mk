@@ -32,16 +32,22 @@ endif
 ###########################################################
 
 ENTITIES := \
-Association \
-Atom \
-CurlyBracketsGroup \
-ParenthesesGroup \
 Program \
 ProgramSentence \
-SquareBracketsGroup \
-SquareBracketsTerm \
-Term \
 Word \
+Atom
+
+# ENTITIES := \
+# Association \
+# Atom \
+# CurlyBracketsGroup \
+# ParenthesesGroup \
+# Program \
+# ProgramSentence \
+# SquareBracketsGroup \
+# SquareBracketsTerm \
+# Term \
+# Word \
 
 OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
@@ -49,6 +55,7 @@ DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
 
 TEST_FILENAMES := $(foreach file,$(wildcard src/test/[!all]*.cpp),$(file:src/test/%.cpp=%))
+TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_OBJS = $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 

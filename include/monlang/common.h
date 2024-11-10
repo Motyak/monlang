@@ -38,8 +38,8 @@ class MayFail<void> {
     bool has_error() const {return err.has_value();}
     Error error() const {return err.value();} // throws if no err
 
-    operator bool() const {return err.has_value();} // convenient when calling functions returning MayFail<void>
-    bool operator!() const {return !err.has_value();} // convenient when calling functions returning MayFail<void>
+    operator bool() const {return !err.has_value();} // convenient when calling functions returning MayFail<void>
+    bool operator!() const {return err.has_value();} // convenient when calling functions returning MayFail<void>
 
     std::optional<Error> err;
 };
@@ -78,7 +78,7 @@ class MayFail<MayFail_<T>> : public MayFail<void> {
     MayFail(MayFail_<T> val) : MayFail<void>(), val(val){}
     explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){}
 
-    T value() const {
+    MayFail_<T> value() const {
         ASSERT (!err.has_value());
         return val;
     }

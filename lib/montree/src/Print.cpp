@@ -22,7 +22,7 @@
 
 #define until(x) while(!(x))
 
-#define SERIALIZE_ERR(x) serializeErr(x).c_str()
+#define SERIALIZE_ERR(malformedMayfail) malformedMayfail.error().fmt.c_str()
 
 #define outputLine(...) \
     output(__VA_ARGS__ __VA_OPT__(,) "\n", nullptr); \
@@ -48,9 +48,9 @@ void (Print::output)(const char* strs...) {
 
 ///////////////////////////////////////////////////////////////
 
-void Print::operator()(const MayFail<Program>& program) {
-    const Program& prog = mayfail_unwrap(program);
-    outputLine(program.has_value()? "-> Program" : "~> Program");
+void Print::operator()(const MayFail<MayFail_<Program>>& program) {
+    const MayFail_<Program>& prog = program.val;
+    outputLine(program.has_error()? "~> Program" : "-> Program");
 
     if (prog.sentences.size() > 0) {
         currIndent++;
@@ -73,9 +73,9 @@ void Print::operator()(const MayFail<Program>& program) {
     }
 }
 
-void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
-    const ProgramSentence& progSentence = mayfail_unwrap(programSentence);
-    output(programSentence.has_value()? "-> " : "~> ");
+void Print::operator()(const MayFail<MayFail_<ProgramSentence>>& programSentence) {
+    const MayFail_<ProgramSentence>& progSentence = programSentence.val;
+    output(programSentence.has_error()? "~> " : "-> ");
 
     if (numbering.empty()) {
         outputLine("ProgramSentence");
@@ -89,7 +89,7 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     }
 
     // note: should always enter since a ProgramSentence cannot be empty
-    if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
+    if (progSentence.programWords.size() > 0 || programSentence.has_error()) {
         currIndent++;
     }
 
@@ -105,25 +105,25 @@ void Print::operator()(const MayFail<ProgramSentence>& programSentence) {
     for (auto programWord: progSentence.programWords) {
         areProgramWords = true;
         operator()(MayFail<ProgramWord>(programWord));
-        if (!programWord.has_value()) {
+        if (programWord.has_error()) {
             malformedProgramWords += 1;
         }
     }
 
-    if (!programSentence.has_value() && malformedProgramWords == 0) {
+    if (programSentence.has_error() && malformedProgramWords == 0) {
         outputLine("~> ", SERIALIZE_ERR(programSentence));
     }
 
     // note: should always enter since a ProgramSentence cannot be empty
-    if (progSentence.programWords.size() > 0 || !programSentence.has_value()) {
+    if (progSentence.programWords.size() > 0 || programSentence.has_error()) {
         currIndent--;
     }
 }
 
 void Print::operator()(const MayFail<ProgramWord>& word) {
     this->curWord = word; // needed by word handlers
-    const ProgramWord& word_ = mayfail_unwrap(word);
-    output(word.has_value()? "-> " : "~> ");
+    const ProgramWord& word_ = word.val;
+    output(word.has_error()? "~> " : "-> ");
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
@@ -144,6 +144,8 @@ void Print::operator()(const MayFail<ProgramWord>& word) {
 
 ///////////////////////////////////////////////////////////////
 
+#if 0 //debug
+
 void Print::operator()(SquareBracketsTerm* sbt) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
@@ -151,7 +153,7 @@ void Print::operator()(SquareBracketsTerm* sbt) {
     outputLine("SquareBracketsTerm");
     currIndent++;
 
-    if (!curWord_.has_value() && sbt->term.has_value()) {
+    if (curWord_.has_error() && !sbt->term.has_error()) {
         outputLine("~> ", SERIALIZE_ERR(curWord_));
         return;
     }
@@ -167,7 +169,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
                              // ..(which calls operator()(Word))
 
     output("SquareBracketsGroup");
-    if (sbg->terms.size() == 0 && curWord_.has_value()) {
+    if (sbg->terms.size() == 0 && !curWord_.has_error()) {
         outputLine(" (empty)");
         return;
     }
@@ -184,17 +186,17 @@ void Print::operator()(SquareBracketsGroup* sbg) {
     }
 
     if (sbg->terms.size() == 0) {
-        ASSERT(!curWord_.has_value());
+        ASSERT(curWord_.has_error());
         outputLine("~> ", SERIALIZE_ERR(curWord_));
     } else {
         int nb_of_malformed_terms = 0;
         for (auto term : sbg->terms) {
-            if (!term.has_value()) {
+            if (term.has_error()) {
                 nb_of_malformed_terms++;
             }
             handleTerm(term);
         }
-        if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
+        if (nb_of_malformed_terms == 0 && curWord_.has_error()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
     }
@@ -207,7 +209,7 @@ void Print::operator()(ParenthesesGroup* pg) {
                              // ..(which calls operator()(Word))
 
     output("ParenthesesGroup");
-    if (pg->terms.size() == 0 && curWord_.has_value()) {
+    if (pg->terms.size() == 0 && !curWord_.has_error()) {
         outputLine(" (empty)");
         return;
     }
@@ -224,17 +226,17 @@ void Print::operator()(ParenthesesGroup* pg) {
     }
 
     if (pg->terms.size() == 0) {
-        ASSERT(!curWord_.has_value());
+        ASSERT(curWord_.has_error());
         outputLine("~> ", SERIALIZE_ERR(curWord_));
     } else {
         int nb_of_malformed_terms = 0;
         for (auto term : pg->terms) {
-            if (!term.has_value()) {
+            if (term.has_error()) {
                 nb_of_malformed_terms++;
             }
             handleTerm(term);
         }
-        if (nb_of_malformed_terms == 0 && !curWord_.has_value()) {
+        if (nb_of_malformed_terms == 0 && curWord_.has_error()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
     }
@@ -248,7 +250,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
 
     output("CurlyBracketsGroup");
 
-    if (cbg->sentences.size() == 0 && curWord_.has_value()) {
+    if (cbg->sentences.size() == 0 && !curWord_.has_error()) {
         outputLine(" (empty)");
         return;
     }
@@ -261,7 +263,7 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
         auto term = cbg->term.value();
         numbering.push(NO_NUMBERING);
         handleTerm(term);
-        if (term.has_value() && !curWord_.has_value()) {
+        if (!term.has_error() && curWord_.has_error()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
         currIndent--;
@@ -277,32 +279,35 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
     }
 
     if (cbg->sentences.size() == 0) {
-        ASSERT(!curWord_.has_value());
+        ASSERT(curWord_.has_error());
         outputLine("~> ", SERIALIZE_ERR(curWord_));
     } else {
         int nb_of_malformed_sentences = 0;
         for (auto sentence : cbg->sentences) {
-            if (!sentence.has_value()) {
+            if (sentence.has_error()) {
                 nb_of_malformed_sentences++;
             }
             operator()(sentence);
         }
-        if (nb_of_malformed_sentences == 0 && !curWord_.has_value()) {
+        if (nb_of_malformed_sentences == 0 && curWord_.has_error()) {
             outputLine("~> ", SERIALIZE_ERR(curWord_));
         }
     }
 
     currIndent--;
 }
+#endif
 
 void Print::operator()(Atom* atom) {
     outputLine("Atom: `", atom->value.c_str(), "`");
-    if (!curWord.has_value()) {
+    if (curWord.has_error()) {
         currIndent++;
         outputLine("~> ", SERIALIZE_ERR(curWord));
         currIndent--;
     }
 }
+
+#if 0 //debug
 
 void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     outputLine("PostfixSquareBracketsGroup");
@@ -366,6 +371,8 @@ void Print::operator()(Association* assoc) {
     numbering = savedStack;
 }
 
+#endif
+
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");
 }
@@ -374,9 +381,11 @@ void Print::operator()(auto) {
 
 Print::Print(std::ostream& os, int TAB_SIZE) : TAB_SIZE(TAB_SIZE), out(os){}
 
+#if 0 //debug
+
 void Print::handleTerm(const MayFail<Term>& term) {
     Term term_;
-    if (term.has_value()) {
+    if (!term.has_error()) {
         term_ = term.value();
         output("-> ");
     } else {
@@ -395,7 +404,7 @@ void Print::handleTerm(const MayFail<Term>& term) {
         numbering.pop();
     }
 
-    if (term_.words.size() > 0 || !term.has_value()) {
+    if (term_.words.size() > 0 || term.has_error()) {
         currIndent++;
     }
 
@@ -410,17 +419,18 @@ void Print::handleTerm(const MayFail<Term>& term) {
     int nb_of_malformed_words = 0;
     for (auto word: term_.words) {
         areProgramWords = false;
-        if (!word.has_value()) {
+        if (word.has_error()) {
             nb_of_malformed_words++;
         }
         operator()(mayfail_cast<ProgramWord>(word));
     }
 
-    if (nb_of_malformed_words == 0 && !term.has_value()) {
+    if (nb_of_malformed_words == 0 && term.has_error()) {
         outputLine("~> ", SERIALIZE_ERR(term));
     }
 
-    if (term_.words.size() > 0 || !term.has_value()) {
+    if (term_.words.size() > 0 || term.has_error()) {
         currIndent--;
     }
 }
+#endif
