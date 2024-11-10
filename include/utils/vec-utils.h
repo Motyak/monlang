@@ -29,7 +29,17 @@ std::vector<T> vec_concat(const std::initializer_list<std::vector<T>>& vecs) {
     return res;
 }
 
-// uses explicit cast
+// prioritize explicit ctor over cast
+template <typename R, typename T>
+std::vector<R> vec_cast(const std::vector<T>& input) {
+    std::vector<R> res;
+    for (auto t: input) {
+        res.push_back(R(t));
+    }
+    return res;
+}
+
+// prioritize explicit cast over implicit ctor
 template <typename R, typename T>
 std::vector<R> vec_convert(const std::vector<T>& input) {
     std::vector<R> res;

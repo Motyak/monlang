@@ -22,31 +22,31 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value()
 };
 
-MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int indentLevel) {
+MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input, int indentLevel) {
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return Malformed(ProgramSentence{}, ERR(125));
+        return Malformed(MayFail_<ProgramSentence>{}, ERR(125));
     }
 
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-        return ProgramSentence{};
+        return MayFail_<ProgramSentence>{};
     }
 
     if (indentLevel > 0 && !consumeSequence(INDENT_SEQUENCE(), input)) {
-        return Malformed(ProgramSentence{}, ERR(123));
+        return Malformed(MayFail_<ProgramSentence>{}, ERR(123));
     }
 
     // indented empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-        return ProgramSentence{};
+        return MayFail_<ProgramSentence>{};
     }
 
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-        return Malformed(ProgramSentence{}, ERR(121));
+        return Malformed(MayFail_<ProgramSentence>{}, ERR(121));
     }
 
     std::vector<MayFail<ProgramWord>> programWords;
@@ -57,23 +57,23 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
     {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             // this happens when we have an Atom right after a non-Atom (without a space in between)
-            return Malformed(ProgramSentence{programWords}, ERR(102));
+            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(102));
         }
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-            return Malformed(ProgramSentence{programWords}, ERR(122));
+            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(122));
         }
     }
         currentWord = consumeProgramWord(input);
         programWords.push_back(currentWord);
         if (currentWord.has_error()) {
-            return Malformed(ProgramSentence{programWords}, ERR(129));
+            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(129));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return Malformed(ProgramSentence{programWords}, ERR(120));
+        return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(120));
     }
 
     // eat and discard trailing newlines as well
@@ -81,5 +81,5 @@ MayFail<ProgramSentence> consumeProgramSentence(std::istringstream& input, int i
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
     }
 
-    return ProgramSentence{programWords};
+    return MayFail_<ProgramSentence>{programWords};
 }

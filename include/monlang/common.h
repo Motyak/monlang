@@ -32,14 +32,14 @@ template <>
 class MayFail<void> {
   public:
     MayFail() = default;
-    MayFail(Error err) : err(err){}
+    MayFail(Error err) : err(err){} // convenient inside functions returning MayFail<void>
     explicit MayFail(std::optional<Error> err) : err(err){}
 
     bool has_error() const {return err.has_value();}
     Error error() const {return err.value();} // throws if no err
 
-    operator bool() const {return err.has_value();}
-    bool operator!() const {return !err.has_value();}
+    operator bool() const {return err.has_value();} // convenient when calling functions returning MayFail<void>
+    bool operator!() const {return !err.has_value();} // convenient when calling functions returning MayFail<void>
 
     std::optional<Error> err;
 };
@@ -74,6 +74,7 @@ template <typename T>
 class MayFail<MayFail_<T>> : public MayFail<void> {
   public:
     MayFail() = default;
+    // MayFail(T val) : MayFail<void>(), val(MayFail_<T>(val)){}
     MayFail(MayFail_<T> val) : MayFail<void>(), val(val){}
     explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){}
 
@@ -81,11 +82,17 @@ class MayFail<MayFail_<T>> : public MayFail<void> {
         ASSERT (!err.has_value());
         return val;
     }
-    explicit operator T() const {return (T)this->val;} // the explicit cast to T needs to be provided..
-                                                       // ..by each individual MayFail_<> specialization
+    explicit operator T() const {return (T)val;} // the explicit cast to T needs to be provided..
+                                                 // ..by each individual MayFail_<> specialization
 
     MayFail_<T> val;
 };
+
+// template <typename T>
+// MayFail<MayFail_<T>> Malformed(MayFail_<T> val, Error err) {
+//     return MayFail((T)val, err); // the explicit cast to T needs to be provided..
+//                                  // ..by each individual MayFail_<> specialization
+// }
 
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
