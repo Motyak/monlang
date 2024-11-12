@@ -24,6 +24,6 @@ struct MayFail_<SquareBracketsTerm> {
     }
 };
 
-MayFail<SquareBracketsTerm> consumeSquareBracketsTerm(std::istringstream&);
+MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstream&);
 
 #endif // SQUARE_BRACKETS_TERM_H

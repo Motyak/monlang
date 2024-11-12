@@ -143,9 +143,7 @@ void Print::operator()(const MayFail<ProgramWord_>& word) {
 
 ///////////////////////////////////////////////////////////////
 
-#if 0 //debug
-
-void Print::operator()(SquareBracketsTerm* sbt) {
+void Print::operator()(MayFail_<SquareBracketsTerm>* sbt) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
@@ -162,8 +160,6 @@ void Print::operator()(SquareBracketsTerm* sbt) {
 
     currIndent--;
 }
-
-#endif
 
 void Print::operator()(MayFail_<SquareBracketsGroup>* sbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
@@ -345,9 +341,7 @@ void Print::operator()(MayFail_<PostfixParenthesesGroup>* ppg) {
     numbering = savedStack;
 }
 
-#if 0 //debug
-
-void Print::operator()(Association* assoc) {
+void Print::operator()(MayFail_<Association>* assoc) {
     outputLine("Association");
 
     auto savedStack = numbering;
@@ -357,7 +351,7 @@ void Print::operator()(Association* assoc) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord>(variant_cast(assoc->leftPart)));
+    operator()(MayFail<ProgramWord_>(variant_cast(assoc->leftPart)));
     currIndent--;
 
     /* add `Word: ` prefix in tree */
@@ -365,13 +359,11 @@ void Print::operator()(Association* assoc) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(mayfail_cast<ProgramWord>(assoc->rightPart));
+    operator()(mayfail_cast<ProgramWord_>(assoc->rightPart));
     currIndent--;
 
     numbering = savedStack;
 }
-
-#endif
 
 void Print::operator()(auto) {
     outputLine("<ENTITY NOT IMPLEMENTED YET>");

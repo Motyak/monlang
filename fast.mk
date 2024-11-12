@@ -39,20 +39,9 @@ ParenthesesGroup \
 Program \
 ProgramSentence \
 SquareBracketsGroup \
+SquareBracketsTerm \
 Term \
 Word \
-
-# ENTITIES := \
-# Association \
-# Atom \
-# CurlyBracketsGroup \
-# ParenthesesGroup \
-# Program \
-# ProgramSentence \
-# SquareBracketsGroup \
-# SquareBracketsTerm \
-# Term \
-# Word \
 
 OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d

@@ -20,14 +20,14 @@ class Print : public AstVisitor<void> {
     void operator()(const MayFail<MayFail_<ProgramSentence>>&) override;
     void operator()(const MayFail<ProgramWord_>& word) override;
 
-    // void operator()(SquareBracketsTerm*);
+    void operator()(MayFail_<SquareBracketsTerm>*);
     void operator()(MayFail_<SquareBracketsGroup>*);
     void operator()(MayFail_<ParenthesesGroup>*);
     void operator()(MayFail_<CurlyBracketsGroup>*);
     void operator()(Atom*);
     void operator()(MayFail_<PostfixSquareBracketsGroup>*);
     void operator()(MayFail_<PostfixParenthesesGroup>*);
-    // void operator()(Association*);
+    void operator()(MayFail_<Association>*);
 
     void operator()(auto); // fall-through
 
