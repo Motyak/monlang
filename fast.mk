@@ -48,7 +48,7 @@ DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
 
 RELEASE_OBJS := $(ENTITIES:%=obj/release/%.o) obj/release/common.o
 
-TEST_FILENAMES := $(foreach file,$(wildcard src/test/[!all]*.cpp),$(file:src/test/%.cpp=%))
+TEST_FILENAMES := $(filter-out all, $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cpp=%)))
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_OBJS = $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
@@ -97,7 +97,7 @@ $(TEST_OBJS): obj/test/%.o: src/test/%.cpp
 $(TEST_BINS): bin/test/%.elf: obj/test/%.o $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-bin/test/all.elf: TEST_FILENAMES = base sbg cbg postfix int sbt bigbang
+bin/test/all.elf: TEST_FILENAMES = base sbg cbg postfix assoc int sbt bigbang
 .SECONDEXPANSION:
 bin/test/all.elf: $$(TEST_OBJS) $(OBJS) lib/test-libs.a
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
