@@ -35,6 +35,7 @@ ENTITIES := \
 Association \
 Atom \
 CurlyBracketsGroup \
+ParenthesesGroup \
 Program \
 ProgramSentence \
 SquareBracketsGroup \

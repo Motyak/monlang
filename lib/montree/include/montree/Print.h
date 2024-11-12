@@ -23,10 +23,10 @@ class Print : public AstVisitor<void> {
     // void operator()(SquareBracketsTerm*);
     void operator()(MayFail_<SquareBracketsGroup>*);
     void operator()(MayFail_<ParenthesesGroup>*);
-    // void operator()(CurlyBracketsGroup*);
+    void operator()(MayFail_<CurlyBracketsGroup>*);
     void operator()(Atom*);
-    // void operator()(PostfixSquareBracketsGroup*);
-    // void operator()(PostfixParenthesesGroup*);
+    void operator()(MayFail_<PostfixSquareBracketsGroup>*);
+    void operator()(MayFail_<PostfixParenthesesGroup>*);
     // void operator()(Association*);
 
     void operator()(auto); // fall-through
@@ -37,7 +37,6 @@ class Print : public AstVisitor<void> {
 
     void handleTerm(const MayFail<MayFail_<Term>>&);
     void output(const char* strs...);
-    void outputLine(const char* strs...);
 
     std::ostream& out;
     std::stack<int> numbering;

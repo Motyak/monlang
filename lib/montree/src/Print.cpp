@@ -245,9 +245,7 @@ void Print::operator()(MayFail_<ParenthesesGroup>* pg) {
     currIndent--;
 }
 
-#if 0 //debug
-
-void Print::operator()(CurlyBracketsGroup* cbg) {
+void Print::operator()(MayFail_<CurlyBracketsGroup>* cbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
@@ -299,7 +297,6 @@ void Print::operator()(CurlyBracketsGroup* cbg) {
 
     currIndent--;
 }
-#endif
 
 void Print::operator()(Atom* atom) {
     outputLine("Atom: `", atom->value.c_str(), "`");
@@ -310,9 +307,7 @@ void Print::operator()(Atom* atom) {
     }
 }
 
-#if 0 //debug
-
-void Print::operator()(PostfixSquareBracketsGroup* psbg) {
+void Print::operator()(MayFail_<PostfixSquareBracketsGroup>* psbg) {
     outputLine("PostfixSquareBracketsGroup");
 
     auto savedStack = numbering;
@@ -321,17 +316,17 @@ void Print::operator()(PostfixSquareBracketsGroup* psbg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord>(variant_cast(psbg->leftPart)));
+    operator()(MayFail<ProgramWord_>(variant_cast(psbg->leftPart)));
     currIndent--;
 
     currIndent++;
-    operator()(mayfail_convert<ProgramWord>(psbg->rightPart));
+    operator()(mayfail_convert<ProgramWord_>(psbg->rightPart));
     currIndent--;
 
     numbering = savedStack;
 }
 
-void Print::operator()(PostfixParenthesesGroup* ppg) {
+void Print::operator()(MayFail_<PostfixParenthesesGroup>* ppg) {
     outputLine("PostfixParenthesesGroup");
 
     auto savedStack = numbering;
@@ -340,15 +335,17 @@ void Print::operator()(PostfixParenthesesGroup* ppg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord>(variant_cast(ppg->leftPart)));
+    operator()(MayFail<ProgramWord_>(variant_cast(ppg->leftPart)));
     currIndent--;
 
     currIndent++;
-    operator()(mayfail_convert<ProgramWord>(ppg->rightPart));
+    operator()(mayfail_convert<ProgramWord_>(ppg->rightPart));
     currIndent--;
 
     numbering = savedStack;
 }
+
+#if 0 //debug
 
 void Print::operator()(Association* assoc) {
     outputLine("Association");
