@@ -18,11 +18,11 @@ class Print : public AstVisitor<void> {
 
     void operator()(const MayFail<MayFail_<Program>>&) override;
     void operator()(const MayFail<MayFail_<ProgramSentence>>&) override;
-    void operator()(const MayFail<ProgramWord>& word) override;
+    void operator()(const MayFail<ProgramWord_>& word) override;
 
     // void operator()(SquareBracketsTerm*);
-    // void operator()(SquareBracketsGroup*);
-    // void operator()(ParenthesesGroup*);
+    void operator()(MayFail_<SquareBracketsGroup>*);
+    void operator()(MayFail_<ParenthesesGroup>*);
     // void operator()(CurlyBracketsGroup*);
     void operator()(Atom*);
     // void operator()(PostfixSquareBracketsGroup*);
@@ -35,7 +35,7 @@ class Print : public AstVisitor<void> {
     static constexpr int NO_NUMBERING = -1;
     const int TAB_SIZE;
 
-    void handleTerm(const MayFail<Term>&);
+    void handleTerm(const MayFail<MayFail_<Term>>&);
     void output(const char* strs...);
     void outputLine(const char* strs...);
 
@@ -44,7 +44,7 @@ class Print : public AstVisitor<void> {
     bool startOfNewLine = true;
     int currIndent = 0;
     bool areProgramWords = false;
-    MayFail<ProgramWord> curWord; // May be a ProgramWord or a Word, so let's name it `word`
+    MayFail<ProgramWord_> curWord; // May be a ProgramWord or a Word, so let's name it `word`
 };
 
 #endif // PRINT_H

@@ -9,7 +9,7 @@
 using Ast = std::variant<
     MayFail<MayFail_<Program>>,
     MayFail<MayFail_<ProgramSentence>>,
-    MayFail<ProgramWord>
+    MayFail<ProgramWord_>
 >;
 
 template <typename T>
@@ -22,7 +22,7 @@ class AstVisitor<void> {
 
     virtual void operator()(const MayFail<MayFail_<Program>>&) = 0;
     virtual void operator()(const MayFail<MayFail_<ProgramSentence>>&) = 0;
-    virtual void operator()(const MayFail<ProgramWord>& word) = 0;
+    virtual void operator()(const MayFail<ProgramWord_>& word) = 0;
 };
 
 template <typename T>

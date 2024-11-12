@@ -104,7 +104,7 @@ void Print::operator()(const MayFail<MayFail_<ProgramSentence>>& programSentence
     int malformedProgramWords = 0;
     for (auto programWord: progSentence.programWords) {
         areProgramWords = true;
-        operator()(MayFail<ProgramWord>(programWord));
+        operator()(MayFail<ProgramWord_>(programWord));
         if (programWord.has_error()) {
             malformedProgramWords += 1;
         }
@@ -120,14 +120,13 @@ void Print::operator()(const MayFail<MayFail_<ProgramSentence>>& programSentence
     }
 }
 
-void Print::operator()(const MayFail<ProgramWord>& word) {
+void Print::operator()(const MayFail<ProgramWord_>& word) {
     this->curWord = word; // needed by word handlers
-    const ProgramWord& word_ = word.val;
     output(word.has_error()? "~> " : "-> ");
 
     if (numbering.empty()) {
         /* then, it's a stand-alone word */
-        std::visit(*this, word_);
+        std::visit(*this, word.val);
         return;
     }
 
@@ -138,7 +137,7 @@ void Print::operator()(const MayFail<ProgramWord>& word) {
     numbering.pop();
     output(": ");
 
-    std::visit(*this, word_); // in case of malformed word,...
+    std::visit(*this, word.val); // in case of malformed word,...
                               // ...will still print its partial value
 }
 
@@ -164,7 +163,9 @@ void Print::operator()(SquareBracketsTerm* sbt) {
     currIndent--;
 }
 
-void Print::operator()(SquareBracketsGroup* sbg) {
+#endif
+
+void Print::operator()(MayFail_<SquareBracketsGroup>* sbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
@@ -204,7 +205,7 @@ void Print::operator()(SquareBracketsGroup* sbg) {
     currIndent--;
 }
 
-void Print::operator()(ParenthesesGroup* pg) {
+void Print::operator()(MayFail_<ParenthesesGroup>* pg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
 
@@ -243,6 +244,8 @@ void Print::operator()(ParenthesesGroup* pg) {
 
     currIndent--;
 }
+
+#if 0 //debug
 
 void Print::operator()(CurlyBracketsGroup* cbg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
@@ -381,17 +384,8 @@ void Print::operator()(auto) {
 
 Print::Print(std::ostream& os, int TAB_SIZE) : TAB_SIZE(TAB_SIZE), out(os){}
 
-#if 0 //debug
-
-void Print::handleTerm(const MayFail<Term>& term) {
-    Term term_;
-    if (!term.has_error()) {
-        term_ = term.value();
-        output("-> ");
-    } else {
-        term_ = term.error().val;
-        output("~> ");
-    }
+void Print::handleTerm(const MayFail<MayFail_<Term>>& term) {
+    output(term.has_error()? "~> " : "-> ");
 
     if (numbering.empty()) {
         outputLine("Term");
@@ -404,12 +398,12 @@ void Print::handleTerm(const MayFail<Term>& term) {
         numbering.pop();
     }
 
-    if (term_.words.size() > 0 || term.has_error()) {
+    if (term.val.words.size() > 0 || term.has_error()) {
         currIndent++;
     }
 
-    if (term_.words.size() > 1) {
-        for (int n : range(term_.words.size(), 0)) {
+    if (term.val.words.size() > 1) {
+        for (int n : range(term.val.words.size(), 0)) {
             numbering.push(n);
         }
     } else {
@@ -417,20 +411,19 @@ void Print::handleTerm(const MayFail<Term>& term) {
     }
 
     int nb_of_malformed_words = 0;
-    for (auto word: term_.words) {
+    for (auto word: term.val.words) {
         areProgramWords = false;
         if (word.has_error()) {
             nb_of_malformed_words++;
         }
-        operator()(mayfail_cast<ProgramWord>(word));
+        operator()(mayfail_cast<ProgramWord_>(word));
     }
 
     if (nb_of_malformed_words == 0 && term.has_error()) {
         outputLine("~> ", SERIALIZE_ERR(term));
     }
 
-    if (term_.words.size() > 0 || term.has_error()) {
+    if (term.val.words.size() > 0 || term.has_error()) {
         currIndent--;
     }
 }
-#endif

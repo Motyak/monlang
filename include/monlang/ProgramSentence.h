@@ -20,13 +20,18 @@ struct ProgramSentence {
 
 template<>
 struct MayFail_<ProgramSentence> {
-    std::vector<MayFail<ProgramWord>> programWords;
+    std::vector<MayFail<ProgramWord_>> programWords;
 
-    // MayFail_<ProgramSentence>(ProgramSentence sentence) 
-    //     : programWords(vec_cast<MayFail<ProgramWord>>(sentence.programWords))
-    // {}
+    ProgramSentence unwrap() const {
+        return (ProgramSentence)*this;
+    }
+
     explicit operator ProgramSentence() const {
-        return ProgramSentence{vec_convert<ProgramWord>(programWords)};
+        std::vector<ProgramWord> res;
+        for (auto e: programWords) {
+            res.push_back(unwrap_pw(e.value()));
+        }
+        return ProgramSentence{res};
     }
 };
 

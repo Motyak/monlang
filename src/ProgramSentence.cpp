@@ -8,13 +8,8 @@
 #include <algorithm>
 
 const Sequence ProgramSentence::TAB_SEQUENCE = {{SPACE, 4_}};
-// const Sequence ProgramSentence::TAB_SEQUENCE = {'+'};
-
 const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {SPACE};
-// const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {'_'};
-
 const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {NEWLINE};
-// const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {SPACE};
 
 const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TAB_SEQUENCE).value(),
@@ -49,8 +44,8 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
         return Malformed(MayFail_<ProgramSentence>{}, ERR(121));
     }
 
-    std::vector<MayFail<ProgramWord>> programWords;
-    MayFail<ProgramWord> currentWord;
+    std::vector<MayFail<ProgramWord_>> programWords;
+    MayFail<ProgramWord_> currentWord;
 
     LOOP until (input.peek() == EOF || peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
     if (!__first_it)

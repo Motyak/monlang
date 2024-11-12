@@ -21,7 +21,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& input) {
+MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
@@ -32,50 +32,50 @@ MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream& in
     };
 
     if (!consumeSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        return Malformed(ParenthesesGroup{}, ERR(042));
+        return Malformed(MayFail_<ParenthesesGroup>{}, ERR(042));
     }
 
     if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ParenthesesGroup::TERMINATOR_SEQUENCE));
-        return ParenthesesGroup{};
+        return MayFail_<ParenthesesGroup>{};
     }
 
-    std::vector<MayFail<Term>> terms;
-    MayFail<Term> currentTerm;
+    std::vector<MayFail<MayFail_<Term>>> terms;
+    MayFail<MayFail_<Term>> currentTerm;
 
     LOOP until (input.peek() == EOF || peekAnyChar(terminatorCharacters, input)) {
     if (!__first_it)
     {
         if (!consumeSequence(ParenthesesGroup::CONTINUATOR_SEQUENCE, input)) {
-            return Malformed(ParenthesesGroup{terms}, ERR(402));
+            return Malformed(MayFail_<ParenthesesGroup>{terms}, ERR(402));
         }
     }
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
         if (currentTerm.has_error()) {
-            return Malformed(ParenthesesGroup{terms}, ERR(429));
+            return Malformed(MayFail_<ParenthesesGroup>{terms}, ERR(429));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
-        return Malformed(ParenthesesGroup{terms}, ERR(420));
+        return Malformed(MayFail_<ParenthesesGroup>{terms}, ERR(420));
     }
 
-    return ParenthesesGroup{terms};
+    return MayFail_<ParenthesesGroup>{terms};
 }
 
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
     auto pg = consumeParenthesesGroupStrictly(input);
 
     if (pg.has_error()) {
-        return mayfail_convert<ParenthesesGroup*>(pg);
+        return mayfail_convert<MayFail_<ParenthesesGroup>*>(pg);
     }
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
+    using PostfixLeftPart = std::variant<MayFail_<ParenthesesGroup>*, MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.value());
 
     for (;;) {

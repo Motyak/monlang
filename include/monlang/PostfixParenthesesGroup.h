@@ -7,17 +7,31 @@
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
 
-// this "entity" would never be returned if left part was Malformed
 struct PostfixParenthesesGroup {
-    Word leftPart; // never Malformed, by design
-    MayFail<ParenthesesGroup> rightPart;
+    Word leftPart;
+    ParenthesesGroup rightPart;
+};
+
+// this "entity" would never be returned if left part was Malformed
+template <>
+struct MayFail_<PostfixParenthesesGroup> {
+    Word_ leftPart; // never Malformed, by design
+    MayFail<MayFail_<ParenthesesGroup>> rightPart;
+
+    PostfixParenthesesGroup unwrap() const {
+        return (PostfixParenthesesGroup)*this;
+    }
+
+    explicit operator PostfixParenthesesGroup() const {
+        return PostfixParenthesesGroup{unwrap_w(leftPart), (ParenthesesGroup)rightPart.val};
+    }
 };
 
 template <typename T>
-MayFail<PostfixParenthesesGroup*>
+MayFail<MayFail_<PostfixParenthesesGroup>*>
 consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
     auto whats_right_behind = consumeParenthesesGroupStrictly(input);
-    auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
+    auto curr_ppg = move_to_heap(MayFail_<PostfixParenthesesGroup>{
         variant_cast(*accumulatedPostfixLeftPart),
         whats_right_behind
     });
@@ -25,7 +39,7 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
         return Malformed(curr_ppg, ERR(319));
     }
     *accumulatedPostfixLeftPart = curr_ppg;
-    return std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart);
+    return std::get<MayFail_<PostfixParenthesesGroup>*>(*accumulatedPostfixLeftPart);
 }
 
 #endif // POSTFIX_PARENTHESES_GROUP_H

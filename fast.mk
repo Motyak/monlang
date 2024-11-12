@@ -32,10 +32,14 @@ endif
 ###########################################################
 
 ENTITIES := \
+Association \
+Atom \
+CurlyBracketsGroup \
 Program \
 ProgramSentence \
+SquareBracketsGroup \
+Term \
 Word \
-Atom
 
 # ENTITIES := \
 # Association \

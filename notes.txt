@@ -55,6 +55,9 @@ WHEN
 
 ---
 
+fastmk -B -j1 bin/test/base.elf DISABLE_WORDS=SBG,PG,CBG,SBT DISABLE_POSTFIXES=PG_IN_ATOM,SBG_IN_ATOM DISABLE_ASSOCS=ATOM
+fastmk -B -j1 bin/test/sbg.elf DISABLE_WORDS=PG,CBG,SBT DISABLE_POSTFIXES=PG_IN_ATOM,SBG_IN_ATOM,PG_IN_CBG,SBG_IN_CBG DISABLE_ASSOCS=ATOM
+
 cloc . --exclude-dir=.vscode,.deps,dist --fullpath --not-match-d=lib/catch2
 
 ## identifier les codes d'erreur qui sont dans le code source mais couvert dans aucun test ##

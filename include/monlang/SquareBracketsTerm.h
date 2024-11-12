@@ -8,7 +8,20 @@ struct SquareBracketsTerm {
     static const Sequence INITIATOR_SEQUENCE;
     static const Sequence TERMINATOR_SEQUENCE;
 
-    MayFail<Term> term;
+    Term term;
+};
+
+template <>
+struct MayFail_<SquareBracketsTerm> {
+    MayFail<MayFail_<Term>> term;
+
+    SquareBracketsTerm unwrap() const {
+        return (SquareBracketsTerm)*this; // avoid duplication
+    }
+
+    explicit operator SquareBracketsTerm() const {
+        return SquareBracketsTerm{(Term)term.value()};
+    }
 };
 
 MayFail<SquareBracketsTerm> consumeSquareBracketsTerm(std::istringstream&);

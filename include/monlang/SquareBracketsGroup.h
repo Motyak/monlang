@@ -4,6 +4,8 @@
 #include <monlang/Term.h>
 #include <monlang/common.h>
 
+#include <utils/vec-utils.h>
+
 #include <sstream>
 #include <vector>
 
@@ -15,14 +17,27 @@ struct SquareBracketsGroup {
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<MayFail<Term>> terms;
+    std::vector<Term> terms;
 };
 
-MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream&);
+template<>
+struct MayFail_<SquareBracketsGroup> {
+    std::vector<MayFail<MayFail_<Term>>> terms;
+
+    SquareBracketsGroup unwrap() const {
+        return (SquareBracketsGroup)*this;
+    }
+
+    explicit operator SquareBracketsGroup() const {
+        return SquareBracketsGroup{vec_convert<Term>(terms)};
+    }
+};
+
+MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream&);
 
 using consumeSquareBracketsGroup_RetType = std::variant<
-    MayFail<SquareBracketsGroup*>,
-    MayFail<PostfixSquareBracketsGroup*>
+    MayFail<MayFail_<SquareBracketsGroup>*>,
+    MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
 
