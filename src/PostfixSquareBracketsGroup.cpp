@@ -15,7 +15,7 @@ MayFail_<PostfixSquareBracketsGroup>::MayFail_(PostfixSquareBracketsGroup psbg) 
 }
 
 MayFail_<PostfixSquareBracketsGroup>::operator PostfixSquareBracketsGroup() const {
-    return PostfixSquareBracketsGroup{leftPart, (SquareBracketsGroup)rightPart.val};
+    return PostfixSquareBracketsGroup{leftPart, (SquareBracketsGroup)rightPart.value()};
 }
 
 PostfixSquareBracketsGroup MayFail_<PostfixSquareBracketsGroup>::unwrap() const {

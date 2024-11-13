@@ -15,7 +15,7 @@ MayFail_<PostfixParenthesesGroup>::MayFail_(PostfixParenthesesGroup ppg) {
 }
 
 MayFail_<PostfixParenthesesGroup>::operator PostfixParenthesesGroup() const {
-    return PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart.val};
+    return PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart.value()};
 }
 
 PostfixParenthesesGroup MayFail_<PostfixParenthesesGroup>::unwrap() const {

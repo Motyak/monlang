@@ -23,7 +23,7 @@ MayFail_<Association>::MayFail_(Association assoc) {
 }
 
 MayFail_<Association>::operator Association() const {
-    return Association{leftPart, unwrap_w(rightPart.val)};
+    return Association{leftPart, unwrap_w(rightPart.value())};
 }
 
 Association MayFail_<Association>::unwrap() const {

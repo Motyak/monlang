@@ -172,7 +172,7 @@ MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
         res.sentences.push_back(e.value().unwrap());
     }
     if (term.has_value()) {
-        res.term = term.value().val.unwrap();
+        res.term = term.value().value().unwrap();
     }
     return res;
 }

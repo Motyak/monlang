@@ -43,7 +43,7 @@ consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstr
 
     auto ppg = PostfixSquareBracketsGroup{
         left_word,
-        whats_right_behind.val.unwrap()
+        whats_right_behind.value().unwrap()
     };
     *accumulatedPostfixLeftPart = move_to_heap(ppg);
     return move_to_heap(

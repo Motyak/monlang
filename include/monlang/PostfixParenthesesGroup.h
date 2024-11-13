@@ -43,7 +43,7 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
 
     auto ppg = PostfixParenthesesGroup{
         left_word,
-        whats_right_behind.val.unwrap()
+        whats_right_behind.value().unwrap()
     };
     *accumulatedPostfixLeftPart = move_to_heap(ppg);
     return move_to_heap(
