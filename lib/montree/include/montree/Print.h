@@ -12,7 +12,7 @@
 #include <monlang/visitors/visitor.h>
 #include <stack>
 
-class Print : public AstVisitor<void> {
+class Print : public AstVisitor_<void> {
   public:
     Print(std::ostream&, int TAB_SIZE=2);
 

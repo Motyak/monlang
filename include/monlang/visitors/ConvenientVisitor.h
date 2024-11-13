@@ -17,13 +17,9 @@ class ConvenientVisitor;
 template <>
 class ConvenientVisitor<void> : public AstVisitor<void> {
   public:
-    virtual void operator()(const MayFail<Program>&) override;
-    virtual void operator()(const MayFail<ProgramSentence>&) override;
-    virtual void operator()(const MayFail<ProgramWord>& word) override;
-
-    virtual void operator()(const Program&);
-    virtual void operator()(const ProgramSentence&);
-    virtual void operator()(const ProgramWord&);
+    virtual void operator()(const Program&) override;
+    virtual void operator()(const ProgramSentence&) override;
+    virtual void operator()(const ProgramWord& word) override;
     virtual void operator()(const Term&);
     virtual void operator()(const Word&);
 

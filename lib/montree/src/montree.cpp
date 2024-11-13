@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-std::string montree::astToString(Ast ast) {
+std::string montree::astToString(Ast_ ast) {
     std::ostringstream oss;
-    visitAst(Print(oss), ast);
+    visitAst_(Print(oss), ast);
     auto res = oss.str();
     // remove potential trailing newline
     if (!res.empty() && res.back() == NEWLINE) {
@@ -17,9 +17,9 @@ std::string montree::astToString(Ast ast) {
     return res;
 }
 
-std::string montree::astToString(Ast ast, int TAB_SIZE) {
+std::string montree::astToString(Ast_ ast, int TAB_SIZE) {
     std::ostringstream oss;
-    visitAst(Print(oss, TAB_SIZE), ast);
+    visitAst_(Print(oss, TAB_SIZE), ast);
     auto res = oss.str();
     // remove potential trailing newline
     if (!res.empty() && res.back() == NEWLINE) {
