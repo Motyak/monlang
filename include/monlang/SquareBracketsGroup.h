@@ -27,7 +27,7 @@ struct MayFail_<SquareBracketsGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
     MayFail_() = default;
-    MayFail_(std::vector<MayFail<MayFail_<Term>>>);
+    explicit MayFail_(std::vector<MayFail<MayFail_<Term>>>);
 
     explicit MayFail_(SquareBracketsGroup);
     explicit operator SquareBracketsGroup() const;

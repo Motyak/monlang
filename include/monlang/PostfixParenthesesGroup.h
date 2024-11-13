@@ -20,7 +20,7 @@ struct MayFail_<PostfixParenthesesGroup> {
     Word leftPart; // never Malformed, by design
     MayFail<MayFail_<ParenthesesGroup>> rightPart;
 
-    MayFail_(Word, MayFail<MayFail_<ParenthesesGroup>>);
+    explicit MayFail_(Word, MayFail<MayFail_<ParenthesesGroup>>);
 
     explicit MayFail_(PostfixParenthesesGroup);
     explicit operator PostfixParenthesesGroup() const;

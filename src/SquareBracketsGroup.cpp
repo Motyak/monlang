@@ -105,9 +105,7 @@ MayFail_<SquareBracketsGroup> SquareBracketsGroup::wrap() const {
 
 MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) {
-    *this = sbg.wrap();
-}
+MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) : MayFail_(sbg.wrap()){}
 
 MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
     return SquareBracketsGroup{vec_cast<Term>(terms)};

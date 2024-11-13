@@ -36,9 +36,7 @@ MayFail_<SquareBracketsTerm> SquareBracketsTerm::wrap() const {
 
 MayFail_<SquareBracketsTerm>::MayFail_(MayFail<MayFail_<Term>> term) : term(term){}
 
-MayFail_<SquareBracketsTerm>::MayFail_(SquareBracketsTerm sbt) {
-    *this = sbt.wrap();
-}
+MayFail_<SquareBracketsTerm>::MayFail_(SquareBracketsTerm sbt) : MayFail_(sbt.wrap()){}
 
 MayFail_<SquareBracketsTerm>::operator SquareBracketsTerm() const {
     return SquareBracketsTerm{(Term)term.value()};

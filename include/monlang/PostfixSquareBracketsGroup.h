@@ -20,7 +20,7 @@ struct MayFail_<PostfixSquareBracketsGroup> {
     Word leftPart; // never Malformed, by design
     MayFail<MayFail_<SquareBracketsGroup>> rightPart;
 
-    MayFail_(Word, MayFail<MayFail_<SquareBracketsGroup>>);
+    explicit MayFail_(Word, MayFail<MayFail_<SquareBracketsGroup>>);
 
     explicit MayFail_(PostfixSquareBracketsGroup);
     explicit operator PostfixSquareBracketsGroup() const;

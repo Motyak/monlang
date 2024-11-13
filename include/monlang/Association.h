@@ -39,7 +39,7 @@ struct MayFail_<Association> {
     AssociationLeftPart leftPart; // never Malformed, by design
     MayFail<Word_> rightPart;
 
-    MayFail_(AssociationLeftPart, MayFail<Word_>);
+    explicit MayFail_(AssociationLeftPart, MayFail<Word_>);
 
     explicit MayFail_(Association);
     explicit operator Association() const;

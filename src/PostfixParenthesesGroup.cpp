@@ -10,9 +10,7 @@ MayFail_<PostfixParenthesesGroup> PostfixParenthesesGroup::wrap() const {
 
 MayFail_<PostfixParenthesesGroup>::MayFail_(Word leftPart, MayFail<MayFail_<ParenthesesGroup>> rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<PostfixParenthesesGroup>::MayFail_(PostfixParenthesesGroup ppg) {
-    *this = ppg.wrap();
-}
+MayFail_<PostfixParenthesesGroup>::MayFail_(PostfixParenthesesGroup ppg) : MayFail_(ppg.wrap()){}
 
 MayFail_<PostfixParenthesesGroup>::operator PostfixParenthesesGroup() const {
     return PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart.value()};

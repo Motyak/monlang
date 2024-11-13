@@ -162,9 +162,7 @@ MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSente
 
 MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences, std::optional<MayFail<MayFail_<Term>>> term) : sentences(sentences), term(term){}
 
-MayFail_<CurlyBracketsGroup>::MayFail_(CurlyBracketsGroup cbg) {
-    *this = cbg.wrap();
-}
+MayFail_<CurlyBracketsGroup>::MayFail_(CurlyBracketsGroup cbg) : MayFail_(cbg.wrap()){}
 
 MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
     CurlyBracketsGroup res;

@@ -18,7 +18,7 @@ struct MayFail_<SquareBracketsTerm> {
     MayFail<MayFail_<Term>> term;
 
     MayFail_() = default;
-    MayFail_(MayFail<MayFail_<Term>>);
+    explicit MayFail_(MayFail<MayFail_<Term>>);
 
     explicit MayFail_(SquareBracketsTerm);
     explicit operator SquareBracketsTerm() const;

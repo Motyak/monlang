@@ -76,9 +76,7 @@ MayFail_<Term> Term::wrap() const {
 
 MayFail_<Term>::MayFail_(std::vector<MayFail<Word_>> words) : words(words){}
 
-MayFail_<Term>::MayFail_(Term term) {
-    *this = term.wrap();
-}
+MayFail_<Term>::MayFail_(Term term) : MayFail_(term.wrap()){}
 
 MayFail_<Term>::operator Term() const {
     std::vector<Word> res;

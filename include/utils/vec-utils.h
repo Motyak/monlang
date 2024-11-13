@@ -29,23 +29,11 @@ std::vector<T> vec_concat(const std::initializer_list<std::vector<T>>& vecs) {
     return res;
 }
 
-// prioritize explicit ctor over cast
 template <typename R, typename T>
 std::vector<R> vec_cast(const std::vector<T>& input) {
     std::vector<R> res;
     for (auto t: input) {
         res.push_back(R(t));
-    }
-    return res;
-}
-
-//reftor? i really want to delete this, _convert imply severe data transformation to me
-// prioritize explicit cast over implicit ctor
-template <typename R, typename T>
-std::vector<R> vec_convert(const std::vector<T>& input) {
-    std::vector<R> res;
-    for (auto t: input) {
-        res.push_back((R)t);
     }
     return res;
 }

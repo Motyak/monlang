@@ -18,9 +18,7 @@ MayFail_<Association> Association::wrap() const {
 
 MayFail_<Association>::MayFail_(AssociationLeftPart leftPart, MayFail<Word_> rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<Association>::MayFail_(Association assoc) {
-    *this = assoc.wrap();
-}
+MayFail_<Association>::MayFail_(Association assoc) : MayFail_(assoc.wrap()){}
 
 MayFail_<Association>::operator Association() const {
     return Association{leftPart, unwrap_w(rightPart.value())};

@@ -26,7 +26,7 @@ struct MayFail_<ParenthesesGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
     MayFail_() = default;
-    MayFail_(std::vector<MayFail<MayFail_<Term>>>);
+    explicit MayFail_(std::vector<MayFail<MayFail_<Term>>>);
 
     explicit MayFail_(ParenthesesGroup);
     explicit operator ParenthesesGroup() const;

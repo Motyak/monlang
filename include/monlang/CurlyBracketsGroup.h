@@ -34,7 +34,7 @@ struct MayFail_<CurlyBracketsGroup> {
     std::optional<MayFail<MayFail_<Term>>> term;
 
     MayFail_() = default;
-    explicit MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>); // explicit otherwise ambiguous with Program
+    explicit MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>);
 
     explicit MayFail_(CurlyBracketsGroup);
     explicit operator CurlyBracketsGroup() const;

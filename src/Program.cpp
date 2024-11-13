@@ -33,9 +33,7 @@ MayFail_<Program> Program::wrap() const {
 
 MayFail_<Program>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : sentences(sentences){}
 
-MayFail_<Program>::MayFail_(Program prog) {
-    *this = prog.wrap();
-}
+MayFail_<Program>::MayFail_(Program prog) : MayFail_(prog.wrap()){}
 
 MayFail_<Program>::operator Program() const {
     return Program{vec_cast<ProgramSentence>(sentences)};

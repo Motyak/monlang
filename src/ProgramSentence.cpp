@@ -91,9 +91,7 @@ MayFail_<ProgramSentence> ProgramSentence::wrap() const {
 
 MayFail_<ProgramSentence>::MayFail_(std::vector<MayFail<ProgramWord_>> programWords) : programWords(programWords){}
 
-MayFail_<ProgramSentence>::MayFail_(ProgramSentence sentence) {
-    *this = sentence.wrap();
-}
+MayFail_<ProgramSentence>::MayFail_(ProgramSentence sentence) : MayFail_(sentence.wrap()){}
 
 MayFail_<ProgramSentence>::operator ProgramSentence() const {
     std::vector<ProgramWord> res;

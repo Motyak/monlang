@@ -116,9 +116,7 @@ MayFail_<ParenthesesGroup> ParenthesesGroup::wrap() const {
 
 MayFail_<ParenthesesGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) {
-    *this = pg.wrap();
-}
+MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) : MayFail_(pg.wrap()){}
 
 MayFail_<ParenthesesGroup>::operator ParenthesesGroup() const {
     return ParenthesesGroup{vec_cast<Term>(terms)};

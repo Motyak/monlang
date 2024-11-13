@@ -23,7 +23,7 @@ struct MayFail_<Term> {
     std::vector<MayFail<Word_>> words;
 
     MayFail_() = default;
-    MayFail_(std::vector<MayFail<Word_>>);
+    explicit MayFail_(std::vector<MayFail<Word_>>);
 
     explicit MayFail_(Term);
     explicit operator Term() const;

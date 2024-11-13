@@ -25,7 +25,7 @@ struct MayFail_<ProgramSentence> {
     std::vector<MayFail<ProgramWord_>> programWords;
 
     MayFail_() = default;
-    MayFail_(std::vector<MayFail<ProgramWord_>>);
+    explicit MayFail_(std::vector<MayFail<ProgramWord_>>);
 
     explicit MayFail_(ProgramSentence);
     explicit operator ProgramSentence() const;
