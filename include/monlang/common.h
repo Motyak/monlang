@@ -31,15 +31,15 @@ struct MayFail;
 template <>
 class MayFail<void> {
   public:
-    MayFail() = default;
+    MayFail() = default; //reftor? remove
     MayFail(Error err) : err(err){} // convenient inside functions returning MayFail<void>
-    explicit MayFail(std::optional<Error> err) : err(err){}
+    explicit MayFail(std::optional<Error> err) : err(err){} //reftor? without explicit
 
     bool has_error() const {return err.has_value();}
     Error error() const {return err.value();} // throws if no err
 
     operator bool() const {return !err.has_value();} // convenient when calling functions returning MayFail<void>
-    bool operator!() const {return err.has_value();} // convenient when calling functions returning MayFail<void>
+    bool operator!() const {return err.has_value();} //reftor? only above is needed ? bang operator will do the implicit cast to bool
 
     std::optional<Error> err;
 };
@@ -49,9 +49,9 @@ class MayFail<void> {
 template <typename T>
 class MayFail : public MayFail<void> {
   public:
-    MayFail() = default;
+    MayFail() = default; //reftor? remove
     MayFail(T val) : MayFail<void>(), val(val){}
-    explicit MayFail(T val, std::optional<Error> err) : MayFail<void>(err), val(val){}
+    explicit MayFail(T val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit, don't like bare {} constructions
 
     T value() const {
         ASSERT (!err.has_value());
@@ -73,32 +73,27 @@ struct MayFail_;
 template <typename T>
 class MayFail<MayFail_<T>> : public MayFail<void> {
   public:
-    MayFail() = default;
-    // MayFail(T val) : MayFail<void>(), val(MayFail_<T>(val)){}
+    MayFail() = default; //reftor? remove
     MayFail(MayFail_<T> val) : MayFail<void>(), val(val){}
-    explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){}
+    explicit MayFail(T val) : MayFail<void>(), val(MayFail_<T>(val)){} //reftor? remove explicit
+    explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit, don't like bare {} constructions
 
     MayFail_<T> value() const {
         ASSERT (!err.has_value());
         return val;
     }
     explicit operator T() const {return (T)val;} // the explicit cast to T needs to be provided..
-                                                 // ..by each individual MayFail_<> specialization
+                                                 // ..by each individual MayFail_<> specializations
 
     MayFail_<T> val;
 };
-
-// template <typename T>
-// MayFail<MayFail_<T>> Malformed(MayFail_<T> val, Error err) {
-//     return MayFail((T)val, err); // the explicit cast to T needs to be provided..
-//                                  // ..by each individual MayFail_<> specialization
-// }
 
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
     return MayFail(R(inputMayfail.val), inputMayfail.err);
 }
 
+//reftor? more precise variant template types ?
 template <typename R, typename... Targs>
 MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
     return std::visit(

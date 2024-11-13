@@ -17,19 +17,20 @@ struct ParenthesesGroup {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Term> terms;
+
+    MayFail_<ParenthesesGroup> wrap() const;
 };
 
 template<>
 struct MayFail_<ParenthesesGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
-    ParenthesesGroup unwrap() const {
-        return (ParenthesesGroup)*this;
-    }
+    MayFail_() = default;
+    MayFail_(std::vector<MayFail<MayFail_<Term>>>);
 
-    explicit operator ParenthesesGroup() const {
-        return ParenthesesGroup{vec_convert<Term>(terms)};
-    }
+    explicit MayFail_(ParenthesesGroup);
+    explicit operator ParenthesesGroup() const;
+    ParenthesesGroup unwrap() const;
 };
 
 MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream&);

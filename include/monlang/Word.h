@@ -20,9 +20,6 @@ struct Association;
 #define GROUP_ENTITIES ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*
 #define POSTFIXES PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 
-#define GROUP_ENTITIES_ MayFail_<ParenthesesGroup>*, MayFail_<SquareBracketsGroup>*, MayFail_<CurlyBracketsGroup>*
-#define POSTFIXES_ MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*
-
 using ProgramWord = std::variant<
     Atom*,
     SquareBracketsTerm*,
@@ -38,6 +35,9 @@ using Word = std::variant<
     POSTFIXES,
     Association*
 >;
+
+#define GROUP_ENTITIES_ MayFail_<ParenthesesGroup>*, MayFail_<SquareBracketsGroup>*, MayFail_<CurlyBracketsGroup>*
+#define POSTFIXES_ MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*
 
 using ProgramWord_ = std::variant<
     Atom*,
@@ -62,7 +62,9 @@ MayFail<Word_> consumeWord(std::istringstream&);
 ///////////////////////////////////////////////////////////
 
 ProgramWord unwrap_pw(ProgramWord_);
+ProgramWord_ wrap_pw(ProgramWord);
 Word unwrap_w(Word_);
+Word_ wrap_w(Word);
 
 template <>
 MayFail<ProgramWord_> mayfail_cast<ProgramWord_>(MayFail<Word_> inputMayfail);

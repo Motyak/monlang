@@ -10,7 +10,7 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
 
-/* required by the unwrap function only */
+/* required by the (un)wrap functions only */
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/Association.h>
@@ -77,7 +77,7 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
 ///////////////////////////////////////////////////////////
 
 /*
-    for the unwrappers to work we not only need..
+    for the (un)wrappers to work we not only need..
     ..Postfixes/Assoc interfaces, but their impl as well
 */
 
@@ -93,6 +93,20 @@ Word unwrap_w(Word_ word_) {
         [](Atom* atom) -> Word {return atom;},
         [](auto word_) -> Word {return move_to_heap(word_->unwrap());}
     }, word_);
+}
+
+ProgramWord_ wrap_pw(ProgramWord pw) {
+    return std::visit(overload{
+        [](Atom* atom) -> ProgramWord_ {return atom;},
+        [](auto pw) -> ProgramWord_ {return move_to_heap(pw->wrap());}
+    }, pw);
+}
+
+Word_ wrap_w(Word word) {
+    return std::visit(overload{
+        [](Atom* atom) -> Word_ {return atom;},
+        [](auto word) -> Word_ {return move_to_heap(word->wrap());}
+    }, word);
 }
 
 template <>

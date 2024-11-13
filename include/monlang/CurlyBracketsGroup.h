@@ -17,7 +17,8 @@ struct CurlyBracketsGroup {
     std::optional<Term> term;
 
     CurlyBracketsGroup() = default;
-    CurlyBracketsGroup(std::vector<ProgramSentence>);
+    explicit CurlyBracketsGroup(std::vector<ProgramSentence>); // explicit otherwise ambiguous with Program
+    MayFail_<CurlyBracketsGroup> wrap() const;
   protected:
     CurlyBracketsGroup(std::vector<ProgramSentence>, std::optional<Term>);
 };
@@ -32,16 +33,12 @@ struct MayFail_<CurlyBracketsGroup> {
     std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
     std::optional<MayFail<MayFail_<Term>>> term;
 
-    CurlyBracketsGroup unwrap() const {
-        return (CurlyBracketsGroup)*this;
-    }
-
-    explicit operator CurlyBracketsGroup() const {
-        return CurlyBracketsGroup{vec_convert<ProgramSentence>(sentences)};
-    }
-
     MayFail_() = default;
-    MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>);
+    explicit MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>); // explicit otherwise ambiguous with Program
+
+    explicit MayFail_(CurlyBracketsGroup);
+    explicit operator CurlyBracketsGroup() const;
+    CurlyBracketsGroup unwrap() const;
   protected:
     MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>, std::optional<MayFail<MayFail_<Term>>>);
 };
@@ -50,6 +47,7 @@ using Subprogram_ = MayFail_<CurlyBracketsGroup>;
 template <>
 struct MayFail_<CurlyBracketsTerm> : public MayFail_<CurlyBracketsGroup> {
     MayFail_(MayFail<MayFail_<Term>> term);
+    explicit MayFail_(CurlyBracketsTerm);
 };
 
 MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream&);

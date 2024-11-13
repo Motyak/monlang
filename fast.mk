@@ -36,6 +36,8 @@ Association \
 Atom \
 CurlyBracketsGroup \
 ParenthesesGroup \
+PostfixParenthesesGroup \
+PostfixSquareBracketsGroup \
 Program \
 ProgramSentence \
 SquareBracketsGroup \

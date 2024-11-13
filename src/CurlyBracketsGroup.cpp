@@ -91,8 +91,8 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<MayFail_<CurlyBracketsGroup>*, MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(cbg.value());
+    using PostfixLeftPart = std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((CurlyBracketsGroup)cbg);
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_CBG
@@ -119,7 +119,7 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
     }
 
     return std::visit(
-        [](auto word) -> consumeCurlyBracketsGroup_RetType {return word;},
+        [](auto word) -> consumeCurlyBracketsGroup_RetType {return move_to_heap(word->wrap());},
         accumulatedPostfixLeftPart
     );
 }
@@ -147,13 +147,38 @@ CurlyBracketsTerm::CurlyBracketsTerm(Term term) : CurlyBracketsGroup{toSentences
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) {
-    this->sentences = sentences;
+MayFail_<CurlyBracketsGroup> CurlyBracketsGroup::wrap() const {
+    MayFail_<CurlyBracketsGroup> res;
+    for (auto e: this->sentences) {
+        res.sentences.push_back(e.wrap());
+    }
+    if (term.has_value()) {
+        res.term = term.value().wrap();
+    }
+    return res;
 }
 
-MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences, std::optional<MayFail<MayFail_<Term>>> term) {
-    this->sentences = sentences;
-    this->term = term;
+MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : sentences(sentences){}
+
+MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences, std::optional<MayFail<MayFail_<Term>>> term) : sentences(sentences), term(term){}
+
+MayFail_<CurlyBracketsGroup>::MayFail_(CurlyBracketsGroup cbg) {
+    *this = cbg.wrap();
+}
+
+MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
+    CurlyBracketsGroup res;
+    for (auto e: this->sentences) {
+        res.sentences.push_back(e.value().unwrap());
+    }
+    if (term.has_value()) {
+        res.term = term.value().val.unwrap();
+    }
+    return res;
+}
+
+CurlyBracketsGroup MayFail_<CurlyBracketsGroup>::unwrap() const {
+    return (CurlyBracketsGroup)*this;
 }
 
 static std::vector<MayFail<MayFail_<ProgramSentence>>> toSentences(MayFail<MayFail_<Term>> term) {

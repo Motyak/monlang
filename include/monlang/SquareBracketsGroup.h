@@ -18,19 +18,20 @@ struct SquareBracketsGroup {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Term> terms;
+
+    MayFail_<SquareBracketsGroup> wrap() const;
 };
 
 template<>
 struct MayFail_<SquareBracketsGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
-    SquareBracketsGroup unwrap() const {
-        return (SquareBracketsGroup)*this;
-    }
+    MayFail_() = default;
+    MayFail_(std::vector<MayFail<MayFail_<Term>>>);
 
-    explicit operator SquareBracketsGroup() const {
-        return SquareBracketsGroup{vec_convert<Term>(terms)};
-    }
+    explicit MayFail_(SquareBracketsGroup);
+    explicit operator SquareBracketsGroup() const;
+    SquareBracketsGroup unwrap() const;
 };
 
 MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream&);

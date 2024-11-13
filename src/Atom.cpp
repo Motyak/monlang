@@ -47,7 +47,7 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<Atom*, MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*>;
+    using PostfixLeftPart = std::variant<Atom*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(atom.value());
 
     for (;;) {
@@ -84,8 +84,8 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     }
     #endif
 
-    return std::visit(
-        [](auto word) -> consumeAtom_RetType {return word;},
-        accumulatedPostfixLeftPart
-    );
+    return std::visit(overload{
+        [](Atom* atom) -> consumeAtom_RetType {return atom;},
+        [](auto postfix) -> consumeAtom_RetType {return move_to_heap(postfix->wrap());},
+    }, accumulatedPostfixLeftPart);
 }

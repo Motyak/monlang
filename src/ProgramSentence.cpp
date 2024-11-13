@@ -78,3 +78,31 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
 
     return MayFail_<ProgramSentence>{programWords};
 }
+
+///////////////////////////////////////////////////////////
+
+MayFail_<ProgramSentence> ProgramSentence::wrap() const {
+    std::vector<MayFail<ProgramWord_>> programWords;
+    for (auto e: this->programWords) {
+        programWords.push_back(wrap_pw(e));
+    }
+    return MayFail_<ProgramSentence>{programWords};
+}
+
+MayFail_<ProgramSentence>::MayFail_(std::vector<MayFail<ProgramWord_>> programWords) : programWords(programWords){}
+
+MayFail_<ProgramSentence>::MayFail_(ProgramSentence sentence) {
+    *this = sentence.wrap();
+}
+
+MayFail_<ProgramSentence>::operator ProgramSentence() const {
+    std::vector<ProgramWord> res;
+    for (auto e: programWords) {
+        res.push_back(unwrap_pw(e.value()));
+    }
+    return ProgramSentence{res};
+}
+
+ProgramSentence MayFail_<ProgramSentence>::unwrap() const {
+    return (ProgramSentence)*this;
+}

@@ -16,23 +16,20 @@ struct ProgramSentence {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<ProgramWord> programWords;
+
+    MayFail_<ProgramSentence> wrap() const;
 };
 
 template<>
 struct MayFail_<ProgramSentence> {
     std::vector<MayFail<ProgramWord_>> programWords;
 
-    ProgramSentence unwrap() const {
-        return (ProgramSentence)*this;
-    }
+    MayFail_() = default;
+    MayFail_(std::vector<MayFail<ProgramWord_>>);
 
-    explicit operator ProgramSentence() const {
-        std::vector<ProgramWord> res;
-        for (auto e: programWords) {
-            res.push_back(unwrap_pw(e.value()));
-        }
-        return ProgramSentence{res};
-    }
+    explicit MayFail_(ProgramSentence);
+    explicit operator ProgramSentence() const;
+    ProgramSentence unwrap() const;
 };
 
 MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input, int indentLevel = 0);

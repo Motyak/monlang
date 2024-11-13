@@ -75,8 +75,8 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<MayFail_<ParenthesesGroup>*, MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(pg.value());
+    using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((ParenthesesGroup)pg);
 
     for (;;) {
         #ifndef DISABLE_PPG_IN_PG
@@ -103,7 +103,27 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
     }
 
     return std::visit(
-        [](auto word) -> consumeParenthesesGroup_RetType {return word;},
+        [](auto word) -> consumeParenthesesGroup_RetType {return move_to_heap(word->wrap());},
         accumulatedPostfixLeftPart
     );
+}
+
+///////////////////////////////////////////////////////////
+
+MayFail_<ParenthesesGroup> ParenthesesGroup::wrap() const {
+    return MayFail_<ParenthesesGroup>{vec_cast<MayFail<MayFail_<Term>>>(this->terms)};
+}
+
+MayFail_<ParenthesesGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
+
+MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) {
+    *this = pg.wrap();
+}
+
+MayFail_<ParenthesesGroup>::operator ParenthesesGroup() const {
+    return ParenthesesGroup{vec_cast<Term>(terms)};
+}
+
+ParenthesesGroup MayFail_<ParenthesesGroup>::unwrap() const {
+    return (ParenthesesGroup)*this;
 }

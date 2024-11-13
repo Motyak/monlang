@@ -10,9 +10,22 @@ const std::vector<char> Association::RESERVED_CHARACTERS = {
     sequenceFirstChar(Association::SEPARATOR_SEQUENCE).value()
 };
 
-AssociationLeftPart unwrap_assoc_left_part(AssociationLeftPart_ alp_) {
-    return std::visit(overload{
-        [](Association*) -> AssociationLeftPart {SHOULD_NOT_HAPPEN();},
-        [](auto word) -> AssociationLeftPart {return word;}
-    }, unwrap_w(variant_cast(alp_)));
+///////////////////////////////////////////////////////////
+
+MayFail_<Association> Association::wrap() const {
+    return MayFail_<Association>{leftPart, wrap_w(rightPart)};
+}
+
+MayFail_<Association>::MayFail_(AssociationLeftPart leftPart, MayFail<Word_> rightPart) : leftPart(leftPart), rightPart(rightPart){}
+
+MayFail_<Association>::MayFail_(Association assoc) {
+    *this = assoc.wrap();
+}
+
+MayFail_<Association>::operator Association() const {
+    return Association{leftPart, unwrap_w(rightPart.val)};
+}
+
+Association MayFail_<Association>::unwrap() const {
+    return (Association)*this;
 }

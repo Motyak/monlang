@@ -24,3 +24,23 @@ MayFail<MayFail_<Program>> consumeProgram(std::istringstream& input) {
 
     return MayFail_<Program>{sentences};
 }
+
+///////////////////////////////////////////////////////////
+
+MayFail_<Program> Program::wrap() const {
+    return MayFail_<Program>{vec_cast<MayFail<MayFail_<ProgramSentence>>>(this->sentences)};
+}
+
+MayFail_<Program>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : sentences(sentences){}
+
+MayFail_<Program>::MayFail_(Program prog) {
+    *this = prog.wrap();
+}
+
+MayFail_<Program>::operator Program() const {
+    return Program{vec_cast<ProgramSentence>(sentences)};
+}
+
+Program MayFail_<Program>::unwrap() const {
+    return (Program)*this;
+}

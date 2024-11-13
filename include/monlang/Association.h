@@ -22,8 +22,6 @@ using AssociationLeftPart_ = std::variant<
     /* no MayFail_<Association>* here */
 >;
 
-AssociationLeftPart unwrap_assoc_left_part(AssociationLeftPart_);
-
 ///////////////////////////////////////////////////////////
 
 struct Association {
@@ -32,20 +30,20 @@ struct Association {
 
     AssociationLeftPart leftPart;
     Word rightPart;
+
+    MayFail_<Association> wrap() const;
 };
 
 template <>
 struct MayFail_<Association> {
-    AssociationLeftPart_ leftPart; // never Malformed, by design
+    AssociationLeftPart leftPart; // never Malformed, by design
     MayFail<Word_> rightPart;
 
-    Association unwrap() const {
-        return (Association)*this;
-    }
+    MayFail_(AssociationLeftPart, MayFail<Word_>);
 
-    explicit operator Association() const {
-        return Association{unwrap_assoc_left_part(leftPart), unwrap_w(rightPart.val)};
-    }
+    explicit MayFail_(Association);
+    explicit operator Association() const;
+    Association unwrap() const;
 };
 
 template <typename T>

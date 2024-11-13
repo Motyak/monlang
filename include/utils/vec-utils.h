@@ -39,6 +39,7 @@ std::vector<R> vec_cast(const std::vector<T>& input) {
     return res;
 }
 
+//reftor? i really want to delete this, _convert imply severe data transformation to me
 // prioritize explicit cast over implicit ctor
 template <typename R, typename T>
 std::vector<R> vec_convert(const std::vector<T>& input) {

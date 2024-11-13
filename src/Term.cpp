@@ -63,3 +63,31 @@ MayFail<MayFail_<Term>> consumeTerm(const Sequence& terminatorSequence, std::ist
 MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input) {
     return _consumeTerm({}, input);
 }
+
+///////////////////////////////////////////////////////////
+
+MayFail_<Term> Term::wrap() const {
+    std::vector<MayFail<Word_>> res;
+    for (auto e: words) {
+        res.push_back(wrap_w(e));
+    }
+    return MayFail_<Term>{res};
+}
+
+MayFail_<Term>::MayFail_(std::vector<MayFail<Word_>> words) : words(words){}
+
+MayFail_<Term>::MayFail_(Term term) {
+    *this = term.wrap();
+}
+
+MayFail_<Term>::operator Term() const {
+    std::vector<Word> res;
+    for (auto e: words) {
+        res.push_back(unwrap_w(e.value()));
+    }
+    return Term{res};
+}
+
+Term MayFail_<Term>::unwrap() const {
+    return (Term)*this;
+}

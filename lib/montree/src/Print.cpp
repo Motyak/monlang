@@ -312,7 +312,7 @@ void Print::operator()(MayFail_<PostfixSquareBracketsGroup>* psbg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord_>(variant_cast(psbg->leftPart)));
+    operator()((MayFail<ProgramWord_>)wrap_pw(variant_cast(psbg->leftPart)));
     currIndent--;
 
     currIndent++;
@@ -331,7 +331,7 @@ void Print::operator()(MayFail_<PostfixParenthesesGroup>* ppg) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord_>(variant_cast(ppg->leftPart)));
+    operator()((MayFail<ProgramWord_>)wrap_pw(variant_cast(ppg->leftPart)));
     currIndent--;
 
     currIndent++;
@@ -351,7 +351,7 @@ void Print::operator()(MayFail_<Association>* assoc) {
     areProgramWords = false;
 
     currIndent++;
-    operator()(MayFail<ProgramWord_>(variant_cast(assoc->leftPart)));
+    operator()((MayFail<ProgramWord_>)wrap_pw(variant_cast(assoc->leftPart)));
     currIndent--;
 
     /* add `Word: ` prefix in tree */

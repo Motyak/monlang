@@ -74,8 +74,8 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<MayFail_<SquareBracketsGroup>*, MayFail_<PostfixSquareBracketsGroup>*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
+    using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((SquareBracketsGroup)sbg);
 
     for (;;) {
         #ifndef DISABLE_PSBG_IN_SBG
@@ -92,7 +92,27 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
     }
 
     return std::visit(
-        [](auto word) -> consumeSquareBracketsGroup_RetType {return word;},
+        [](auto word) -> consumeSquareBracketsGroup_RetType {return move_to_heap(word->wrap());},
         accumulatedPostfixLeftPart
     );
+}
+
+///////////////////////////////////////////////////////////
+
+MayFail_<SquareBracketsGroup> SquareBracketsGroup::wrap() const {
+    return MayFail_<SquareBracketsGroup>{vec_cast<MayFail<MayFail_<Term>>>(this->terms)};
+}
+
+MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
+
+MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) {
+    *this = sbg.wrap();
+}
+
+MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
+    return SquareBracketsGroup{vec_cast<Term>(terms)};
+}
+
+SquareBracketsGroup MayFail_<SquareBracketsGroup>::unwrap() const {
+    return (SquareBracketsGroup)*this;
 }

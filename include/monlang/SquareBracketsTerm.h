@@ -9,19 +9,20 @@ struct SquareBracketsTerm {
     static const Sequence TERMINATOR_SEQUENCE;
 
     Term term;
+
+    MayFail_<SquareBracketsTerm> wrap() const;
 };
 
 template <>
 struct MayFail_<SquareBracketsTerm> {
     MayFail<MayFail_<Term>> term;
 
-    SquareBracketsTerm unwrap() const {
-        return (SquareBracketsTerm)*this; // avoid duplication
-    }
+    MayFail_() = default;
+    MayFail_(MayFail<MayFail_<Term>>);
 
-    explicit operator SquareBracketsTerm() const {
-        return SquareBracketsTerm{(Term)term.value()};
-    }
+    explicit MayFail_(SquareBracketsTerm);
+    explicit operator SquareBracketsTerm() const;
+    SquareBracketsTerm unwrap() const;
 };
 
 MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstream&);

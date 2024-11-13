@@ -10,36 +10,46 @@
 struct PostfixSquareBracketsGroup {
     Word leftPart;
     SquareBracketsGroup rightPart;
+
+    MayFail_<PostfixSquareBracketsGroup> wrap() const;
 };
 
 // this "entity" would never be returned if left part was Malformed
 template <>
 struct MayFail_<PostfixSquareBracketsGroup> {
-    Word_ leftPart; // never Malformed, by design
+    Word leftPart; // never Malformed, by design
     MayFail<MayFail_<SquareBracketsGroup>> rightPart;
 
-    PostfixSquareBracketsGroup unwrap() const {
-        return (PostfixSquareBracketsGroup)*this;
-    }
+    MayFail_(Word, MayFail<MayFail_<SquareBracketsGroup>>);
 
-    explicit operator PostfixSquareBracketsGroup() const {
-        return PostfixSquareBracketsGroup{unwrap_w(leftPart), (SquareBracketsGroup)rightPart.val};
-    }
+    explicit MayFail_(PostfixSquareBracketsGroup);
+    explicit operator PostfixSquareBracketsGroup() const;
+    PostfixSquareBracketsGroup unwrap() const;
 };
 
 template <typename T>
 MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
+    auto left_word = variant_cast(*accumulatedPostfixLeftPart);
     auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
-    auto curr_psbg = move_to_heap(MayFail_<PostfixSquareBracketsGroup>{
-        variant_cast(*accumulatedPostfixLeftPart),
-        whats_right_behind
-    });
+
     if (whats_right_behind.has_error()) {
-        return Malformed(curr_psbg, ERR(329));
+        auto ppg = MayFail_<PostfixSquareBracketsGroup>{
+            left_word,
+            whats_right_behind
+        };
+        return Malformed(move_to_heap(ppg), ERR(319));
     }
-    *accumulatedPostfixLeftPart = curr_psbg;
-    return std::get<MayFail_<PostfixSquareBracketsGroup>*>(*accumulatedPostfixLeftPart);
+
+    auto ppg = PostfixSquareBracketsGroup{
+        left_word,
+        whats_right_behind.val.unwrap()
+    };
+    *accumulatedPostfixLeftPart = move_to_heap(ppg);
+    return move_to_heap(
+        std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart)
+            ->wrap()
+    );
 }
 
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H

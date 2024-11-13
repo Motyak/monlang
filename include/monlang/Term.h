@@ -14,23 +14,20 @@ struct Term {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Word> words;
+
+    MayFail_<Term> wrap() const;
 };
 
 template <>
 struct MayFail_<Term> {
     std::vector<MayFail<Word_>> words;
 
-    Term unwrap() const {
-        return (Term)*this;
-    }
+    MayFail_() = default;
+    MayFail_(std::vector<MayFail<Word_>>);
 
-    explicit operator Term() const {
-        std::vector<Word> res;
-        for (auto e: words) {
-            res.push_back(unwrap_w(e.value()));
-        }
-        return Term{res};
-    }
+    explicit MayFail_(Term);
+    explicit operator Term() const;
+    Term unwrap() const;
 };
 
 MayFail<MayFail_<Term>> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input);
