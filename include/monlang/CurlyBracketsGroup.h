@@ -17,7 +17,7 @@ struct CurlyBracketsGroup {
     std::optional<Term> term;
 
     CurlyBracketsGroup() = default;
-    explicit CurlyBracketsGroup(std::vector<ProgramSentence>); // explicit otherwise ambiguous with Program
+    CurlyBracketsGroup(std::vector<ProgramSentence>);
     MayFail_<CurlyBracketsGroup> wrap() const;
   protected:
     CurlyBracketsGroup(std::vector<ProgramSentence>, std::optional<Term>);
@@ -57,7 +57,6 @@ using consumeCurlyBracketsGroup_RetType = std::variant<
     MayFail<MayFail_<PostfixParenthesesGroup>*>,
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
-
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

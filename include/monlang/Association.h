@@ -14,16 +14,6 @@ using AssociationLeftPart = std::variant<
     /* no Association* here */
 >;
 
-using AssociationLeftPart_ = std::variant<
-    Atom*,
-    /* no MayFail_<SquareBracketsTerm>* here */
-    GROUP_ENTITIES_,
-    POSTFIXES_
-    /* no MayFail_<Association>* here */
->;
-
-///////////////////////////////////////////////////////////
-
 struct Association {
     static const Sequence SEPARATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;

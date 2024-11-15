@@ -34,10 +34,10 @@ class MayFail<void> {
     MayFail(Error err) : err(err){} // convenient inside functions returning MayFail<void>
     MayFail(std::optional<Error> err) : err(err){}
 
-    bool has_error() const {return err.has_value();}
+    bool has_error() const {return !!err;}
     Error error() const {return err.value();} // throws if no err
 
-    operator bool() const {return !err.has_value();} // convenient when calling functions returning MayFail<void>
+    operator bool() const {return !err;} // convenient when calling functions returning MayFail<void>
 
     std::optional<Error> err;
 };
@@ -52,7 +52,7 @@ class MayFail : public MayFail<void> {
     explicit MayFail(T val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
 
     T value() const {
-        ASSERT (!err.has_value());
+        ASSERT (!err);
         return val;
     }
     explicit operator T() const {return val;}
@@ -77,7 +77,7 @@ class MayFail<MayFail_<T>> : public MayFail<void> {
     explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
 
     MayFail_<T> value() const {
-        ASSERT (!err.has_value());
+        ASSERT (!err);
         return val;
     }
     explicit operator T() const {return (T)val;} // the explicit cast to T needs to be provided..

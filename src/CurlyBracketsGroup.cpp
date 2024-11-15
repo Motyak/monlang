@@ -153,7 +153,7 @@ MayFail_<CurlyBracketsGroup> CurlyBracketsGroup::wrap() const {
         res.sentences.push_back(e.wrap());
     }
     if (term.has_value()) {
-        res.term = term.value().wrap();
+        res.term = term->wrap();
     }
     return res;
 }
@@ -170,7 +170,7 @@ MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
         res.sentences.push_back(e.value().unwrap());
     }
     if (term.has_value()) {
-        res.term = term.value().value().unwrap();
+        res.term = term->value().unwrap();
     }
     return res;
 }
