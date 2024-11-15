@@ -8,8 +8,10 @@
 #include "postfix.cpp" // PostfixSquareBracketsGroup..
                        // .., PostfixParenthesesGroup
 
+#include "assoc.cpp" // Association
+
 #include "int.cpp" // <entity>-Word integrations, nested entities
 
-#include "sbt.cpp" // SquareBracketsTerm is a ProgramWord (not a Word)
+#include "sbt.cpp" // SquareBracketsTerm is a ProgramWord (not a composable Word)
 
 #include "bigbang.cpp" // complete programs

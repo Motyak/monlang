@@ -13,7 +13,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
-        return std::unexpected(Malformed(Atom{}, ERR(995)));
+        return Malformed(Atom{}, ERR(995));
     }
 
     std::string value;
@@ -26,7 +26,7 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
 
     // means we hit a reserved character
     if (value.size() == 0) {
-        return std::unexpected(Malformed(Atom{}, ERR(992)));
+        return Malformed(Atom{}, ERR(992));
     }
 
     return Atom{value};
@@ -41,7 +41,7 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     #endif
     auto atom = consumeAtomStrictly(terminatorCharacters, input);
 
-    if (!atom.has_value()) {
+    if (atom.has_error()) {
         return mayfail_convert<Atom*>(atom);
     }
 
@@ -54,7 +54,7 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
         #ifndef DISABLE_PPG_IN_ATOM
         if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
             auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (!ppg.has_value()) {
+            if (ppg.has_error()) {
                 return ppg; // malformed postfix
             }
             continue;
@@ -64,7 +64,7 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
         #ifndef DISABLE_PSBG_IN_ATOM
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (!psbg.has_value()) {
+            if (psbg.has_error()) {
                 return psbg; // malformed postfix
             }
             continue;
@@ -84,8 +84,8 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     }
     #endif
 
-    return std::visit(
-        [](auto word) -> consumeAtom_RetType {return word;},
-        accumulatedPostfixLeftPart
-    );
+    return std::visit(overload{
+        [](Atom* atom) -> consumeAtom_RetType {return atom;},
+        [](auto postfix) -> consumeAtom_RetType {return move_to_heap(postfix->wrap());},
+    }, accumulatedPostfixLeftPart);
 }

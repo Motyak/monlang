@@ -13,20 +13,23 @@
 #define UINT uint32_t
 #define INT int32_t
 
+namespace handleterm
+{
+
 // TERM CTOR //////////////////////////////////////////////
 
-MayFail<Word> Atom_(std::string val) {
-    return mayfail_convert<Word>(MayFail<Atom>(Atom{val}));
+Word Atom_(std::string val) {
+    return move_to_heap(Atom{val});
 }
 
 // explicit cast
-Atom Atom_(MayFail<Word> word) {
-    return *std::get<Atom*>(*word);
+Atom Atom_(Word word) {
+    return *std::get<Atom*>(word);
 }
 
 Term Term_(std::string operation) {
     auto str_vec = split(operation, " ");
-    std::vector<MayFail<Word>> words;
+    std::vector<Word> words;
     for (auto token: str_vec) {
         words.push_back(Atom_(token));
     }
@@ -40,9 +43,9 @@ struct Operator {
     UINT pos;
 };
 
-std::string stringify(MayFail<Word> word) {
+std::string stringify(Word word) {
     std::ostringstream oss;
-    visitAst(Unparse(oss), mayfail_cast<ProgramWord>(word));
+    visitAst(Unparse(oss), (ProgramWord)variant_cast(word));
     return oss.str();
 }
 
@@ -90,7 +93,7 @@ std::optional<Operator> next_optr(Term term, Operator op) {
 // TERM MUTATOR ///////////////////////////////////////////
 
 Term Term_(Term term, Operator op) {
-    std::vector<MayFail<Word>> words;
+    std::vector<Word> words;
 
     words.push_back(Atom_(left_opnd(term, op)));
     words.push_back(Atom_(op.val));
@@ -104,21 +107,21 @@ ParenthesesGroup ParenthesesGroup_(Term term, Operator op) {
 }
 
 // explicit cast
-MayFail<Word> Word_(ParenthesesGroup pg) {
-    return mayfail_convert<Word>(MayFail<ParenthesesGroup>(pg));
+Word Word_(ParenthesesGroup pg) {
+    return move_to_heap(pg);
 }
 
 void parenthesize_optn(Term* term, Operator op) {
     auto operation = ParenthesesGroup_(*term, op);
 
     // copy all words BEFORE operation
-    auto left_words = std::vector<MayFail<Word>>(term->words.begin(), term->words.begin() + op.pos - 1);
+    auto left_words = std::vector<Word>(term->words.begin(), term->words.begin() + op.pos - 1);
 
     // copy all words AFTER operation
-    auto right_words = std::vector<MayFail<Word>>(term->words.begin() + op.pos + 2, term->words.end());
+    auto right_words = std::vector<Word>(term->words.begin() + op.pos + 2, term->words.end());
 
     // concat both ends with the new parenthesized operation
-    std::vector<MayFail<Word>> new_words = vec_concat({
+    std::vector<Word> new_words = vec_concat({
         left_words,
         {Word_(operation)},
         right_words,
@@ -130,8 +133,8 @@ void parenthesize_optn(Term* term, Operator op) {
 
 std::ostream& operator<<(std::ostream& os, Term term) {
     /* first wrap term into parentheses group, to convert it into an AST (Word) */
-    auto pg = ParenthesesGroup{{MayFail<Term>(term)}};
-    auto word = mayfail_convert<ProgramWord>(MayFail<ParenthesesGroup>(pg));
+    auto pg = ParenthesesGroup{{term}};
+    auto word = (ProgramWord)move_to_heap(pg);
 
     std::ostringstream oss;
     visitAst(Unparse(oss), word);
@@ -142,10 +145,14 @@ std::ostream& operator<<(std::ostream& os, Term term) {
     return os << res;
 }
 
+} // end of namespace handleterm::
+
 #ifdef TEST_OPTR
-// g++ -D TEST_OPTR -o playground.elf playground.cpp --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_OPTR -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
+    using namespace handleterm; // avoid collisions
+
     Term input = Term_("1 + 2 * 2 ^ 3 ^ 2 + 91 ^ 1");
 
     {
@@ -171,9 +178,11 @@ int main()
 // end of TEST_OPTR
 
 #elif defined TEST_OPND
-// g++ -D TEST_OPND -o playground.elf playground.cpp --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_OPND -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
+    using namespace handleterm; // avoid collisions
+
     Term input = Term_("1 + 2 * 2 ^ 3 ^ 2 + 91 ^ 1");
 
     {
@@ -189,22 +198,24 @@ int main()
 // end of TEST_OPND
 
 #elif defined TEST_PREV_NEXT_OPTR
-// g++ -D TEST_PREV_NEXT_OPTR -o playground.elf playground.cpp --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_PREV_NEXT_OPTR -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
+    using namespace handleterm; // avoid collisions
+
     Term input = Term_("1 + 2 * 2 ^ 3 ^ 2 + 91 ^ 1");
 
     {
         auto op = optr(input, 2);
         std::cout << "#2: " << op.val << std::endl;
-        std::cout << "<prev>: " << prev_optr(input, op).val << std::endl;
+        std::cout << "<prev>: " << prev_optr(input, op).value().val << std::endl;
         std::cout << "---" << std::endl;
     }
 
     {
         auto op = optr(input, 2);
         std::cout << "#2: " << op.val << std::endl;
-        std::cout << "<next>: " << next_optr(input, op).val << std::endl;
+        std::cout << "<next>: " << next_optr(input, op).value().val << std::endl;
         std::cout << "---" << std::endl;
     }
 
@@ -212,22 +223,24 @@ int main()
     // {
     //     auto op = optr(input, 1);
     //     std::cout << "#1: " << op.val << std::endl;
-    //     std::cout << "<prev>: " << prev_optr(input, op).val << std::endl;
+    //     std::cout << "<prev>: " << prev_optr(input, op).value().val << std::endl;
     // }
 
     // // ERR
     // {
     //     auto op = optr(input, -1);
     //     std::cout << "#-1: " << op.val << std::endl;
-    //     std::cout << "<next>: " << next_optr(input, op).val << std::endl;
+    //     std::cout << "<next>: " << next_optr(input, op).value().val << std::endl;
     // }
 }
 // end of TEST_PREV_NEXT_OPTR
 
 #elif defined TEST_PARENTHESIZE
-// g++ -D TEST_PARENTHESIZE -o playground.elf playground.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_PARENTHESIZE -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
+    using namespace handleterm; // avoid collisions
+
     Term input = Term_("1 + 2 * 2 ^ 3 ^ 2 + 91 ^ 1");
     std::cout << "Term: " << input << std::endl;
 
@@ -249,6 +262,8 @@ int main()
 // end of TEST_PARENTHESIZE
 
 #else
+
+using namespace handleterm; // avoid collisions
 
 enum Associativity {
     LEFT_ASSOCIATIVE,

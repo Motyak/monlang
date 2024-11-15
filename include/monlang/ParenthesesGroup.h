@@ -16,15 +16,29 @@ struct ParenthesesGroup {
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<MayFail<Term>> terms;
+    std::vector<Term> terms;
+
+    MayFail_<ParenthesesGroup> wrap() const;
 };
 
-MayFail<ParenthesesGroup> consumeParenthesesGroupStrictly(std::istringstream&);
+template<>
+struct MayFail_<ParenthesesGroup> {
+    std::vector<MayFail<MayFail_<Term>>> terms;
+
+    MayFail_() = default;
+    explicit MayFail_(std::vector<MayFail<MayFail_<Term>>>);
+
+    explicit MayFail_(ParenthesesGroup);
+    explicit operator ParenthesesGroup() const;
+    ParenthesesGroup unwrap() const;
+};
+
+MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream&);
 
 using consumeParenthesesGroup_RetType = std::variant<
-    MayFail<ParenthesesGroup*>,
-    MayFail<PostfixParenthesesGroup*>,
-    MayFail<PostfixSquareBracketsGroup*>
+    MayFail<MayFail_<ParenthesesGroup>*>,
+    MayFail<MayFail_<PostfixParenthesesGroup>*>,
+    MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 

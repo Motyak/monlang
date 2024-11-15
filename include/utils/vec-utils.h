@@ -29,4 +29,13 @@ std::vector<T> vec_concat(const std::initializer_list<std::vector<T>>& vecs) {
     return res;
 }
 
+template <typename R, typename T>
+std::vector<R> vec_cast(const std::vector<T>& input) {
+    std::vector<R> res;
+    for (auto t: input) {
+        res.push_back(R(t));
+    }
+    return res;
+}
+
 #endif // VEC_UTILS_H

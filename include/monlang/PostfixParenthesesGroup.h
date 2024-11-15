@@ -7,25 +7,49 @@
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
 
-// this "entity" would never be returned if left part was Malformed
 struct PostfixParenthesesGroup {
+    Word leftPart;
+    ParenthesesGroup rightPart;
+
+    MayFail_<PostfixParenthesesGroup> wrap() const;
+};
+
+// this "entity" would never be returned if left part was Malformed
+template <>
+struct MayFail_<PostfixParenthesesGroup> {
     Word leftPart; // never Malformed, by design
-    MayFail<ParenthesesGroup> rightPart;
+    MayFail<MayFail_<ParenthesesGroup>> rightPart;
+
+    explicit MayFail_(Word, MayFail<MayFail_<ParenthesesGroup>>);
+
+    explicit MayFail_(PostfixParenthesesGroup);
+    explicit operator PostfixParenthesesGroup() const;
+    PostfixParenthesesGroup unwrap() const;
 };
 
 template <typename T>
-MayFail<PostfixParenthesesGroup*>
+MayFail<MayFail_<PostfixParenthesesGroup>*>
 consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
+    auto left_word = variant_cast(*accumulatedPostfixLeftPart);
     auto whats_right_behind = consumeParenthesesGroupStrictly(input);
-    auto curr_ppg = move_to_heap(PostfixParenthesesGroup{
-        variant_cast(*accumulatedPostfixLeftPart),
-        whats_right_behind
-    });
-    if (!whats_right_behind.has_value()) {
-        return std::unexpected(Malformed(curr_ppg, ERR(319)));
+
+    if (whats_right_behind.has_error()) {
+        auto ppg = MayFail_<PostfixParenthesesGroup>{
+            left_word,
+            whats_right_behind
+        };
+        return Malformed(move_to_heap(ppg), ERR(319));
     }
-    *accumulatedPostfixLeftPart = curr_ppg;
-    return std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart);
+
+    auto ppg = PostfixParenthesesGroup{
+        left_word,
+        whats_right_behind.value().unwrap()
+    };
+    *accumulatedPostfixLeftPart = move_to_heap(ppg);
+    return move_to_heap(
+        std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart)
+            ->wrap()
+    );
 }
 
 #endif // POSTFIX_PARENTHESES_GROUP_H

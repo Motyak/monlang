@@ -12,22 +12,22 @@
 #include <monlang/visitors/visitor.h>
 #include <stack>
 
-class Print : public AstVisitor<void> {
+class Print : public AstVisitor_<void> {
   public:
     Print(std::ostream&, int TAB_SIZE=2);
 
-    void operator()(const MayFail<Program>&) override;
-    void operator()(const MayFail<ProgramSentence>&) override;
-    void operator()(const MayFail<ProgramWord>& word) override;
+    void operator()(const MayFail<MayFail_<Program>>&) override;
+    void operator()(const MayFail<MayFail_<ProgramSentence>>&) override;
+    void operator()(const MayFail<ProgramWord_>& word) override;
 
-    void operator()(SquareBracketsTerm*);
-    void operator()(SquareBracketsGroup*);
-    void operator()(ParenthesesGroup*);
-    void operator()(CurlyBracketsGroup*);
+    void operator()(MayFail_<SquareBracketsTerm>*);
+    void operator()(MayFail_<SquareBracketsGroup>*);
+    void operator()(MayFail_<ParenthesesGroup>*);
+    void operator()(MayFail_<CurlyBracketsGroup>*);
     void operator()(Atom*);
-    void operator()(PostfixSquareBracketsGroup*);
-    void operator()(PostfixParenthesesGroup*);
-    void operator()(Association*);
+    void operator()(MayFail_<PostfixSquareBracketsGroup>*);
+    void operator()(MayFail_<PostfixParenthesesGroup>*);
+    void operator()(MayFail_<Association>*);
 
     void operator()(auto); // fall-through
 
@@ -35,16 +35,15 @@ class Print : public AstVisitor<void> {
     static constexpr int NO_NUMBERING = -1;
     const int TAB_SIZE;
 
-    void handleTerm(const MayFail<Term>&);
+    void handleTerm(const MayFail<MayFail_<Term>>&);
     void output(const char* strs...);
-    void outputLine(const char* strs...);
 
     std::ostream& out;
     std::stack<int> numbering;
     bool startOfNewLine = true;
     int currIndent = 0;
     bool areProgramWords = false;
-    MayFail<ProgramWord> curWord; // May be a ProgramWord or a Word, so let's name it `word`
+    MayFail<ProgramWord_> curWord; // May be a ProgramWord or a Word, so let's name it `word`
 };
 
 #endif // PRINT_H

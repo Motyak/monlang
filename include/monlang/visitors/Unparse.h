@@ -48,14 +48,14 @@ int main()
     )EOF");
     auto input_iss = std::istringstream(input);
 
-    auto prog = consumeProgram(input_iss);
+    auto prog_ = consumeProgram(input_iss);
 
-    if (!prog.has_value()) {
+    if (prog_.has_error()) {
         std::cout << "wtf" << std::endl;
         return 1;
     }
 
-    visitAst(Unparse(std::cout), prog);
+    visitAst(Unparse(std::cout), (Program)prog_);
 }
 #endif // UNPARSE_H_MAIN
 

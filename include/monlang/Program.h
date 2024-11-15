@@ -8,9 +8,23 @@
 #include <sstream>
 
 struct Program {
-    std::vector<MayFail<ProgramSentence>> sentences;
+    std::vector<ProgramSentence> sentences;
+
+    MayFail_<Program> wrap() const;
 };
 
-MayFail<Program> consumeProgram(std::istringstream&);
+template<>
+struct MayFail_<Program> {
+    std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
+
+    MayFail_() = default;
+    explicit MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>);
+
+    explicit MayFail_(Program);
+    explicit operator Program() const;
+    Program unwrap() const;
+};
+
+MayFail<MayFail_<Program>> consumeProgram(std::istringstream&);
 
 #endif // PROGRAM_H

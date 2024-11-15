@@ -20,7 +20,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
+MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     const std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
@@ -31,57 +31,57 @@ MayFail<SquareBracketsGroup> consumeSquareBracketsGroupStrictly(std::istringstre
     };
 
     if (!consumeSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{}, ERR(043)));
+        return Malformed(MayFail_<SquareBracketsGroup>{}, ERR(043));
     }
 
     if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE));
-        return SquareBracketsGroup{};
+        return MayFail_<SquareBracketsGroup>{};
     }
 
-    std::vector<MayFail<Term>> terms;
-    MayFail<Term> currentTerm;
+    std::vector<MayFail<MayFail_<Term>>> terms;
+    MayFail<MayFail_<Term>> currentTerm;
 
     LOOP until (input.peek() == EOF || peekAnyChar(terminatorCharacters, input)) {
     if (!__first_it)
     {
         if (!consumeSequence(SquareBracketsGroup::CONTINUATOR_SEQUENCE, input)) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(403)));
+            return Malformed(MayFail_<SquareBracketsGroup>{terms}, ERR(403));
         }
     }
         currentTerm = consumeTerm(termTerminatorChars, input);
         terms.push_back(currentTerm);
-        if (!currentTerm.has_value()) {
-            return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(439)));
+        if (currentTerm.has_error()) {
+            return Malformed(MayFail_<SquareBracketsGroup>{terms}, ERR(439));
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
-        return std::unexpected(Malformed(SquareBracketsGroup{terms}, ERR(430)));
+        return Malformed(MayFail_<SquareBracketsGroup>{terms}, ERR(430));
     }
 
-    return SquareBracketsGroup{terms};
+    return MayFail_<SquareBracketsGroup>{terms};
 }
 
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
     auto sbg = consumeSquareBracketsGroupStrictly(input);
 
-    if (!sbg.has_value()) {
-        return mayfail_convert<SquareBracketsGroup*>(sbg);
+    if (sbg.has_error()) {
+        return mayfail_convert<MayFail_<SquareBracketsGroup>*>(sbg);
     }
 
     /* look behind */
 
     using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap(sbg.value());
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((SquareBracketsGroup)sbg);
 
     for (;;) {
         #ifndef DISABLE_PSBG_IN_SBG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (!psbg.has_value()) {
+            if (psbg.has_error()) {
                 return psbg; // malformed postfix
             }
             continue;
@@ -92,7 +92,25 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
     }
 
     return std::visit(
-        [](auto word) -> consumeSquareBracketsGroup_RetType {return word;},
+        [](auto word) -> consumeSquareBracketsGroup_RetType {return move_to_heap(word->wrap());},
         accumulatedPostfixLeftPart
     );
+}
+
+///////////////////////////////////////////////////////////
+
+MayFail_<SquareBracketsGroup> SquareBracketsGroup::wrap() const {
+    return MayFail_<SquareBracketsGroup>{vec_cast<MayFail<MayFail_<Term>>>(this->terms)};
+}
+
+MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
+
+MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) : MayFail_(sbg.wrap()){}
+
+MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
+    return SquareBracketsGroup{vec_cast<Term>(terms)};
+}
+
+SquareBracketsGroup MayFail_<SquareBracketsGroup>::unwrap() const {
+    return (SquareBracketsGroup)*this;
 }

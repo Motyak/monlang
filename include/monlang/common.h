@@ -1,14 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <utils/mem-utils.h>
-#include <utils/assert-utils.h>
-
+#include <string>
 #include <vector>
 #include <sstream>
 #include <optional>
-#include <variant>
-#include <expected>
+
+#include <utils/mem-utils.h>
+#include <utils/assert-utils.h>
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
@@ -21,34 +20,82 @@ struct Error {
     int code;
     std::string fmt;
     operator int() const;
-    friend std::ostream& operator<<(std::ostream&, Error);
 };
 #define ERR(x) Error{atoi(#x), "ERR-"#x}
 
-#define OK() return std::expected<void, Error>()
+std::ostream& operator<<(std::ostream&, Error);
 
 template <typename T>
-struct Malformed {
-    static_assert(!std::is_void_v<T>);
-    T val;
-    Error err;
+struct MayFail;
+
+template <>
+class MayFail<void> {
+  public:
+    MayFail(Error err) : err(err){} // convenient inside functions returning MayFail<void>
+    MayFail(std::optional<Error> err) : err(err){}
+
+    bool has_error() const {return !!err;}
+    Error error() const {return err.value();} // throws if no err
+
+    operator bool() const {return !err;} // convenient when calling functions returning MayFail<void>
+
+    std::optional<Error> err;
+};
+
+#define OK() return MayFail<void>(std::nullopt)
+
+template <typename T>
+class MayFail : public MayFail<void> {
+  public:
+    MayFail() : MayFail<void>(std::nullopt){}
+    MayFail(T val) : MayFail<void>(std::nullopt), val(val){}
+    explicit MayFail(T val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
+
+    T value() const {
+        ASSERT (!err);
+        return val;
+    }
+    explicit operator T() const {return val;}
+
+    T val; // accessible for simple unwrapping regardless of err
 };
 
 template <typename T>
-using MayFail = std::expected<T, Malformed<T>>;
+MayFail<T> Malformed(T val, Error err) {
+    return MayFail(val, err);
+}
+
+template <typename T>
+struct MayFail_;
+
+template <typename T>
+class MayFail<MayFail_<T>> : public MayFail<void> {
+  public:
+    MayFail() : MayFail<void>(std::nullopt){}
+    MayFail(MayFail_<T> val) : MayFail<void>(std::nullopt), val(val){}
+    explicit MayFail(T val) : MayFail<void>(std::nullopt), val(MayFail_<T>(val)){} // keep it explicit
+    explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
+
+    MayFail_<T> value() const {
+        ASSERT (!err);
+        return val;
+    }
+    explicit operator T() const {return (T)val;} // the explicit cast to T needs to be provided..
+                                                 // ..by each individual MayFail_<> specializations
+
+    MayFail_<T> val;
+};
 
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
-    return inputMayfail.transform([](auto t){return R{t};})
-            .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+    return MayFail(R(inputMayfail.val), inputMayfail.err);
 }
 
 template <typename R, typename... Targs>
 MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
     return std::visit(
         [](auto inputMayfail){
-            return inputMayfail.transform([](auto t){return R{t};})
-                    .transform_error([](auto e){return Malformed(R{e.val}, e.err);});
+            return MayFail(R(inputMayfail.val), inputMayfail.err);
         },
         inputMayfailVariant
     );
@@ -56,34 +103,7 @@ MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
 
 template <typename R, typename T>
 MayFail<R> mayfail_convert(MayFail<T> inputMayfail) {
-    return inputMayfail.transform([](auto t){return R{move_to_heap(t)};})
-            .transform_error([](auto e){return Malformed(R{move_to_heap(e.val)}, e.err);});
-}
-
-template <typename R, typename T>
-MayFail<R> mayfail_convert(MayFail<T> inputMayfail, auto converter) {
-    return inputMayfail.transform([&converter](auto t){return R{converter(t)};})
-            .transform_error([&converter](auto e){return Malformed(R{converter(e.val)}, e.err);});
-}
-
-template <typename T>
-const T& mayfail_unwrap(const MayFail<T>& inputMayfail) {
-    return inputMayfail.has_value()?
-            inputMayfail.value()
-            : inputMayfail.error().val;
-}
-
-template <typename T>
-T& mayfail_unwrap(MayFail<T>& inputMayfail) {
-    return inputMayfail.has_value()?
-            inputMayfail.value()
-            : inputMayfail.error().val;
-}
-
-template <typename T>
-std::string serializeErr(MayFail<T> malformed) {
-    ASSERT(!malformed.has_value());
-    return malformed.error().err.fmt;
+    return MayFail(R(move_to_heap(inputMayfail.val)), inputMayfail.err);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -111,7 +131,7 @@ std::ostream& operator<<(std::ostream&, Sequence);
 std::optional<char> sequenceFirstChar(const Sequence&);
 size_t sequenceLen(const Sequence&);
 
-std::expected<void, Error> consumeSequence(const Sequence&, std::istringstream&);
+MayFail<void> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
 bool peekAnySeq(const std::vector<Sequence>&, std::istringstream&);
