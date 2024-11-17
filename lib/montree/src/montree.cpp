@@ -6,17 +6,6 @@
 
 #include <iostream>
 
-std::string montree::astToString(Ast_ ast) {
-    std::ostringstream oss;
-    visitAst_(Print(oss), ast);
-    auto res = oss.str();
-    // remove potential trailing newline
-    if (!res.empty() && res.back() == NEWLINE) {
-        res.pop_back();
-    }
-    return res;
-}
-
 std::string montree::astToString(Ast_ ast, int TAB_SIZE) {
     std::ostringstream oss;
     visitAst_(Print(oss, TAB_SIZE), ast);
