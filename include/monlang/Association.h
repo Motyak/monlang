@@ -50,4 +50,4 @@ MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istring
     return assoc;
 }
 
-#endif
+#endif // ASSOCIATION_H
