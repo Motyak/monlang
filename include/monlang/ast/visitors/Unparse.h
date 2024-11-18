@@ -1,7 +1,7 @@
 #ifndef UNPARSE_H
 #define UNPARSE_H
 
-#include <monlang/visitors/ConvenientVisitor.h>
+#include <monlang/ast/visitors/ConvenientVisitor.h>
 
 class Unparse : public ConvenientVisitor<void> {
   public:

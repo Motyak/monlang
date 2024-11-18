@@ -1,17 +1,9 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include <monlang/ProgramSentence.h>
+#include <monlang/ast/Program.h>
+
 #include <monlang/common.h>
-
-#include <vector>
-#include <sstream>
-
-struct Program {
-    std::vector<ProgramSentence> sentences;
-
-    MayFail_<Program> wrap() const;
-};
 
 template<>
 struct MayFail_<Program> {
@@ -22,9 +14,14 @@ struct MayFail_<Program> {
 
     explicit MayFail_(Program);
     explicit operator Program() const;
-    Program unwrap() const;
 };
 
 MayFail<MayFail_<Program>> consumeProgram(std::istringstream&);
+
+template <>
+Program unwrap(const MayFail_<Program>&);
+
+template <>
+MayFail_<Program> wrap(const Program&);
 
 #endif // PROGRAM_H

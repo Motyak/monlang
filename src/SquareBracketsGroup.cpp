@@ -7,6 +7,7 @@
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
+#include <utils/vec-utils.h>
 
 #include <algorithm>
 
@@ -92,25 +93,27 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
     }
 
     return std::visit(
-        [](auto word) -> consumeSquareBracketsGroup_RetType {return move_to_heap(word->wrap());},
+        [](auto word) -> consumeSquareBracketsGroup_RetType {return move_to_heap(wrap(*word));},
         accumulatedPostfixLeftPart
     );
 }
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<SquareBracketsGroup> SquareBracketsGroup::wrap() const {
-    return MayFail_<SquareBracketsGroup>{vec_cast<MayFail<MayFail_<Term>>>(this->terms)};
+template <>
+SquareBracketsGroup unwrap(const MayFail_<SquareBracketsGroup>& sbg) {
+    return (SquareBracketsGroup)sbg;
+}
+
+template <>
+MayFail_<SquareBracketsGroup> wrap(const SquareBracketsGroup& sbg) {
+    return MayFail_<SquareBracketsGroup>{vec_cast<MayFail<MayFail_<Term>>>(sbg.terms)};
 }
 
 MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) : MayFail_(sbg.wrap()){}
+MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) : MayFail_(wrap(sbg)){}
 
 MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
     return SquareBracketsGroup{vec_cast<Term>(terms)};
-}
-
-SquareBracketsGroup MayFail_<SquareBracketsGroup>::unwrap() const {
-    return (SquareBracketsGroup)*this;
 }

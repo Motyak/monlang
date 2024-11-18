@@ -1,18 +1,13 @@
 #ifndef POSTFIX_SQUARE_BRACKETS_GROUP_H
 #define POSTFIX_SQUARE_BRACKETS_GROUP_H
 
+#include <monlang/ast/PostfixSquareBracketsGroup.h>
+
 #include <monlang/Word.h>
 #include <monlang/SquareBracketsGroup.h>
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
-
-struct PostfixSquareBracketsGroup {
-    Word leftPart;
-    SquareBracketsGroup rightPart;
-
-    MayFail_<PostfixSquareBracketsGroup> wrap() const;
-};
 
 // this "entity" would never be returned if left part was Malformed
 template <>
@@ -24,7 +19,6 @@ struct MayFail_<PostfixSquareBracketsGroup> {
 
     explicit MayFail_(PostfixSquareBracketsGroup);
     explicit operator PostfixSquareBracketsGroup() const;
-    PostfixSquareBracketsGroup unwrap() const;
 };
 
 template <typename T>
@@ -43,13 +37,18 @@ consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstr
 
     auto ppg = PostfixSquareBracketsGroup{
         left_word,
-        whats_right_behind.value().unwrap()
+        unwrap(whats_right_behind.value())
     };
     *accumulatedPostfixLeftPart = move_to_heap(ppg);
-    return move_to_heap(
-        std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart)
-            ->wrap()
-    );
+    return move_to_heap(wrap(
+        *std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart)
+    ));
 }
+
+template <>
+PostfixSquareBracketsGroup unwrap(const MayFail_<PostfixSquareBracketsGroup>&);
+
+template <>
+MayFail_<PostfixSquareBracketsGroup> wrap(const PostfixSquareBracketsGroup&);
 
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H

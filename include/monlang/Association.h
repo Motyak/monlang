@@ -1,28 +1,9 @@
 #ifndef ASSOCIATION_H
 #define ASSOCIATION_H
 
+#include <monlang/ast/Association.h>
+
 #include <monlang/Word.h>
-#include <monlang/common.h>
-
-#include <variant>
-
-using AssociationLeftPart = std::variant<
-    Atom*,
-    /* no SquareBracketsTerm* here */
-    GROUP_ENTITIES,
-    POSTFIXES
-    /* no Association* here */
->;
-
-struct Association {
-    static const Sequence SEPARATOR_SEQUENCE;
-    static const std::vector<char> RESERVED_CHARACTERS;
-
-    AssociationLeftPart leftPart;
-    Word rightPart;
-
-    MayFail_<Association> wrap() const;
-};
 
 template <>
 struct MayFail_<Association> {
@@ -33,7 +14,6 @@ struct MayFail_<Association> {
 
     explicit MayFail_(Association);
     explicit operator Association() const;
-    Association unwrap() const;
 };
 
 template <typename T>
@@ -49,5 +29,11 @@ MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istring
     }
     return assoc;
 }
+
+template <>
+Association unwrap(const MayFail_<Association>&);
+
+template <>
+MayFail_<Association> wrap(const Association&);
 
 #endif // ASSOCIATION_H

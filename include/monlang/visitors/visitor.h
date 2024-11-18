@@ -1,44 +1,11 @@
 #ifndef VISITOR_H
 #define VISITOR_H
 
-#include <monlang/common.h>
+#include <monlang/ast/visitors/visitor.h>
+
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
-
-using Ast = std::variant<Program, ProgramSentence, ProgramWord>;
-
-template <typename T>
-class AstVisitor;
-
-template <>
-class AstVisitor<void> {
-  public:
-    static constexpr bool returnsSomething = false;
-
-    virtual void operator()(const Program&) = 0;
-    virtual void operator()(const ProgramSentence&) = 0;
-    virtual void operator()(const ProgramWord& word) = 0;
-};
-
-template <typename T>
-class AstVisitor : public AstVisitor<void> {
-  public:
-    static constexpr bool returnsSomething = true;
-
-    T res;
-};
-
-template <typename T>
-auto visitAst(T visitor, const Ast& tree) {
-    static_assert(std::is_base_of_v<AstVisitor<void>, T>);
-    std::visit(visitor, tree);
-    if constexpr (visitor.returnsSomething) {
-        return visitor.res;
-    }
-}
-
-///////////////////////////////////////////////////////////
 
 using Ast_ = std::variant<
     MayFail<MayFail_<Program>>,

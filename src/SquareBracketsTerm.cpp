@@ -30,18 +30,20 @@ MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstre
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<SquareBracketsTerm> SquareBracketsTerm::wrap() const {
-    return MayFail_<SquareBracketsTerm>{MayFail_<Term>(term)};
+template <>
+SquareBracketsTerm unwrap(const MayFail_<SquareBracketsTerm>& sbt) {
+    return (SquareBracketsTerm)sbt;
+}
+
+template <>
+MayFail_<SquareBracketsTerm> wrap(const SquareBracketsTerm& sbt) {
+    return MayFail_<SquareBracketsTerm>{MayFail_<Term>(sbt.term)};
 }
 
 MayFail_<SquareBracketsTerm>::MayFail_(MayFail<MayFail_<Term>> term) : term(term){}
 
-MayFail_<SquareBracketsTerm>::MayFail_(SquareBracketsTerm sbt) : MayFail_(sbt.wrap()){}
+MayFail_<SquareBracketsTerm>::MayFail_(SquareBracketsTerm sbt) : MayFail_(wrap(sbt)){}
 
 MayFail_<SquareBracketsTerm>::operator SquareBracketsTerm() const {
     return SquareBracketsTerm{(Term)term.value()};
-}
-
-SquareBracketsTerm MayFail_<SquareBracketsTerm>::unwrap() const {
-    return (SquareBracketsTerm)*this;
 }

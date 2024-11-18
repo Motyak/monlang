@@ -1,15 +1,13 @@
 #ifndef CONVENIENT_VISITOR_H
 #define CONVENIENT_VISITOR_H
 
-#include <monlang/visitors/visitor.h>
+#include <monlang/ast/visitors/visitor.h>
 
-#include <monlang/common.h>
-
-#include <monlang/Program.h>
-#include <monlang/ProgramSentence.h>
-#include <monlang/Word.h>
-#include <monlang/Term.h>
-#include <monlang/Word.h>
+#include <monlang/ast/Program.h>
+#include <monlang/ast/ProgramSentence.h>
+#include <monlang/ast/Word.h>
+#include <monlang/ast/Term.h>
+#include <monlang/ast/Word.h>
 
 template <typename T>
 class ConvenientVisitor;

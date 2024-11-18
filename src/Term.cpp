@@ -66,9 +66,15 @@ MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input) {
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<Term> Term::wrap() const {
+template <>
+Term unwrap(const MayFail_<Term>& term) {
+    return (Term)term;
+}
+
+template <>
+MayFail_<Term> wrap(const Term& term) {
     std::vector<MayFail<Word_>> res;
-    for (auto e: words) {
+    for (auto e: term.words) {
         res.push_back(wrap_w(e));
     }
     return MayFail_<Term>{res};
@@ -76,7 +82,7 @@ MayFail_<Term> Term::wrap() const {
 
 MayFail_<Term>::MayFail_(std::vector<MayFail<Word_>> words) : words(words){}
 
-MayFail_<Term>::MayFail_(Term term) : MayFail_(term.wrap()){}
+MayFail_<Term>::MayFail_(Term term) : MayFail_(wrap(term)){}
 
 MayFail_<Term>::operator Term() const {
     std::vector<Word> res;
@@ -84,8 +90,4 @@ MayFail_<Term>::operator Term() const {
         res.push_back(unwrap_w(e.value()));
     }
     return Term{res};
-}
-
-Term MayFail_<Term>::unwrap() const {
-    return (Term)*this;
 }

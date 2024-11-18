@@ -86,6 +86,6 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
 
     return std::visit(overload{
         [](Atom* atom) -> consumeAtom_RetType {return atom;},
-        [](auto postfix) -> consumeAtom_RetType {return move_to_heap(postfix->wrap());},
+        [](auto postfix) -> consumeAtom_RetType {return move_to_heap(wrap(*postfix));},
     }, accumulatedPostfixLeftPart);
 }

@@ -1,32 +1,10 @@
 #ifndef CURLY_BRACKETS_GROUP_H
 #define CURLY_BRACKETS_GROUP_H
 
+#include <monlang/ast/CurlyBracketsGroup.h>
+
 #include <monlang/ProgramSentence.h>
 #include <monlang/Term.h>
-#include <monlang/common.h>
-
-#include <vector>
-#include <optional>
-
-struct CurlyBracketsGroup {
-    static const Sequence INITIATOR_SEQUENCE;
-    static const Sequence TERMINATOR_SEQUENCE;
-    static const std::vector<char> RESERVED_CHARACTERS;
-
-    std::vector<ProgramSentence> sentences;
-    std::optional<Term> term;
-
-    CurlyBracketsGroup() = default;
-    CurlyBracketsGroup(std::vector<ProgramSentence>);
-    MayFail_<CurlyBracketsGroup> wrap() const;
-  protected:
-    CurlyBracketsGroup(std::vector<ProgramSentence>, std::optional<Term>);
-};
-using Subprogram = CurlyBracketsGroup;
-
-struct CurlyBracketsTerm : public CurlyBracketsGroup {
-    CurlyBracketsTerm(Term term);
-};
 
 template <>
 struct MayFail_<CurlyBracketsGroup> {
@@ -38,7 +16,7 @@ struct MayFail_<CurlyBracketsGroup> {
 
     explicit MayFail_(CurlyBracketsGroup);
     explicit operator CurlyBracketsGroup() const;
-    CurlyBracketsGroup unwrap() const;
+
   protected:
     MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>, std::optional<MayFail<MayFail_<Term>>>);
 };
@@ -58,5 +36,11 @@ using consumeCurlyBracketsGroup_RetType = std::variant<
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
+
+template <>
+CurlyBracketsGroup unwrap(const MayFail_<CurlyBracketsGroup>&);
+
+template <>
+MayFail_<CurlyBracketsGroup> wrap(const CurlyBracketsGroup&);
 
 #endif // CURLY_BRACKETS_GROUP_H

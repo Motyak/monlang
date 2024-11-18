@@ -1,17 +1,10 @@
 #ifndef SQUARE_BRACKETS_TERM_H
 #define SQUARE_BRACKETS_TERM_H
 
+#include <monlang/ast/SquareBracketsTerm.h>
+
 #include <monlang/Term.h>
 #include <monlang/common.h>
-
-struct SquareBracketsTerm {
-    static const Sequence INITIATOR_SEQUENCE;
-    static const Sequence TERMINATOR_SEQUENCE;
-
-    Term term;
-
-    MayFail_<SquareBracketsTerm> wrap() const;
-};
 
 template <>
 struct MayFail_<SquareBracketsTerm> {
@@ -22,9 +15,14 @@ struct MayFail_<SquareBracketsTerm> {
 
     explicit MayFail_(SquareBracketsTerm);
     explicit operator SquareBracketsTerm() const;
-    SquareBracketsTerm unwrap() const;
 };
 
 MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstream&);
+
+template <>
+SquareBracketsTerm unwrap(const MayFail_<SquareBracketsTerm>&);
+
+template <>
+MayFail_<SquareBracketsTerm> wrap(const SquareBracketsTerm&);
 
 #endif // SQUARE_BRACKETS_TERM_H

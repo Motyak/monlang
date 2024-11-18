@@ -1,13 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <string>
-#include <vector>
-#include <sstream>
-#include <optional>
+#include <monlang/ast/common.h>
 
 #include <utils/mem-utils.h>
 #include <utils/assert-utils.h>
+
+#include <string>
+#include <sstream>
+#include <optional>
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
@@ -86,6 +87,12 @@ class MayFail<MayFail_<T>> : public MayFail<void> {
     MayFail_<T> val;
 };
 
+template <typename T>
+T unwrap(const MayFail_<T>&);
+
+template <typename T>
+MayFail_<T> wrap(const T&);
+
 template <typename R, typename T>
 MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
     return MayFail(R(inputMayfail.val), inputMayfail.err);
@@ -108,23 +115,6 @@ MayFail<R> mayfail_convert(MayFail<T> inputMayfail) {
 
 ////////////////////////////////////////////////////////////////
 
-struct Quantifier {
-  private:
-    int n;
-
-  public:
-    explicit Quantifier(int);
-    operator int() const; // accessor
-};
-Quantifier operator "" _(unsigned long long int);
-
-struct CharacterAppearance {
-    char c;
-    Quantifier ntimes;
-    CharacterAppearance(char c, Quantifier ntimes = 1_);
-};
-
-using Sequence = std::vector<CharacterAppearance>;
 Sequence operator *(int ntimes, Sequence);
 std::ostream& operator<<(std::ostream&, Sequence);
 

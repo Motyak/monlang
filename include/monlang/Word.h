@@ -1,40 +1,9 @@
 #ifndef WORD_H
 #define WORD_H
 
+#include <monlang/ast/Word.h>
+
 #include <monlang/common.h>
-
-#include <utils/variant-utils.h>
-
-#include <sstream>
-#include <variant>
-
-struct Atom;
-struct SquareBracketsTerm;
-struct ParenthesesGroup;
-struct SquareBracketsGroup;
-struct CurlyBracketsGroup;
-struct PostfixParenthesesGroup;
-struct PostfixSquareBracketsGroup;
-struct Association;
-
-#define GROUP_ENTITIES ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*
-#define POSTFIXES PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
-
-using ProgramWord = std::variant<
-    Atom*,
-    SquareBracketsTerm*,
-    GROUP_ENTITIES,
-    POSTFIXES,
-    Association*
->;
-
-using Word = std::variant<
-    Atom*,
-    /* no SquareBracketsTerm* here */
-    GROUP_ENTITIES,
-    POSTFIXES,
-    Association*
->;
 
 #define GROUP_ENTITIES_ MayFail_<ParenthesesGroup>*, MayFail_<SquareBracketsGroup>*, MayFail_<CurlyBracketsGroup>*
 #define POSTFIXES_ MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*

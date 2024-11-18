@@ -1,17 +1,13 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <monlang/common.h>
+#include <monlang/ast/Atom.h>
 
-#include <variant>
+#include <monlang/common.h>
 
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 struct Association;
-
-struct Atom {
-    std::string value;
-};
 
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 

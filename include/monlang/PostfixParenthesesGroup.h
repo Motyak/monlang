@@ -1,18 +1,13 @@
 #ifndef POSTFIX_PARENTHESES_GROUP_H
 #define POSTFIX_PARENTHESES_GROUP_H
 
+#include <monlang/ast/PostfixParenthesesGroup.h>
+
 #include <monlang/Word.h>
 #include <monlang/ParenthesesGroup.h>
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
-
-struct PostfixParenthesesGroup {
-    Word leftPart;
-    ParenthesesGroup rightPart;
-
-    MayFail_<PostfixParenthesesGroup> wrap() const;
-};
 
 // this "entity" would never be returned if left part was Malformed
 template <>
@@ -24,7 +19,6 @@ struct MayFail_<PostfixParenthesesGroup> {
 
     explicit MayFail_(PostfixParenthesesGroup);
     explicit operator PostfixParenthesesGroup() const;
-    PostfixParenthesesGroup unwrap() const;
 };
 
 template <typename T>
@@ -43,13 +37,18 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
 
     auto ppg = PostfixParenthesesGroup{
         left_word,
-        whats_right_behind.value().unwrap()
+        unwrap(whats_right_behind.value())
     };
     *accumulatedPostfixLeftPart = move_to_heap(ppg);
-    return move_to_heap(
-        std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart)
-            ->wrap()
-    );
+    return move_to_heap(wrap(
+        *std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart)
+    ));
 }
+
+template <>
+PostfixParenthesesGroup unwrap(const MayFail_<PostfixParenthesesGroup>&);
+
+template <>
+MayFail_<PostfixParenthesesGroup> wrap(const PostfixParenthesesGroup&);
 
 #endif // POSTFIX_PARENTHESES_GROUP_H

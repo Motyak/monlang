@@ -1,26 +1,11 @@
 #ifndef SQUARE_BRACKETS_GROUP_H
 #define SQUARE_BRACKETS_GROUP_H
 
+#include <monlang/ast/SquareBracketsGroup.h>
+
 #include <monlang/Term.h>
-#include <monlang/common.h>
-
-#include <utils/vec-utils.h>
-
-#include <sstream>
-#include <vector>
 
 struct PostfixSquareBracketsGroup;
-
-struct SquareBracketsGroup {
-    static const Sequence INITIATOR_SEQUENCE;
-    static const Sequence CONTINUATOR_SEQUENCE;
-    static const Sequence TERMINATOR_SEQUENCE;
-    static const std::vector<char> RESERVED_CHARACTERS;
-
-    std::vector<Term> terms;
-
-    MayFail_<SquareBracketsGroup> wrap() const;
-};
 
 template<>
 struct MayFail_<SquareBracketsGroup> {
@@ -31,7 +16,6 @@ struct MayFail_<SquareBracketsGroup> {
 
     explicit MayFail_(SquareBracketsGroup);
     explicit operator SquareBracketsGroup() const;
-    SquareBracketsGroup unwrap() const;
 };
 
 MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream&);
@@ -41,5 +25,11 @@ using consumeSquareBracketsGroup_RetType = std::variant<
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
+
+template <>
+SquareBracketsGroup unwrap(const MayFail_<SquareBracketsGroup>&);
+
+template <>
+MayFail_<SquareBracketsGroup> wrap(const SquareBracketsGroup&);
 
 #endif // SQUARE_BRACKETS_GROUP_H

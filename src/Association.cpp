@@ -12,18 +12,20 @@ const std::vector<char> Association::RESERVED_CHARACTERS = {
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<Association> Association::wrap() const {
-    return MayFail_<Association>{leftPart, wrap_w(rightPart)};
-}
-
 MayFail_<Association>::MayFail_(AssociationLeftPart leftPart, MayFail<Word_> rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<Association>::MayFail_(Association assoc) : MayFail_(assoc.wrap()){}
+MayFail_<Association>::MayFail_(Association assoc) : MayFail_(wrap(assoc)){}
 
 MayFail_<Association>::operator Association() const {
     return Association{leftPart, unwrap_w(rightPart.value())};
 }
 
-Association MayFail_<Association>::unwrap() const {
-    return (Association)*this;
+template <>
+Association unwrap(const MayFail_<Association>& assoc) {
+    return (Association)assoc;
+}
+
+template <>
+MayFail_<Association> wrap(const Association& assoc) {
+    return MayFail_<Association>{assoc.leftPart, wrap_w(assoc.rightPart)};
 }

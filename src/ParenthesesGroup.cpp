@@ -8,6 +8,7 @@
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
+#include <utils/vec-utils.h>
 
 #include <algorithm>
 
@@ -103,25 +104,27 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
     }
 
     return std::visit(
-        [](auto word) -> consumeParenthesesGroup_RetType {return move_to_heap(word->wrap());},
+        [](auto word) -> consumeParenthesesGroup_RetType {return move_to_heap(wrap(*word));},
         accumulatedPostfixLeftPart
     );
 }
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<ParenthesesGroup> ParenthesesGroup::wrap() const {
-    return MayFail_<ParenthesesGroup>{vec_cast<MayFail<MayFail_<Term>>>(this->terms)};
+template <>
+ParenthesesGroup unwrap(const MayFail_<ParenthesesGroup>& pg) {
+    return (ParenthesesGroup)pg;
+}
+
+template <>
+MayFail_<ParenthesesGroup> wrap(const ParenthesesGroup& pg) {
+    return MayFail_<ParenthesesGroup>{vec_cast<MayFail<MayFail_<Term>>>(pg.terms)};
 }
 
 MayFail_<ParenthesesGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) : MayFail_(pg.wrap()){}
+MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) : MayFail_(wrap(pg)){}
 
 MayFail_<ParenthesesGroup>::operator ParenthesesGroup() const {
     return ParenthesesGroup{vec_cast<Term>(terms)};
-}
-
-ParenthesesGroup MayFail_<ParenthesesGroup>::unwrap() const {
-    return (ParenthesesGroup)*this;
 }
