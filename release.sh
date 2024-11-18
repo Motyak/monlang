@@ -37,18 +37,26 @@ for header in [A-Z]*.h; do
 done
 cd - > /dev/null
 
-# ## add LV1:: namespace for Ast and AstVisitor in public visitor.h ##
-# visitor_h=dist/monlang-LV1/visitors/visitor.h
-# added_code=$(
-# cat <<'EOF'
-# namespace LV1 {
-#     using Ast = ::Ast;
-#     using AstVisitor = ::AstVisitor;
-#     using ValidAstVisitor = ::ValidAstVisitor;
-# }
-# EOF
-# )
-# perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+## add LV1:: namespace for ProgramWord in public Word.h ##
+word_h=dist/monlang-LV1/Word.h
+added_code=$(
+cat <<'EOF'
+namespace LV1 { using ProgramWord = ::ProgramWord; }
+EOF
+)
+perl -i -pe 's/(#endif \/\/ WORD_H)/'"$added_code"'\n\n$1/' $word_h
+
+## add LV1:: namespace for Ast and Ast_ in public visitor.h ##
+visitor_h=dist/monlang-LV1/visitors/visitor.h
+added_code=$(
+cat <<'EOF'
+namespace LV1 {
+    using Ast = ::Ast;
+    using Ast_ = ::Ast_;
+}
+EOF
+)
+perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
 
 wait $package_proc_id
 

@@ -1,9 +1,9 @@
-#include <monlang/CurlyBracketsGroup.h>
-#include <monlang/Word.h>
-
 #include <utils/tommystring.h>
 #include <montree/montree.h>
 #include <catch2/catch_amalgamated.hpp>
+
+#include <monlang/CurlyBracketsGroup.h>
+#include <monlang/Word.h>
 
 ////////////////////////////////////////////////////////////////
 

@@ -1,11 +1,11 @@
+#include <utils/tommystring.h>
+#include <montree/montree.h>
+#include <catch2/catch_amalgamated.hpp>
+
 #include <monlang/Word.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
-
-#include <utils/tommystring.h>
-#include <montree/montree.h>
-#include <catch2/catch_amalgamated.hpp>
 
 ////////////////////////////////////////////////////////////////
 
