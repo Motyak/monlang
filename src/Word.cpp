@@ -84,7 +84,6 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
 ProgramWord unwrap_pw(ProgramWord_ pw_) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord {return atom;},
-        // [](auto pw_) -> ProgramWord {return move_to_heap(pw_->unwrap());}
         [](auto pw_) -> ProgramWord {return move_to_heap(unwrap(*pw_));}
     }, pw_);
 }
@@ -92,7 +91,6 @@ ProgramWord unwrap_pw(ProgramWord_ pw_) {
 Word unwrap_w(Word_ word_) {
     return std::visit(overload{
         [](Atom* atom) -> Word {return atom;},
-        // [](auto word_) -> Word {return move_to_heap(word_->unwrap());}
         [](auto word_) -> Word {return move_to_heap(unwrap(*word_));}
     }, word_);
 }
@@ -100,7 +98,6 @@ Word unwrap_w(Word_ word_) {
 ProgramWord_ wrap_pw(ProgramWord pw) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord_ {return atom;},
-        // [](auto pw) -> ProgramWord_ {return move_to_heap(pw->wrap());}
         [](auto pw) -> ProgramWord_ {return move_to_heap(wrap(*pw));}
     }, pw);
 }
@@ -108,7 +105,6 @@ ProgramWord_ wrap_pw(ProgramWord pw) {
 Word_ wrap_w(Word word) {
     return std::visit(overload{
         [](Atom* atom) -> Word_ {return atom;},
-        // [](auto word) -> Word_ {return move_to_heap(word->wrap());}
         [](auto word) -> Word_ {return move_to_heap(wrap(*word));}
     }, word);
 }
