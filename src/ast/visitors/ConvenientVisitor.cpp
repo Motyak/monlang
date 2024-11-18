@@ -1,23 +1,18 @@
-#include <monlang/visitors/ConvenientVisitor.h>
+#include <monlang/ast/visitors/ConvenientVisitor.h>
 
 #include <monlang/common.h>
 
-#include <monlang/Program.h>
-#include <monlang/ProgramSentence.h>
-#include <monlang/Word.h>
-#include <monlang/Term.h>
-#include <monlang/Word.h>
-
 /* impl only */
-#include <monlang/SquareBracketsTerm.h>
-#include <monlang/ParenthesesGroup.h>
-#include <monlang/SquareBracketsGroup.h>
-#include <monlang/CurlyBracketsGroup.h>
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/Association.h>
+#include <monlang/ast/SquareBracketsTerm.h>
+#include <monlang/ast/ParenthesesGroup.h>
+#include <monlang/ast/SquareBracketsGroup.h>
+#include <monlang/ast/CurlyBracketsGroup.h>
+#include <monlang/ast/PostfixParenthesesGroup.h>
+#include <monlang/ast/PostfixSquareBracketsGroup.h>
+#include <monlang/ast/Association.h>
 
 #include <utils/mem-utils.h>
+#include <utils/variant-utils.h>
 
 void ConvenientVisitor<void>::operator()(const Program& prog) {
     for (auto progSentence: prog.sentences) {

@@ -7,7 +7,6 @@
 #include <utils/assert-utils.h>
 
 #include <string>
-#include <sstream>
 #include <optional>
 
 constexpr char SPACE = 32;
@@ -114,9 +113,6 @@ MayFail<R> mayfail_convert(MayFail<T> inputMayfail) {
 }
 
 ////////////////////////////////////////////////////////////////
-
-Sequence operator *(int ntimes, Sequence);
-std::ostream& operator<<(std::ostream&, Sequence);
 
 std::optional<char> sequenceFirstChar(const Sequence&);
 size_t sequenceLen(const Sequence&);

@@ -1,12 +1,12 @@
-#include <monlang/visitors/Unparse.h>
-#include <monlang/visitors/ConvenientVisitor.h>
+#include <monlang/ast/visitors/Unparse.h>
+#include <monlang/ast/visitors/ConvenientVisitor.h>
 
 /* impl only */
-#include <monlang/Atom.h>
-#include <monlang/SquareBracketsTerm.h>
-#include <monlang/ParenthesesGroup.h>
-#include <monlang/SquareBracketsGroup.h>
-#include <monlang/CurlyBracketsGroup.h>
+#include <monlang/ast/Atom.h>
+#include <monlang/ast/SquareBracketsTerm.h>
+#include <monlang/ast/ParenthesesGroup.h>
+#include <monlang/ast/SquareBracketsGroup.h>
+#include <monlang/ast/CurlyBracketsGroup.h>
 
 Unparse::Unparse(std::ostream& out) : out(out) {}
 

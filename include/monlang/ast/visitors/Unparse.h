@@ -3,6 +3,8 @@
 
 #include <monlang/ast/visitors/ConvenientVisitor.h>
 
+#include <sstream>
+
 class Unparse : public ConvenientVisitor<void> {
   public:
     Unparse(std::ostream&);
@@ -31,10 +33,12 @@ class Unparse : public ConvenientVisitor<void> {
 #ifdef UNPARSE_H_MAIN
 // #include <monlang/visitors/Unparse.h>
 
+#include <monlang/Program.h> // consumeProgram()
+
 #include <utils/tommystring.h>
 
-// g++ -x c++ -D UNPARSE_H_MAIN -c include/monlang/visitors/Unparse.h -o main.o --std=c++23 -Wall -Wextra -I include
-// g++ main.o src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp  obj/*.o -o main.elf --std=c++23 -Wall -Wextra -I include
+// g++ -x c++ -D UNPARSE_H_MAIN -c include/monlang/ast/visitors/Unparse.h -o main.o --std=c++23 -Wall -Wextra -I include
+// g++ main.o src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp  obj/*.o -o main.elf --std=c++23 -Wall -Wextra -I include
 int main()
 {
     auto input = tommy_str(R"EOF(

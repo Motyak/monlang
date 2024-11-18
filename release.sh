@@ -22,8 +22,8 @@ for header in dist/monlang-LV1/**/*.h; do
     perl -i -pe 's/<monlang\//<monlang-LV1\//g' $header;
 done
 
-## add LV1:: namespace for each entity in public headers ##
-cd dist/monlang-LV1
+## add LV1:: namespace for each entity in public ast/ headers ##
+cd dist/monlang-LV1/ast
 for header in [A-Z]*.h; do
     camelcase_entity_name=${header%.h*}
     uppercase_entity_name=$(
@@ -33,27 +33,33 @@ for header in [A-Z]*.h; do
         | tail -c+2 # remove leading underscore
     )
     CC=$camelcase_entity_name UPP=$uppercase_entity_name \
-        perl -i -pe 's/(#endif \/\/ $ENV{UPP}_H)/namespace LV1 { using $ENV{CC} = ::$ENV{CC}; }\n\n$1/' $header
+        perl -i -pe 's/(#endif \/\/ AST_$ENV{UPP}_H)/namespace LV1 { using $ENV{CC} = ::$ENV{CC}; }\n\n$1/' $header
 done
 cd - > /dev/null
 
-## add LV1:: namespace for ProgramWord in public Word.h ##
-word_h=dist/monlang-LV1/Word.h
+## add LV1:: namespace for ProgramWord in public ast/Word.h ##
+word_h=dist/monlang-LV1/ast/Word.h
 added_code=$(
 cat <<'EOF'
 namespace LV1 { using ProgramWord = ::ProgramWord; }
 EOF
 )
-perl -i -pe 's/(#endif \/\/ WORD_H)/'"$added_code"'\n\n$1/' $word_h
+perl -i -pe 's/(#endif \/\/ AST_WORD_H)/'"$added_code"'\n\n$1/' $word_h
 
-## add LV1:: namespace for Ast and Ast_ in public visitor.h ##
+## add LV1:: namespace for Ast in public ast/visitor.h ##
+visitor_h=dist/monlang-LV1/ast/visitors/visitor.h
+added_code=$(
+cat <<'EOF'
+namespace LV1 { using Ast = ::Ast; }
+EOF
+)
+perl -i -pe 's/(#endif \/\/ AST_VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+
+## add LV1:: namespace for Ast_ in public visitor.h ##
 visitor_h=dist/monlang-LV1/visitors/visitor.h
 added_code=$(
 cat <<'EOF'
-namespace LV1 {
-    using Ast = ::Ast;
-    using Ast_ = ::Ast_;
-}
+namespace LV1 { using Ast_ = ::Ast_; }
 EOF
 )
 perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h

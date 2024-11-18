@@ -3,6 +3,7 @@
 
 #include <monlang/ast/Program.h>
 
+#include <monlang/ProgramSentence.h>
 #include <monlang/common.h>
 
 template<>

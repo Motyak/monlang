@@ -1,12 +1,14 @@
-#include <monlang/Term.h>
-#include <monlang/Atom.h>
-#include <monlang/ParenthesesGroup.h>
+#include <monlang/ast/Term.h>
+#include <monlang/ast/Atom.h>
+#include <monlang/ast/ParenthesesGroup.h>
 
-#include <monlang/visitors/Unparse.h>
+#include <monlang/ast/visitors/Unparse.h>
 
 #include <utils/str-utils.h>
 #include <utils/assert-utils.h>
 #include <utils/vec-utils.h>
+#include <utils/mem-utils.h>
+#include <utils/variant-utils.h>
 
 #include <cstdint>
 
@@ -148,7 +150,7 @@ std::ostream& operator<<(std::ostream& os, Term term) {
 } // end of namespace handleterm::
 
 #ifdef TEST_OPTR
-// g++ -D TEST_OPTR -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_OPTR -o handleterm.elf handleterm.cpp src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     using namespace handleterm; // avoid collisions
@@ -178,7 +180,7 @@ int main()
 // end of TEST_OPTR
 
 #elif defined TEST_OPND
-// g++ -D TEST_OPND -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_OPND -o handleterm.elf handleterm.cpp src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     using namespace handleterm; // avoid collisions
@@ -198,7 +200,7 @@ int main()
 // end of TEST_OPND
 
 #elif defined TEST_PREV_NEXT_OPTR
-// g++ -D TEST_PREV_NEXT_OPTR -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_PREV_NEXT_OPTR -o handleterm.elf handleterm.cpp src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     using namespace handleterm; // avoid collisions
@@ -236,7 +238,7 @@ int main()
 // end of TEST_PREV_NEXT_OPTR
 
 #elif defined TEST_PARENTHESIZE
-// g++ -D TEST_PARENTHESIZE -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -D TEST_PARENTHESIZE -o handleterm.elf handleterm.cpp src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     using namespace handleterm; // avoid collisions
@@ -308,7 +310,7 @@ bool parenthesizeFirstEncounteredOp(Term* term, std::vector<std::string> opvals,
     return false; // no op found
 }
 
-// g++ -o handleterm.elf handleterm.cpp src/visitors/Unparse.cpp src/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
+// g++ -o handleterm.elf handleterm.cpp src/ast/visitors/Unparse.cpp src/ast/visitors/ConvenientVisitor.cpp obj/*.o --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 int main()
 {
     Term input = Term_("2 - 1 + 1 * 2 ^ 3 ^ 2 + 91 ^ 1");
