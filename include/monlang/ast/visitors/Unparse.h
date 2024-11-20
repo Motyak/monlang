@@ -14,6 +14,7 @@ class Unparse : public ConvenientVisitor<void> {
     void operator()(const ProgramSentence&) override;
     void operator()(const Term&) override;
     void operator()(const Word&) override;
+    void operator()(const ProgramWord&) override;
 
     void operator()(Atom*) override;
     void operator()(SquareBracketsTerm*) override;

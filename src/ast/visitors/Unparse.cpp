@@ -48,6 +48,18 @@ void Unparse::operator()(const Word& word) {
     ConvenientVisitor::operator()(word);
 }
 
+void Unparse::operator()(const ProgramWord& pw) {
+    if (continuator) {
+        if (succeedsAContinuator) {
+            out << continuator.value();
+        } else {
+            succeedsAContinuator = true;
+        }
+    }
+
+    ConvenientVisitor::operator()(pw);
+}
+
 ///////////////////////////////////////////////////////////
 
 void Unparse::operator()(Atom* atom) {
