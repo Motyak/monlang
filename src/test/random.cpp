@@ -9,6 +9,7 @@
 
 TEST_CASE ("random", "[test-5000][random]") {
     int seed = std::random_device{}();
+    // int seed = -1721694133;
     std::cerr << "[test-5000] seed is: `" << seed << "`" << std::endl;
 
     auto prog = montree::generateLV1Program(seed);

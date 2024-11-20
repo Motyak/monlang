@@ -118,6 +118,9 @@ void Unparse::operator()(SquareBracketsGroup* sbg) {
 }
 
 void Unparse::operator()(CurlyBracketsGroup* cbg) {
+    auto saved_ContinuatorSeq = continuator; // backup curr continuator
+    auto saved_SucceedsAContinuator = succeedsAContinuator; // backup curr `succeeds a continuator`
+
     out << CurlyBracketsGroup::INITIATOR_SEQUENCE;
 
     /* handle single term expression */
@@ -132,6 +135,9 @@ void Unparse::operator()(CurlyBracketsGroup* cbg) {
         currIndent--;
         out << (currIndent * ProgramSentence::TAB_SEQUENCE);
     }
+
+    continuator = saved_ContinuatorSeq;
+    succeedsAContinuator = saved_SucceedsAContinuator;
 
     out << CurlyBracketsGroup::TERMINATOR_SEQUENCE;
 }
