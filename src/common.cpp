@@ -97,6 +97,8 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     for (auto charAppearance: sequence) {
         if (charAppearance.ntimes == 0) {
             if (input.peek() == charAppearance.c) {
+                // reset flags if EOF reached etc..
+                input.clear();
                 // restore stream position
                 input.seekg(initialPosition);
                 return false;
@@ -106,6 +108,8 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
 
         for (int i = 1; i <= charAppearance.ntimes; ++i) {
             if (input.peek() != charAppearance.c) {
+                // reset flags if EOF reached etc..
+                input.clear();
                 // restore stream position
                 input.seekg(initialPosition);
                 return false;
@@ -114,6 +118,8 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
         }
     }
 
+    // reset flags if EOF reached etc..
+    input.clear();
     // restore stream position
     input.seekg(initialPosition);
     return true;
