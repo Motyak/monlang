@@ -6,11 +6,14 @@
 #include <monlang/Program.h>
 #include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
+#include <monlang/Term.h>
 
 using Ast_ = std::variant<
     MayFail<MayFail_<Program>>,
     MayFail<MayFail_<ProgramSentence>>,
-    MayFail<ProgramWord_>
+    MayFail<ProgramWord_>,
+    MayFail<MayFail_<Term>>,
+    MayFail<Word_>
 >;
 
 template <typename T>
@@ -23,7 +26,9 @@ class AstVisitor_<void> {
 
     virtual void operator()(const MayFail<MayFail_<Program>>&) = 0;
     virtual void operator()(const MayFail<MayFail_<ProgramSentence>>&) = 0;
-    virtual void operator()(const MayFail<ProgramWord_>& word) = 0;
+    virtual void operator()(const MayFail<ProgramWord_>&) = 0;
+    virtual void operator()(const MayFail<MayFail_<Term>>&) = 0;
+    virtual void operator()(const MayFail<Word_>&) = 0;
 };
 
 template <typename T>
