@@ -9,7 +9,7 @@ CXXFLAGS_RELEASE := --std=c++23 -Wall -Wextra -Werror -O3 -I include
 CXXFLAGS_TEST = $(CXXFLAGS) $(addprefix -I ,$(LIB_INCLUDE_DIRS))
 DEPFLAGS = -MMD -MP -MF .deps/$*.d
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
-ARFLAGS := rcsv
+ARFLAGS = D -M < <(tools/aggregate-libs.mri.sh $@ $^); :
 
 BUILD_LIBS_ONCE ?= x # disable by passing `BUILD_LIBS_ONCE=`
 TRACE ?= # enable by passing `TRACE=x`
@@ -110,28 +110,28 @@ bin/test/all.elf: $$(TEST_OBJS) $(OBJS) lib/test-libs.a
 # libs
 ############################################################
 
-## aggregate all lib objects into one static lib ##
+## aggregate all libs (.o, .a) into one static lib ##
 .SECONDEXPANSION:
-lib/libs.a: $$(lib_objects)
+lib/libs.a: $$(libs)
 	$(AR) $(ARFLAGS) $@ $^
 
-## aggregate all test lib objects into one static test lib ##
+## aggregate all test lib (.o, .a) into one static lib ##
 .SECONDEXPANSION:
-lib/test-libs.a: $$(test_lib_objects)
+lib/test-libs.a: $$(test_libs)
 # when BUILD_LIBS_ONCE is unset => we always enter this recipe
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 
 ## compiles lib used for testing (catch2) ##
-test_lib_objects += lib/catch2/obj/catch_amalgamated.o
+test_libs += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 	$(MAKE) -C lib/catch2
 
 ## compiles our own lib used for testing (montree) ##
-test_lib_objects += lib/montree/obj/montree.o
+test_libs += lib/montree/dist/montree.a
 $(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
-	.PHONY: lib/montree/obj/montree.o)
-lib/montree/obj/montree.o:
+	.PHONY: lib/montree/dist/montree.a)
+lib/montree/dist/montree.a:
 	$(MAKE) -C lib/montree
 
 ###########################################################
