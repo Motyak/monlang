@@ -1,7 +1,7 @@
-SHELL := /bin/bash
-RM := rm -rf
 CXXFLAGS := --std=c++23 -Wall -Wextra -Og -ggdb3 -I include
 DEPFLAGS = -MMD -MP -MF .deps/$(notdir $*.d)
+RM := rm -rf
+ARFLAGS := rcsvD
 
 ifdef CLANG
 CXX := clang++
@@ -11,38 +11,45 @@ endif
 
 ifdef X86
 CXXFLAGS += -m32
-LDFLAGS += -m32
 endif
 
 ###########################################################
 
-SRC_NAMES := montree
-OBJS := $(SRC_NAMES:%=obj/%.o)
-DEPS := $(SRC_NAMES:%=.deps/%.d)
+SRC_FILENAMES := \
+montree \
+Print \
+
+DEPS := $(SRC_FILENAMES:%=.deps/%.d)
+OBJS := $(SRC_FILENAMES:%=obj/%.o)
 
 ###########################################################
 
-all: build
+all: dist
 
 build: $(OBJS)
 
+dist: dist/montree.a
+
 clean:
-	$(RM) $(OBJS) $(DEPS)
+	$(RM) obj/* .deps/*
 
 mrproper:
 	$(RM) obj .deps
 
 
-.PHONY: all build clean mrproper
+.PHONY: all build dist clean mrproper
 
 ###########################################################
 
 $(OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS)
 
+dist/montree.a: $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+
 -include $(DEPS)
 
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-$(shell mkdir -p obj .deps)
+$(shell mkdir -p obj .deps dist)
