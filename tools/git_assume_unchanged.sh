@@ -5,7 +5,6 @@
 INPUT="
 include/utils
 utils.mk
-lib/montree
 "
 
 set -o errexit

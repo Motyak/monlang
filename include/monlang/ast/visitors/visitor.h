@@ -3,9 +3,10 @@
 
 #include <monlang/ast/Program.h>
 #include <monlang/ast/ProgramSentence.h>
+#include <monlang/ast/Term.h>
 #include <monlang/ast/Word.h>
 
-using Ast = std::variant<Program, ProgramSentence, ProgramWord>;
+using Ast = std::variant<Program, ProgramSentence, ProgramWord, Term, Word>;
 
 template <typename T>
 class AstVisitor;
@@ -17,7 +18,9 @@ class AstVisitor<void> {
 
     virtual void operator()(const Program&) = 0;
     virtual void operator()(const ProgramSentence&) = 0;
-    virtual void operator()(const ProgramWord& word) = 0;
+    virtual void operator()(const ProgramWord&) = 0;
+    virtual void operator()(const Term&) = 0;
+    virtual void operator()(const Word&) = 0;
 };
 
 template <typename T>

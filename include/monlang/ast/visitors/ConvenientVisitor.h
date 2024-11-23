@@ -17,9 +17,9 @@ class ConvenientVisitor<void> : public AstVisitor<void> {
   public:
     virtual void operator()(const Program&) override;
     virtual void operator()(const ProgramSentence&) override;
-    virtual void operator()(const ProgramWord& word) override;
-    virtual void operator()(const Term&);
-    virtual void operator()(const Word&);
+    virtual void operator()(const ProgramWord&) override;
+    virtual void operator()(const Term&) override;
+    virtual void operator()(const Word&) override;
 
     virtual void operator()(Atom*);
     virtual void operator()(SquareBracketsTerm*);
