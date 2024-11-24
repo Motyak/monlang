@@ -8,6 +8,7 @@
 
 #include <string>
 #include <optional>
+#include <variant>
 
 constexpr char SPACE = 32;
 constexpr char NEWLINE = 10;
