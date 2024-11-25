@@ -3,12 +3,13 @@
 
 #include <monlang/ast/CurlyBracketsGroup.h>
 
-#include <monlang/ProgramSentence.h>
+#include <monlang/Program.h>
 #include <monlang/Term.h>
 
 template <>
-struct MayFail_<CurlyBracketsGroup> {
-    std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
+struct MayFail_<CurlyBracketsGroup> : public MayFail_<Program> {
+    // inherited from MayFail_<Program>
+    // std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
     std::optional<MayFail<MayFail_<Term>>> term;
 
     MayFail_() = default;

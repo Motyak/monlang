@@ -1,17 +1,18 @@
 #ifndef AST_CURLY_BRACKETS_GROUP_H
 #define AST_CURLY_BRACKETS_GROUP_H
 
-#include <monlang/ast/ProgramSentence.h>
+#include <monlang/ast/Program.h>
 #include <monlang/ast/Term.h>
 
 #include <optional>
 
-struct CurlyBracketsGroup {
+struct CurlyBracketsGroup : public Program {
     static const Sequence INITIATOR_SEQUENCE;
     static const Sequence TERMINATOR_SEQUENCE;
     static const std::vector<char> RESERVED_CHARACTERS;
 
-    std::vector<ProgramSentence> sentences;
+    // inherited from Program
+    // std::vector<ProgramSentence> sentences;
     std::optional<Term> term;
 
     CurlyBracketsGroup() = default;

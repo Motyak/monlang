@@ -126,14 +126,9 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
 
 ////////////////////////////////////////////////////////////////
 
-CurlyBracketsGroup::CurlyBracketsGroup(std::vector<ProgramSentence> sentences) {
-    this->sentences = sentences;
-}
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<ProgramSentence> sentences) : Program{sentences}{}
 
-CurlyBracketsGroup::CurlyBracketsGroup(std::vector<ProgramSentence> sentences, std::optional<Term> term) {
-    this->sentences = sentences;
-    this->term = term;
-}
+CurlyBracketsGroup::CurlyBracketsGroup(std::vector<ProgramSentence> sentences, std::optional<Term> term) : Program{sentences}, term(term){}
 
 static std::vector<ProgramSentence> toSentences(Term term) {
     std::vector<ProgramWord> programWords;
@@ -164,9 +159,9 @@ MayFail_<CurlyBracketsGroup> wrap(const CurlyBracketsGroup& cbg) {
     return res;
 }
 
-MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : sentences(sentences){}
+MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : MayFail_<Program>(sentences){}
 
-MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences, std::optional<MayFail<MayFail_<Term>>> term) : sentences(sentences), term(term){}
+MayFail_<CurlyBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences, std::optional<MayFail<MayFail_<Term>>> term) : MayFail_<Program>(sentences), term(term){}
 
 MayFail_<CurlyBracketsGroup>::MayFail_(CurlyBracketsGroup cbg) : MayFail_(wrap(cbg)){}
 
