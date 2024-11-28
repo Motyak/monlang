@@ -31,4 +31,7 @@ using Word = std::variant<
     Association*
 >;
 
+bool holds_word(const ProgramWord&);
+Word get_word(const ProgramWord&);
+
 #endif // AST_WORD_H

@@ -76,6 +76,20 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
 
 ///////////////////////////////////////////////////////////
 
+bool holds_word(const ProgramWord& pw) {
+    return std::visit(overload{
+        [](SquareBracketsTerm*) {return false;},
+        [](auto) {return true;},
+    }, pw);
+}
+
+Word get_word(const ProgramWord& pw) {
+    return std::visit(overload{
+        [](SquareBracketsTerm*) -> Word {SHOULD_NOT_HAPPEN();},
+        [](auto word) -> Word {return word;},
+    }, pw);
+}
+
 /*
     for the (un)wrappers to work we not only need..
     ..Postfixes/Assoc interfaces, but their impl as well
