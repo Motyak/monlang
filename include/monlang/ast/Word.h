@@ -33,5 +33,6 @@ using Word = std::variant<
 
 bool holds_word(const ProgramWord&);
 Word get_word(const ProgramWord&);
+// ProgramWord deepcopy(const ProgramWord&); // TODO: should we add this ?
 
 #endif // AST_WORD_H
