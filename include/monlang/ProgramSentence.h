@@ -20,10 +20,4 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
 
 #define INDENT_SEQUENCE() (indentLevel * ProgramSentence::TAB_SEQUENCE)
 
-template <>
-ProgramSentence unwrap(const MayFail_<ProgramSentence>&);
-
-template <>
-MayFail_<ProgramSentence> wrap(const ProgramSentence&);
-
 #endif // PROGRAM_SENTENCE_H

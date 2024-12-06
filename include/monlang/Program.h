@@ -19,10 +19,4 @@ struct MayFail_<Program> {
 
 MayFail<MayFail_<Program>> consumeProgram(std::istringstream&);
 
-template <>
-Program unwrap(const MayFail_<Program>&);
-
-template <>
-MayFail_<Program> wrap(const Program&);
-
 #endif // PROGRAM_H

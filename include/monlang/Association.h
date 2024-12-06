@@ -30,10 +30,4 @@ MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istring
     return assoc;
 }
 
-template <>
-Association unwrap(const MayFail_<Association>&);
-
-template <>
-MayFail_<Association> wrap(const Association&);
-
 #endif // ASSOCIATION_H

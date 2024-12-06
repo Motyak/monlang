@@ -19,10 +19,4 @@ struct MayFail_<SquareBracketsTerm> {
 
 MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstream&);
 
-template <>
-SquareBracketsTerm unwrap(const MayFail_<SquareBracketsTerm>&);
-
-template <>
-MayFail_<SquareBracketsTerm> wrap(const SquareBracketsTerm&);
-
 #endif // SQUARE_BRACKETS_TERM_H

@@ -45,10 +45,4 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
     ));
 }
 
-template <>
-PostfixParenthesesGroup unwrap(const MayFail_<PostfixParenthesesGroup>&);
-
-template <>
-MayFail_<PostfixParenthesesGroup> wrap(const PostfixParenthesesGroup&);
-
 #endif // POSTFIX_PARENTHESES_GROUP_H

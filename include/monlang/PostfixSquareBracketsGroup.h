@@ -45,10 +45,4 @@ consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstr
     ));
 }
 
-template <>
-PostfixSquareBracketsGroup unwrap(const MayFail_<PostfixSquareBracketsGroup>&);
-
-template <>
-MayFail_<PostfixSquareBracketsGroup> wrap(const PostfixSquareBracketsGroup&);
-
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H

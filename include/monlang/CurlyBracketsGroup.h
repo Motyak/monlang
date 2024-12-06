@@ -38,10 +38,4 @@ using consumeCurlyBracketsGroup_RetType = std::variant<
 >;
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
 
-template <>
-CurlyBracketsGroup unwrap(const MayFail_<CurlyBracketsGroup>&);
-
-template <>
-MayFail_<CurlyBracketsGroup> wrap(const CurlyBracketsGroup&);
-
 #endif // CURLY_BRACKETS_GROUP_H

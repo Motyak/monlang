@@ -111,19 +111,11 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
 
 ///////////////////////////////////////////////////////////
 
-template <>
-ParenthesesGroup unwrap(const MayFail_<ParenthesesGroup>& pg) {
-    return (ParenthesesGroup)pg;
-}
-
-template <>
-MayFail_<ParenthesesGroup> wrap(const ParenthesesGroup& pg) {
-    return MayFail_<ParenthesesGroup>{vec_cast<MayFail<MayFail_<Term>>>(pg.terms)};
-}
-
 MayFail_<ParenthesesGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) : MayFail_(wrap(pg)){}
+MayFail_<ParenthesesGroup>::MayFail_(ParenthesesGroup pg) {
+    this->terms = vec_cast<MayFail<MayFail_<Term>>>(pg.terms);
+}
 
 MayFail_<ParenthesesGroup>::operator ParenthesesGroup() const {
     return ParenthesesGroup{vec_cast<Term>(terms)};

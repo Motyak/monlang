@@ -26,10 +26,4 @@ using consumeSquareBracketsGroup_RetType = std::variant<
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
 
-template <>
-SquareBracketsGroup unwrap(const MayFail_<SquareBracketsGroup>&);
-
-template <>
-MayFail_<SquareBracketsGroup> wrap(const SquareBracketsGroup&);
-
 #endif // SQUARE_BRACKETS_GROUP_H

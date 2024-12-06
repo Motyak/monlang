@@ -100,19 +100,11 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 
 ///////////////////////////////////////////////////////////
 
-template <>
-SquareBracketsGroup unwrap(const MayFail_<SquareBracketsGroup>& sbg) {
-    return (SquareBracketsGroup)sbg;
-}
-
-template <>
-MayFail_<SquareBracketsGroup> wrap(const SquareBracketsGroup& sbg) {
-    return MayFail_<SquareBracketsGroup>{vec_cast<MayFail<MayFail_<Term>>>(sbg.terms)};
-}
-
 MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 
-MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) : MayFail_(wrap(sbg)){}
+MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) {
+    this->terms = vec_cast<MayFail<MayFail_<Term>>>(sbg.terms);
+}
 
 MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
     return SquareBracketsGroup{vec_cast<Term>(terms)};

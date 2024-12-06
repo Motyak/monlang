@@ -28,10 +28,4 @@ using consumeParenthesesGroup_RetType = std::variant<
 >;
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 
-template <>
-ParenthesesGroup unwrap(const MayFail_<ParenthesesGroup>&);
-
-template <>
-MayFail_<ParenthesesGroup> wrap(const ParenthesesGroup&);
-
 #endif // PARENTHESES_GROUP_H

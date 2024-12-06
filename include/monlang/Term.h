@@ -25,10 +25,4 @@ MayFail<MayFail_<Term>> consumeTerm(const Sequence& terminatorSequence, std::ist
 // (no terminator at all)
 MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input);
 
-template <>
-Term unwrap(const MayFail_<Term>&);
-
-template <>
-MayFail_<Term> wrap(const Term&);
-
 #endif // TERM_H
