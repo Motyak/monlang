@@ -144,4 +144,10 @@ class _TRACE_CUR_FUNC {
 #define TRACE_CUR_FUN() \
     auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
 
+#define RECORD_INPUT_STREAM_PROGRESS() \
+    auto ___initial_input_pos = size_t(input.tellg())
+
+#define GET_INPUT_STREAM_PROGRESS() \
+    (size_t(input.tellg()) - ___initial_input_pos)
+
 #endif // COMMON_H

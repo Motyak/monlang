@@ -21,6 +21,7 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
 
 MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
+    RECORD_INPUT_STREAM_PROGRESS();
     static thread_local int indentLevel = 0;
     auto indentedTerminatorSeq = vec_concat({INDENT_SEQUENCE(), CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
@@ -30,7 +31,9 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
 
     if (peekSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(CurlyBracketsGroup::TERMINATOR_SEQUENCE));
-        return MayFail_<CurlyBracketsGroup>{};
+        auto empty_cbg = MayFail_<CurlyBracketsGroup>{};
+        empty_cbg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+        return empty_cbg;
     }
 
     /* handle single term expression */
@@ -45,7 +48,9 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
         if (!consumeSequence(CurlyBracketsGroup::TERMINATOR_SEQUENCE, input)) {
             return Malformed<MayFail_<CurlyBracketsGroup>>(MayFail_<CurlyBracketsTerm>(term), ERR(510));
         }
-        return MayFail_<CurlyBracketsTerm>(term);
+        auto cbt = MayFail_<CurlyBracketsTerm>(term);
+        cbt._tokenLen = GET_INPUT_STREAM_PROGRESS();
+        return cbt;
     }
 
     input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
@@ -60,11 +65,15 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
     MayFail<MayFail_<ProgramSentence>> currentSentence;
 
+    auto newlines = size_t(0);
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
         if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
+            newlines += currentSentence.value()._tokenLen;
             continue; // ignore empty sentences
         }
+        currentSentence.val._leadingNewlines = newlines;
+        newlines = 0;
         sentences.push_back(currentSentence);
         if (currentSentence.has_error()) {
             return Malformed(MayFail_<CurlyBracketsGroup>{sentences}, ERR(419));
@@ -79,7 +88,12 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
         return Malformed(MayFail_<CurlyBracketsGroup>{}, ERR(413));
     }
 
-    return MayFail_<CurlyBracketsGroup>{sentences};
+    // add trailing newlines to the latest sentence
+    sentences.back().val._trailingNewlines = newlines;
+
+    auto cbg = MayFail_<CurlyBracketsGroup>{sentences};
+    cbg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return cbg;
 }
 
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& input) {
@@ -155,16 +169,18 @@ MayFail_<CurlyBracketsGroup>::MayFail_(CurlyBracketsGroup cbg) {
     if (cbg.term.has_value()) {
         this->term = wrap(*cbg.term);
     }
+    this->_tokenLen = cbg._tokenLen;
 }
 
 MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
     CurlyBracketsGroup res;
-    for (auto e: this->sentences) {
+    for (auto e: sentences) {
         res.sentences.push_back(unwrap(e.value()));
     }
     if (term.has_value()) {
         res.term = unwrap(term->value());
     }
+    res._tokenLen = _tokenLen;
     return res;
 }
 

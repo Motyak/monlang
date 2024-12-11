@@ -11,6 +11,7 @@
 
 MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     TRACE_CUR_FUN();
+    RECORD_INPUT_STREAM_PROGRESS();
 
     if (input.peek() == EOF) {
         return Malformed(Atom{}, ERR(995));
@@ -29,7 +30,9 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
         return Malformed(Atom{}, ERR(992));
     }
 
-    return Atom{value};
+    auto atom = Atom{value};
+    atom._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return atom;
 }
 
 consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::istringstream& input) {
@@ -89,3 +92,5 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
         [](auto postfix) -> consumeAtom_RetType {return move_to_heap(wrap(*postfix));},
     }, accumulatedPostfixLeftPart);
 }
+
+Atom::Atom(std::string value) : value(value){}

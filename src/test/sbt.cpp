@@ -74,6 +74,27 @@ TEST_CASE ("ERR missing sbt initiator", "[test-5214][sbt][err]") {
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("ERR empty sbt (single space)", "[test-5236][sbt][err]") {
+    auto input = tommy_str(R"EOF(
+        [\s]
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> SquareBracketsTerm
+       |  ~> Term
+       |    ~> Word: Atom: ``
+       |      ~> ERR-992
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeSquareBracketsTerm(input_iss);
+    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("ERR empty sbt", "[test-5216][sbt][err]") {
     auto input = tommy_str(R"EOF(
         [\s\s]

@@ -5,6 +5,10 @@
 
 struct Atom {
     std::string value;
+
+    size_t _tokenLen = 0;
+    Atom() = default;
+    Atom(std::string);
 };
 
 #endif // AST_ATOM_H

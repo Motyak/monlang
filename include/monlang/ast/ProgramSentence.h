@@ -11,6 +11,12 @@ struct ProgramSentence {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<ProgramWord> programWords;
+
+    size_t _leadingNewlines = 0;
+    size_t _tokenLen = 0;
+    size_t _trailingNewlines = 0;
+    ProgramSentence() = default;
+    ProgramSentence(std::vector<ProgramWord>);
 };
 
 #endif // AST_PROGRAM_SENTENCE_H

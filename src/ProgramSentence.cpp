@@ -18,6 +18,7 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
 };
 
 MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input, int indentLevel) {
+    RECORD_INPUT_STREAM_PROGRESS();
     TRACE_CUR_FUN();
 
     if (input.peek() == EOF) {
@@ -27,17 +28,13 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
     // empty sentences are valid, just discarded by the Program
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-        return MayFail_<ProgramSentence>{};
+        auto empty_sentence = MayFail_<ProgramSentence>{};
+        empty_sentence._leadingNewlines = GET_INPUT_STREAM_PROGRESS();
+        return empty_sentence;
     }
 
     if (indentLevel > 0 && !consumeSequence(INDENT_SEQUENCE(), input)) {
         return Malformed(MayFail_<ProgramSentence>{}, ERR(123));
-    }
-
-    // indented empty sentences are valid, just discarded by the Program
-    if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-        return MayFail_<ProgramSentence>{};
     }
 
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
@@ -71,15 +68,14 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
         return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(120));
     }
 
-    // eat and discard trailing newlines as well
-    while (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-    }
-
-    return MayFail_<ProgramSentence>{programWords};
+    auto sentence = MayFail_<ProgramSentence>{programWords};
+    sentence._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return sentence;
 }
 
 ///////////////////////////////////////////////////////////
+
+ProgramSentence::ProgramSentence(std::vector<ProgramWord> programWords) : programWords(programWords){}
 
 MayFail_<ProgramSentence>::MayFail_(std::vector<MayFail<ProgramWord_>> programWords) : programWords(programWords){}
 

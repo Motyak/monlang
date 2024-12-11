@@ -24,6 +24,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
 
 MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
+    RECORD_INPUT_STREAM_PROGRESS();
     std::vector<char> terminatorCharacters = {
         sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
     };
@@ -38,7 +39,9 @@ MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istring
 
     if (peekSequence(ParenthesesGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ParenthesesGroup::TERMINATOR_SEQUENCE));
-        return MayFail_<ParenthesesGroup>{};
+        auto empty_pg = MayFail_<ParenthesesGroup>{};
+        empty_pg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+        return empty_pg;
     }
 
     std::vector<MayFail<MayFail_<Term>>> terms;
@@ -64,7 +67,9 @@ MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istring
         return Malformed(MayFail_<ParenthesesGroup>{terms}, ERR(420));
     }
 
-    return MayFail_<ParenthesesGroup>{terms};
+    auto pg = MayFail_<ParenthesesGroup>{terms};
+    pg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return pg;
 }
 
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
@@ -110,6 +115,8 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
 }
 
 ///////////////////////////////////////////////////////////
+
+ParenthesesGroup::ParenthesesGroup(std::vector<Term> terms) : terms(terms){}
 
 MayFail_<ParenthesesGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 

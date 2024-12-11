@@ -10,19 +10,25 @@ MayFail<MayFail_<Program>> consumeProgram(std::istringstream& input) {
     std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
     MayFail<MayFail_<ProgramSentence>> currentSentence;
 
+    auto newlines = size_t(0);
     while (input.peek() != EOF) {
         currentSentence = consumeProgramSentence(input);
 
         if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
+            newlines += currentSentence.value()._tokenLen;
             continue; // ignore empty sentences
         }
 
+        currentSentence.val._leadingNewlines = newlines;
+        newlines = 0;
         sentences.push_back(currentSentence);
 
         if (currentSentence.has_error()) {
             return Malformed(MayFail_<Program>{sentences}, ERR(119));
         }
     }
+
+    // we don't care about trailing newlines in Program, only in CurlyBracketsGroup
 
     return MayFail_<Program>{sentences};
 }

@@ -10,6 +10,10 @@ struct ParenthesesGroup {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Term> terms;
+
+    size_t _tokenLen = 0;
+    ParenthesesGroup() = default;
+    ParenthesesGroup(std::vector<Term>);
 };
 
 #endif // AST_PARENTHESES_GROUP_H
