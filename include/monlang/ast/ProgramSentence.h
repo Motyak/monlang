@@ -16,7 +16,7 @@ struct ProgramSentence {
     size_t _tokenLen = 0;
     size_t _trailingNewlines = 0;
     ProgramSentence() = default;
-    ProgramSentence(std::vector<ProgramWord>);
+    ProgramSentence(const std::vector<ProgramWord>&);
 };
 
 #endif // AST_PROGRAM_SENTENCE_H

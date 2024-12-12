@@ -16,9 +16,9 @@ struct MayFail_<PostfixSquareBracketsGroup> {
     MayFail<MayFail_<SquareBracketsGroup>> rightPart;
 
     size_t _tokenLen = 0;
-    explicit MayFail_(Word, MayFail<MayFail_<SquareBracketsGroup>>);
+    explicit MayFail_(const Word&, const MayFail<MayFail_<SquareBracketsGroup>>&);
 
-    explicit MayFail_(PostfixSquareBracketsGroup);
+    explicit MayFail_(const PostfixSquareBracketsGroup&);
     explicit operator PostfixSquareBracketsGroup() const;
 };
 

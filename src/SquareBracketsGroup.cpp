@@ -105,14 +105,17 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 
 ///////////////////////////////////////////////////////////
 
-SquareBracketsGroup::SquareBracketsGroup(std::vector<Term> terms) : terms(terms){}
+SquareBracketsGroup::SquareBracketsGroup(const std::vector<Term>& terms) : terms(terms){}
 
-MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
+MayFail_<SquareBracketsGroup>::MayFail_(const std::vector<MayFail<MayFail_<Term>>>& terms) : terms(terms){}
 
-MayFail_<SquareBracketsGroup>::MayFail_(SquareBracketsGroup sbg) {
+MayFail_<SquareBracketsGroup>::MayFail_(const SquareBracketsGroup& sbg) {
     this->terms = vec_cast<MayFail<MayFail_<Term>>>(sbg.terms);
+    this->_tokenLen = sbg._tokenLen;
 }
 
 MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
-    return SquareBracketsGroup{vec_cast<Term>(terms)};
+    auto sbg = SquareBracketsGroup{vec_cast<Term>(terms)};
+    sbg._tokenLen = this->_tokenLen;
+    return sbg;
 }

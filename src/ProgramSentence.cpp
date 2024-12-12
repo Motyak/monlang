@@ -75,22 +75,29 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
 
 ///////////////////////////////////////////////////////////
 
-ProgramSentence::ProgramSentence(std::vector<ProgramWord> programWords) : programWords(programWords){}
+ProgramSentence::ProgramSentence(const std::vector<ProgramWord>& programWords) : programWords(programWords){}
 
-MayFail_<ProgramSentence>::MayFail_(std::vector<MayFail<ProgramWord_>> programWords) : programWords(programWords){}
+MayFail_<ProgramSentence>::MayFail_(const std::vector<MayFail<ProgramWord_>>& programWords) : programWords(programWords){}
 
-MayFail_<ProgramSentence>::MayFail_(ProgramSentence sentence) {
+MayFail_<ProgramSentence>::MayFail_(const ProgramSentence& sentence) {
     std::vector<MayFail<ProgramWord_>> programWords;
     for (auto e: sentence.programWords) {
         programWords.push_back(wrap_pw(e));
     }
     this->programWords = programWords;
+    this->_leadingNewlines = sentence._leadingNewlines;
+    this->_tokenLen = sentence._tokenLen;
+    this->_trailingNewlines = sentence._trailingNewlines;
 }
 
 MayFail_<ProgramSentence>::operator ProgramSentence() const {
-    std::vector<ProgramWord> res;
-    for (auto e: programWords) {
-        res.push_back(unwrap_pw(e.value()));
+    std::vector<ProgramWord> programWords;
+    for (auto e: this->programWords) {
+        programWords.push_back(unwrap_pw(e.value()));
     }
-    return ProgramSentence{res};
+    auto sentence = ProgramSentence{programWords};
+    sentence._leadingNewlines = this->_leadingNewlines;
+    sentence._tokenLen = this->_tokenLen;
+    sentence._trailingNewlines = this->_trailingNewlines;
+    return sentence;
 }

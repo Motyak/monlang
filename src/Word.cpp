@@ -95,28 +95,28 @@ Word get_word(const ProgramWord& pw) {
     ..Postfixes/Assoc interfaces, but their impl as well
 */
 
-ProgramWord unwrap_pw(ProgramWord_ pw_) {
+ProgramWord unwrap_pw(const ProgramWord_& pw_) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord {return atom;},
         [](auto pw_) -> ProgramWord {return move_to_heap(unwrap(*pw_));}
     }, pw_);
 }
 
-Word unwrap_w(Word_ word_) {
+Word unwrap_w(const Word_& word_) {
     return std::visit(overload{
         [](Atom* atom) -> Word {return atom;},
         [](auto word_) -> Word {return move_to_heap(unwrap(*word_));}
     }, word_);
 }
 
-ProgramWord_ wrap_pw(ProgramWord pw) {
+ProgramWord_ wrap_pw(const ProgramWord& pw) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord_ {return atom;},
         [](auto pw) -> ProgramWord_ {return move_to_heap(wrap(*pw));}
     }, pw);
 }
 
-Word_ wrap_w(Word word) {
+Word_ wrap_w(const Word& word) {
     return std::visit(overload{
         [](Atom* atom) -> Word_ {return atom;},
         [](auto word) -> Word_ {return move_to_heap(wrap(*word));}
@@ -124,11 +124,11 @@ Word_ wrap_w(Word word) {
 }
 
 template <>
-MayFail<ProgramWord_> mayfail_cast<ProgramWord_>(MayFail<Word_> inputMayfail) {
+MayFail<ProgramWord_> mayfail_cast<ProgramWord_>(const MayFail<Word_>& inputMayfail) {
     return MayFail((ProgramWord_)variant_cast(inputMayfail.val), inputMayfail.err);
 }
 
-static Word_ pw2w(ProgramWord_ pw) {
+static Word_ pw2w(const ProgramWord_& pw) {
     return std::visit(overload{
         [](MayFail_<SquareBracketsTerm>*) -> Word_ {SHOULD_NOT_HAPPEN();},
         [](auto word) -> Word_ {return word;},
@@ -136,6 +136,6 @@ static Word_ pw2w(ProgramWord_ pw) {
 }
 
 template <>
-MayFail<Word_> mayfail_cast<Word_>(MayFail<ProgramWord_> inputMayfail) {
+MayFail<Word_> mayfail_cast<Word_>(const MayFail<ProgramWord_>& inputMayfail) {
     return MayFail(pw2w(inputMayfail.val), inputMayfail.err);
 }

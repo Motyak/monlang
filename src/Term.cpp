@@ -69,22 +69,25 @@ MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input) {
 
 ///////////////////////////////////////////////////////////
 
-Term::Term(std::vector<Word> words) : words(words){}
+Term::Term(const std::vector<Word>& words) : words(words){}
 
-MayFail_<Term>::MayFail_(std::vector<MayFail<Word_>> words) : words(words){}
+MayFail_<Term>::MayFail_(const std::vector<MayFail<Word_>>& words) : words(words){}
 
-MayFail_<Term>::MayFail_(Term term) {
+MayFail_<Term>::MayFail_(const Term& term) {
     std::vector<MayFail<Word_>> res;
     for (auto e: term.words) {
         res.push_back(wrap_w(e));
     }
     this->words = res;
+    this->_tokenLen = term._tokenLen;
 }
 
 MayFail_<Term>::operator Term() const {
-    std::vector<Word> res;
-    for (auto e: words) {
-        res.push_back(unwrap_w(e.value()));
+    std::vector<Word> words;
+    for (auto e: this->words) {
+        words.push_back(unwrap_w(e.value()));
     }
-    return Term{res};
+    auto term = Term{words};
+    term._tokenLen = this->_tokenLen;
+    return term;
 }

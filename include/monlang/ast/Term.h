@@ -12,7 +12,7 @@ struct Term {
 
     size_t _tokenLen = 0;
     Term() = default;
-    Term(std::vector<Word>);
+    Term(const std::vector<Word>&);
 };
 
 #endif // AST_TERM_H

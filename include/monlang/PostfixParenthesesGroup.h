@@ -16,9 +16,9 @@ struct MayFail_<PostfixParenthesesGroup> {
     MayFail<MayFail_<ParenthesesGroup>> rightPart;
 
     size_t _tokenLen = 0;
-    explicit MayFail_(Word, MayFail<MayFail_<ParenthesesGroup>>);
+    explicit MayFail_(const Word&, const MayFail<MayFail_<ParenthesesGroup>>&);
 
-    explicit MayFail_(PostfixParenthesesGroup);
+    explicit MayFail_(const PostfixParenthesesGroup&);
     explicit operator PostfixParenthesesGroup() const;
 };
 

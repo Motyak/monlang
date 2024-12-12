@@ -22,7 +22,7 @@ struct CharacterAppearance {
 
 using Sequence = std::vector<CharacterAppearance>;
 
-Sequence operator *(int ntimes, Sequence);
-std::ostream& operator<<(std::ostream&, Sequence);
+Sequence operator *(int ntimes, const Sequence&);
+std::ostream& operator<<(std::ostream&, const Sequence&);
 
 #endif // AST_COMMON_H

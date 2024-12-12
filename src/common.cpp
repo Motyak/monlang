@@ -10,7 +10,7 @@ Error::operator int() const {
     return this->code;
 }
 
-std::ostream& operator<<(std::ostream& os, Error err) {
+std::ostream& operator<<(std::ostream& os, const Error& err) {
     return os << err.fmt;
 }
 
@@ -33,7 +33,7 @@ CharacterAppearance::CharacterAppearance(char c, Quantifier ntimes) : c(c), ntim
     ;
 }
 
-Sequence operator *(int ntimes, Sequence seq) {
+Sequence operator *(int ntimes, const Sequence& seq) {
     ASSERT(ntimes >= 0);
     Sequence res;
     for (int i = 1; i <= ntimes; ++i) {
@@ -44,7 +44,7 @@ Sequence operator *(int ntimes, Sequence seq) {
     return res;
 }
 
-std::ostream& operator<<(std::ostream& out, Sequence seq) {
+std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
     for (auto charAppearance: seq) {
         for (int i = 1; i <= charAppearance.ntimes; ++i) {
             out << charAppearance.c;
@@ -147,7 +147,7 @@ bool peekAnySeq(const std::vector<Sequence>& seqs, std::istringstream& input) {
 
 thread_local int _TRACE_CUR_FUNC::depth = 0;
 
-_TRACE_CUR_FUNC::_TRACE_CUR_FUNC(std::string funcName, std::istringstream& input) : funcName(funcName), input(input) {
+_TRACE_CUR_FUNC::_TRACE_CUR_FUNC(const std::string& funcName, std::istringstream& input) : funcName(funcName), input(input) {
 #ifdef TRACE
     for (int i = 1; i <= depth - 1; ++i) {
         std::cerr << "│   ";

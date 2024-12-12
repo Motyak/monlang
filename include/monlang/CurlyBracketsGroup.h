@@ -14,20 +14,20 @@ struct MayFail_<CurlyBracketsGroup> : public MayFail_<Program> {
 
     size_t _tokenLen = 0;
     MayFail_() = default;
-    explicit MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>);
+    explicit MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>&);
 
-    explicit MayFail_(CurlyBracketsGroup);
+    explicit MayFail_(const CurlyBracketsGroup&);
     explicit operator CurlyBracketsGroup() const;
 
   protected:
-    MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>>, std::optional<MayFail<MayFail_<Term>>>);
+    MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>&, const std::optional<MayFail<MayFail_<Term>>>&);
 };
 using Subprogram_ = MayFail_<CurlyBracketsGroup>;
 
 template <>
 struct MayFail_<CurlyBracketsTerm> : public MayFail_<CurlyBracketsGroup> {
-    MayFail_(MayFail<MayFail_<Term>> term);
-    explicit MayFail_(CurlyBracketsTerm);
+    MayFail_(const MayFail<MayFail_<Term>>&);
+    explicit MayFail_(const CurlyBracketsTerm&);
 };
 
 MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream&);

@@ -35,9 +35,9 @@ MayFail<MayFail_<Program>> consumeProgram(std::istringstream& input) {
 
 ///////////////////////////////////////////////////////////
 
-MayFail_<Program>::MayFail_(std::vector<MayFail<MayFail_<ProgramSentence>>> sentences) : sentences(sentences){}
+MayFail_<Program>::MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>& sentences) : sentences(sentences){}
 
-MayFail_<Program>::MayFail_(Program prog) {
+MayFail_<Program>::MayFail_(const Program& prog) {
     this->sentences = vec_cast<MayFail<MayFail_<ProgramSentence>>>(prog.sentences);
 }
 

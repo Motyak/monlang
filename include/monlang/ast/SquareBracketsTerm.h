@@ -11,7 +11,7 @@ struct SquareBracketsTerm {
 
     size_t _tokenLen = 0;
     SquareBracketsTerm() = default;
-    SquareBracketsTerm(Term);
+    SquareBracketsTerm(const Term&);
 };
 
 #endif // AST_SQUARE_BRACKETS_TERM_H

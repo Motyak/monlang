@@ -30,15 +30,15 @@ MayFail<Word_> consumeWord(std::istringstream&);
 
 ///////////////////////////////////////////////////////////
 
-ProgramWord unwrap_pw(ProgramWord_);
-ProgramWord_ wrap_pw(ProgramWord);
-Word unwrap_w(Word_);
-Word_ wrap_w(Word);
+ProgramWord unwrap_pw(const ProgramWord_&);
+ProgramWord_ wrap_pw(const ProgramWord&);
+Word unwrap_w(const Word_&);
+Word_ wrap_w(const Word&);
 
 template <>
-MayFail<ProgramWord_> mayfail_cast<ProgramWord_>(MayFail<Word_> inputMayfail);
+MayFail<ProgramWord_> mayfail_cast<ProgramWord_>(const MayFail<Word_>& inputMayfail);
 
 template <>
-MayFail<Word_> mayfail_cast<Word_>(MayFail<ProgramWord_> inputMayfail);
+MayFail<Word_> mayfail_cast<Word_>(const MayFail<ProgramWord_>& inputMayfail);
 
 #endif // WORD_H

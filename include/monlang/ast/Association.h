@@ -23,7 +23,7 @@ struct Association {
 
     size_t _tokenLen = 0;
     Association() = default;
-    Association(AssociationLeftPart, Word);
+    Association(const AssociationLeftPart&, const Word&);
 };
 
 #endif // AST_ASSOCIATION_H

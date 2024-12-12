@@ -24,7 +24,7 @@ struct Error {
 };
 #define ERR(x) Error{atoi(#x), "ERR-"#x}
 
-std::ostream& operator<<(std::ostream&, Error);
+std::ostream& operator<<(std::ostream&, const Error&);
 
 template <typename T>
 struct MayFail;
@@ -32,8 +32,8 @@ struct MayFail;
 template <>
 class MayFail<void> {
   public:
-    MayFail(Error err) : err(err){} // convenient inside functions returning MayFail<void>
-    MayFail(std::optional<Error> err) : err(err){}
+    MayFail(const Error& err) : err(err){} // convenient inside functions returning MayFail<void>
+    MayFail(const std::optional<Error>& err) : err(err){}
 
     bool has_error() const {return !!err;}
     Error error() const {return err.value();} // throws if no err
@@ -49,8 +49,8 @@ template <typename T>
 class MayFail : public MayFail<void> {
   public:
     MayFail() : MayFail<void>(std::nullopt){}
-    MayFail(T val) : MayFail<void>(std::nullopt), val(val){}
-    explicit MayFail(T val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
+    MayFail(const T& val) : MayFail<void>(std::nullopt), val(val){}
+    explicit MayFail(const T& val, const std::optional<Error>& err) : MayFail<void>(err), val(val){} // keep it explicit
 
     T value() const {
         ASSERT (!err);
@@ -62,7 +62,7 @@ class MayFail : public MayFail<void> {
 };
 
 template <typename T>
-MayFail<T> Malformed(T val, Error err) {
+MayFail<T> Malformed(const T& val, const Error& err) {
     return MayFail(val, err);
 }
 
@@ -73,9 +73,9 @@ template <typename T>
 class MayFail<MayFail_<T>> : public MayFail<void> {
   public:
     MayFail() : MayFail<void>(std::nullopt){}
-    MayFail(MayFail_<T> val) : MayFail<void>(std::nullopt), val(val){}
-    explicit MayFail(T val) : MayFail<void>(std::nullopt), val(MayFail_<T>(val)){} // keep it explicit
-    explicit MayFail(MayFail_<T> val, std::optional<Error> err) : MayFail<void>(err), val(val){} // keep it explicit
+    MayFail(const MayFail_<T>& val) : MayFail<void>(std::nullopt), val(val){}
+    explicit MayFail(const T& val) : MayFail<void>(std::nullopt), val(MayFail_<T>(val)){} // keep it explicit
+    explicit MayFail(const MayFail_<T>& val, const std::optional<Error>& err) : MayFail<void>(err), val(val){} // keep it explicit
 
     MayFail_<T> value() const {
         ASSERT (!err);
@@ -98,7 +98,7 @@ MayFail_<T> wrap(const T& t) {
 }
 
 template <typename R, typename T>
-MayFail<R> mayfail_cast(MayFail<T> inputMayfail) {
+MayFail<R> mayfail_cast(const MayFail<T>& inputMayfail) {
     return MayFail(R(inputMayfail.val), inputMayfail.err);
 }
 
@@ -113,7 +113,7 @@ MayFail<R> mayfail_cast(const std::variant<Targs...>& inputMayfailVariant) {
 }
 
 template <typename R, typename T>
-MayFail<R> mayfail_convert(MayFail<T> inputMayfail) {
+MayFail<R> mayfail_convert(const MayFail<T>& inputMayfail) {
     return MayFail(R(move_to_heap(inputMayfail.val)), inputMayfail.err);
 }
 
@@ -137,7 +137,7 @@ class _TRACE_CUR_FUNC {
     rdonly std::istringstream& input; // tracked variable
 
   public:
-    _TRACE_CUR_FUNC(std::string funcName, std::istringstream& input);
+    _TRACE_CUR_FUNC(const std::string& funcName, std::istringstream& input);
     ~_TRACE_CUR_FUNC();
 };
 
@@ -166,7 +166,7 @@ size_t token_len(const std::variant<Targs...>& entityVariant) {
 }
 
 template <typename T>
-size_t token_len(T entity) {
+size_t token_len(const T& entity) {
     return entity._tokenLen;
 }
 

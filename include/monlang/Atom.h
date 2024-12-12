@@ -17,6 +17,6 @@ using consumeAtom_RetType = std::variant<
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>,
     MayFail<MayFail_<Association>*>
 >;
-consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::istringstream& input);
+consumeAtom_RetType consumeAtom(/*copy*/ std::vector<char> terminatorCharacters, std::istringstream& input);
 
 #endif // ATOM_H

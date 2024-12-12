@@ -93,4 +93,4 @@ consumeAtom_RetType consumeAtom(std::vector<char> terminatorCharacters, std::ist
     }, accumulatedPostfixLeftPart);
 }
 
-Atom::Atom(std::string value) : value(value){}
+Atom::Atom(const std::string& value) : value(value){}

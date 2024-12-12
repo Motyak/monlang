@@ -11,14 +11,14 @@ struct MayFail_<Association> {
     MayFail<Word_> rightPart;
 
     size_t _tokenLen = 0;
-    explicit MayFail_(AssociationLeftPart, MayFail<Word_>);
+    explicit MayFail_(const AssociationLeftPart&, const MayFail<Word_>&);
 
-    explicit MayFail_(Association);
+    explicit MayFail_(const Association&);
     explicit operator Association() const;
 };
 
 template <typename T>
-MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istringstream& input) {
+MayFail<MayFail_<Association>*> consumeAssociation(const T& assocLeftPart, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE));
     auto whats_right_behind = consumeWord(input);

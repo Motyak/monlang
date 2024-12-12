@@ -33,14 +33,17 @@ MayFail<MayFail_<SquareBracketsTerm>> consumeSquareBracketsTerm(std::istringstre
 
 ///////////////////////////////////////////////////////////
 
-SquareBracketsTerm::SquareBracketsTerm(Term term) : term(term){}
+SquareBracketsTerm::SquareBracketsTerm(const Term& term) : term(term){}
 
-MayFail_<SquareBracketsTerm>::MayFail_(MayFail<MayFail_<Term>> term) : term(term){}
+MayFail_<SquareBracketsTerm>::MayFail_(const MayFail<MayFail_<Term>>& term) : term(term){}
 
-MayFail_<SquareBracketsTerm>::MayFail_(SquareBracketsTerm sbt) {
+MayFail_<SquareBracketsTerm>::MayFail_(const SquareBracketsTerm& sbt) {
     this->term = MayFail_<Term>(sbt.term);
+    this->_tokenLen = sbt._tokenLen;
 }
 
 MayFail_<SquareBracketsTerm>::operator SquareBracketsTerm() const {
-    return SquareBracketsTerm{(Term)term.value()};
+    auto sbt = SquareBracketsTerm{(Term)term.value()};
+    sbt._tokenLen = this->_tokenLen;
+    return sbt;
 }

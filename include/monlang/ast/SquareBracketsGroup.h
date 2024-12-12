@@ -13,7 +13,7 @@ struct SquareBracketsGroup {
 
     size_t _tokenLen = 0;
     SquareBracketsGroup() = default;
-    SquareBracketsGroup(std::vector<Term>);
+    SquareBracketsGroup(const std::vector<Term>&);
 };
 
 #endif // AST_SQUARE_BRACKETS_GROUP_H

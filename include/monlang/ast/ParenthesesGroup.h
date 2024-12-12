@@ -13,7 +13,7 @@ struct ParenthesesGroup {
 
     size_t _tokenLen = 0;
     ParenthesesGroup() = default;
-    ParenthesesGroup(std::vector<Term>);
+    ParenthesesGroup(const std::vector<Term>&);
 };
 
 #endif // AST_PARENTHESES_GROUP_H

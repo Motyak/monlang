@@ -12,9 +12,9 @@ struct MayFail_<Term> {
 
     size_t _tokenLen = 0;
     MayFail_() = default;
-    explicit MayFail_(std::vector<MayFail<Word_>>);
+    explicit MayFail_(const std::vector<MayFail<Word_>>&);
 
-    explicit MayFail_(Term);
+    explicit MayFail_(const Term&);
     explicit operator Term() const;
 };
 

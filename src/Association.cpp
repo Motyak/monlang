@@ -12,15 +12,18 @@ const std::vector<char> Association::RESERVED_CHARACTERS = {
 
 ///////////////////////////////////////////////////////////
 
-Association::Association(AssociationLeftPart leftPart, Word rightPart) : leftPart(leftPart), rightPart(rightPart){}
+Association::Association(const AssociationLeftPart& leftPart, const Word& rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<Association>::MayFail_(AssociationLeftPart leftPart, MayFail<Word_> rightPart) : leftPart(leftPart), rightPart(rightPart){}
+MayFail_<Association>::MayFail_(const AssociationLeftPart& leftPart, const MayFail<Word_>& rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<Association>::MayFail_(Association assoc) {
+MayFail_<Association>::MayFail_(const Association& assoc) {
     this->leftPart = assoc.leftPart;
     this->rightPart = wrap_w(assoc.rightPart);
+    this->_tokenLen = assoc._tokenLen;
 }
 
 MayFail_<Association>::operator Association() const {
-    return Association{leftPart, unwrap_w(rightPart.value())};
+    auto assoc = Association{leftPart, unwrap_w(rightPart.value())};
+    assoc._tokenLen = this->_tokenLen;
+    return assoc;
 }

@@ -13,9 +13,9 @@ struct MayFail_<SquareBracketsGroup> {
 
     size_t _tokenLen = 0;
     MayFail_() = default;
-    explicit MayFail_(std::vector<MayFail<MayFail_<Term>>>);
+    explicit MayFail_(const std::vector<MayFail<MayFail_<Term>>>&);
 
-    explicit MayFail_(SquareBracketsGroup);
+    explicit MayFail_(const SquareBracketsGroup&);
     explicit operator SquareBracketsGroup() const;
 };
 

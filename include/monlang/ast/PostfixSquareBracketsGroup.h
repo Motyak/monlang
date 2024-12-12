@@ -10,7 +10,7 @@ struct PostfixSquareBracketsGroup {
 
     size_t _tokenLen = 0;
     PostfixSquareBracketsGroup() = default;
-    PostfixSquareBracketsGroup(Word, SquareBracketsGroup);
+    PostfixSquareBracketsGroup(const Word&, const SquareBracketsGroup&);
 };
 
 #endif // AST_POSTFIX_SQUARE_BRACKETS_GROUP_H

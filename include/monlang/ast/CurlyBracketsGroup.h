@@ -17,15 +17,15 @@ struct CurlyBracketsGroup : public Program {
 
     size_t _tokenLen = 0;
     CurlyBracketsGroup() = default;
-    CurlyBracketsGroup(std::vector<ProgramSentence>);
+    CurlyBracketsGroup(const std::vector<ProgramSentence>&);
 
   protected:
-    CurlyBracketsGroup(std::vector<ProgramSentence>, std::optional<Term>);
+    CurlyBracketsGroup(const std::vector<ProgramSentence>&, const std::optional<Term>&);
 };
 using Subprogram = CurlyBracketsGroup;
 
 struct CurlyBracketsTerm : public CurlyBracketsGroup {
-    CurlyBracketsTerm(Term term);
+    CurlyBracketsTerm(const Term&);
 };
 
 #endif // AST_CURLY_BRACKETS_GROUP_H

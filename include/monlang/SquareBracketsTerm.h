@@ -12,9 +12,9 @@ struct MayFail_<SquareBracketsTerm> {
 
     size_t _tokenLen = 0;
     MayFail_() = default;
-    explicit MayFail_(MayFail<MayFail_<Term>>);
+    explicit MayFail_(const MayFail<MayFail_<Term>>&);
 
-    explicit MayFail_(SquareBracketsTerm);
+    explicit MayFail_(const SquareBracketsTerm&);
     explicit operator SquareBracketsTerm() const;
 };
 

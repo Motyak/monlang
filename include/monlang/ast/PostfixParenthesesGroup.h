@@ -10,7 +10,7 @@ struct PostfixParenthesesGroup {
 
     size_t _tokenLen = 0;
     PostfixParenthesesGroup() = default;
-    PostfixParenthesesGroup(Word, ParenthesesGroup);
+    PostfixParenthesesGroup(const Word&, const ParenthesesGroup&);
 };
 
 #endif // AST_POSTFIX_PARENTHESES_GROUP_H
