@@ -2,9 +2,9 @@
 shopt -s nullglob globstar
 set -o errexit -o pipefail
 
-## we expect at least one header file and one release obj file ##
+## we expect at least one header file and one obj file ##
 (shopt -s failglob; : include/monlang/**/*.h)
-(shopt -s failglob; : obj/release/**/*.o)
+(shopt -s failglob; : obj/*.o)
 
 exec 9> /tmp/monlang_trace.txt
 export BASH_XTRACEFD=9
@@ -13,8 +13,8 @@ set -o xtrace
 
 rm -rf dist/monlang-LV1; mkdir -p $_
 
-## package release objects (in background job) ##
-ar rcsvD dist/monlang-LV1.a obj/release/**/*.o & package_proc_id=$!
+## package objects (in background job) ##
+ar rcsvD dist/monlang-LV1.a obj/*.o & package_proc_id=$!
 
 ## copy public header files ##
 cp -r include/monlang/* -t dist/monlang-LV1/

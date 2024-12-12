@@ -13,4 +13,4 @@
 ## assoc ##
 %/Atom.o: assoc_macro := $(call buildmacros, DISABLE_ASSOC_IN_, $(DISABLE_ASSOCS), ATOM)
 
-macros = $(strip $(trace_macro) $(word_macros) $(postfix_macros) $(assoc_macro))
+macros := $(strip $(trace_macro) $(word_macros) $(postfix_macros) $(assoc_macro))
