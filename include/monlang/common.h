@@ -147,15 +147,10 @@ class _TRACE_CUR_FUNC {
 ////////////////////////////////////////////////////////////////
 
 #define RECORD_INPUT_STREAM_PROGRESS() \
-    auto ___initial_input_pos = size_t(input.tellg())
+    auto ___initial_input_pos = size_t(input.tellg() == -1? input.str().size() : (size_t)input.tellg())
 
 #define GET_INPUT_STREAM_PROGRESS() \
-    (size_t(input.tellg()) - ___initial_input_pos)
-
-
-
-// template <typename T>
-// size_t token_len(T entity);
+    (size_t(input.tellg() == -1? input.str().size() : (size_t)input.tellg()) - ___initial_input_pos)
 
 template <typename... Targs>
 size_t token_len(const std::variant<Targs...>& entityVariant) {
