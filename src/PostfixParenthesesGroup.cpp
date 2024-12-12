@@ -1,6 +1,8 @@
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/common.h>
 
+PostfixParenthesesGroup::PostfixParenthesesGroup(Word leftPart, ParenthesesGroup rightPart) : leftPart(leftPart), rightPart(rightPart){}
+
 MayFail_<PostfixParenthesesGroup>::MayFail_(Word leftPart, MayFail<MayFail_<ParenthesesGroup>> rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
 MayFail_<PostfixParenthesesGroup>::MayFail_(PostfixParenthesesGroup ppg) {

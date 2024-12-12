@@ -10,6 +10,7 @@ struct MayFail_<Association> {
     AssociationLeftPart leftPart; // never Malformed, by design
     MayFail<Word_> rightPart;
 
+    size_t _tokenLen = 0;
     explicit MayFail_(AssociationLeftPart, MayFail<Word_>);
 
     explicit MayFail_(Association);
@@ -18,6 +19,7 @@ struct MayFail_<Association> {
 
 template <typename T>
 MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istringstream& input) {
+    RECORD_INPUT_STREAM_PROGRESS();
     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE));
     auto whats_right_behind = consumeWord(input);
     auto assoc = move_to_heap(MayFail_<Association>{
@@ -27,6 +29,7 @@ MayFail<MayFail_<Association>*> consumeAssociation(T assocLeftPart, std::istring
     if (whats_right_behind.has_error()) {
         return Malformed(assoc, ERR(219));
     }
+    assoc->_tokenLen = token_len(assocLeftPart) + GET_INPUT_STREAM_PROGRESS();
     return assoc;
 }
 

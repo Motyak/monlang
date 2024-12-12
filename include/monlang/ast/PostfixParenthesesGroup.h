@@ -7,6 +7,10 @@
 struct PostfixParenthesesGroup {
     Word leftPart;
     ParenthesesGroup rightPart;
+
+    size_t _tokenLen = 0;
+    PostfixParenthesesGroup() = default;
+    PostfixParenthesesGroup(Word, ParenthesesGroup);
 };
 
 #endif // AST_POSTFIX_PARENTHESES_GROUP_H

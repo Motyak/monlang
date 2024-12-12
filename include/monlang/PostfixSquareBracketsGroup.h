@@ -15,6 +15,7 @@ struct MayFail_<PostfixSquareBracketsGroup> {
     Word leftPart; // never Malformed, by design
     MayFail<MayFail_<SquareBracketsGroup>> rightPart;
 
+    size_t _tokenLen = 0;
     explicit MayFail_(Word, MayFail<MayFail_<SquareBracketsGroup>>);
 
     explicit MayFail_(PostfixSquareBracketsGroup);
@@ -24,22 +25,24 @@ struct MayFail_<PostfixSquareBracketsGroup> {
 template <typename T>
 MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 consumePostfixSquareBracketsGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
-    auto left_word = variant_cast(*accumulatedPostfixLeftPart);
+    RECORD_INPUT_STREAM_PROGRESS();
+    auto left_word = (Word)variant_cast(*accumulatedPostfixLeftPart);
     auto whats_right_behind = consumeSquareBracketsGroupStrictly(input);
 
     if (whats_right_behind.has_error()) {
-        auto ppg = MayFail_<PostfixSquareBracketsGroup>{
+        auto psbg = MayFail_<PostfixSquareBracketsGroup>{
             left_word,
             whats_right_behind
         };
-        return Malformed(move_to_heap(ppg), ERR(319));
+        return Malformed(move_to_heap(psbg), ERR(319));
     }
 
-    auto ppg = PostfixSquareBracketsGroup{
+    auto psbg = PostfixSquareBracketsGroup{
         left_word,
         unwrap(whats_right_behind.value())
     };
-    *accumulatedPostfixLeftPart = move_to_heap(ppg);
+    psbg._tokenLen = token_len(*accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
+    *accumulatedPostfixLeftPart = move_to_heap(psbg);
     return move_to_heap(wrap(
         *std::get<PostfixSquareBracketsGroup*>(*accumulatedPostfixLeftPart)
     ));

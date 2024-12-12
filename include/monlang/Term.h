@@ -10,6 +10,7 @@ template <>
 struct MayFail_<Term> {
     std::vector<MayFail<Word_>> words;
 
+    size_t _tokenLen = 0;
     MayFail_() = default;
     explicit MayFail_(std::vector<MayFail<Word_>>);
 

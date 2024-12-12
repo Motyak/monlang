@@ -15,6 +15,7 @@ const std::vector<char> Term::RESERVED_CHARACTERS = {
 
 static MayFail<MayFail_<Term>> _consumeTerm(const std::vector<Sequence>& terminatorSequences, std::istringstream& input) {
     TRACE_CUR_FUN();
+    RECORD_INPUT_STREAM_PROGRESS();
 
     if (input.peek() == EOF) {
         return Malformed(MayFail_<Term>{}, ERR(135));
@@ -45,7 +46,9 @@ static MayFail<MayFail_<Term>> _consumeTerm(const std::vector<Sequence>& termina
     }
     until (input.peek() == EOF || peekAnySeq(terminatorSequences, input));
 
-    return MayFail_<Term>{words};
+    auto term = MayFail_<Term>{words};
+    term._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return term;
 }
 
 MayFail<MayFail_<Term>> consumeTerm(const std::vector<char>& terminatorCharacters, std::istringstream& input) {
@@ -65,6 +68,8 @@ MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input) {
 }
 
 ///////////////////////////////////////////////////////////
+
+Term::Term(std::vector<Word> words) : words(words){}
 
 MayFail_<Term>::MayFail_(std::vector<MayFail<Word_>> words) : words(words){}
 

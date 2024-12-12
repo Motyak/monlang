@@ -20,6 +20,10 @@ struct Association {
 
     AssociationLeftPart leftPart;
     Word rightPart;
+
+    size_t _tokenLen = 0;
+    Association() = default;
+    Association(AssociationLeftPart, Word);
 };
 
 #endif // AST_ASSOCIATION_H

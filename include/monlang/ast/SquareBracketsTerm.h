@@ -8,6 +8,10 @@ struct SquareBracketsTerm {
     static const Sequence TERMINATOR_SEQUENCE;
 
     Term term;
+
+    size_t _tokenLen = 0;
+    SquareBracketsTerm() = default;
+    SquareBracketsTerm(Term);
 };
 
 #endif // AST_SQUARE_BRACKETS_TERM_H

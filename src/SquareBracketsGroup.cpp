@@ -22,6 +22,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
 };
 
 MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
+    RECORD_INPUT_STREAM_PROGRESS();
     TRACE_CUR_FUN();
     const std::vector<char> terminatorCharacters = {
         sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
@@ -37,7 +38,9 @@ MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::i
 
     if (peekSequence(SquareBracketsGroup::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(SquareBracketsGroup::TERMINATOR_SEQUENCE));
-        return MayFail_<SquareBracketsGroup>{};
+        auto empty_sbg = MayFail_<SquareBracketsGroup>{};
+        empty_sbg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+        return empty_sbg;
     }
 
     std::vector<MayFail<MayFail_<Term>>> terms;
@@ -63,7 +66,9 @@ MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::i
         return Malformed(MayFail_<SquareBracketsGroup>{terms}, ERR(430));
     }
 
-    return MayFail_<SquareBracketsGroup>{terms};
+    auto sbg = MayFail_<SquareBracketsGroup>{terms};
+    sbg._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    return sbg;
 }
 
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
@@ -99,6 +104,8 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 }
 
 ///////////////////////////////////////////////////////////
+
+SquareBracketsGroup::SquareBracketsGroup(std::vector<Term> terms) : terms(terms){}
 
 MayFail_<SquareBracketsGroup>::MayFail_(std::vector<MayFail<MayFail_<Term>>> terms) : terms(terms){}
 

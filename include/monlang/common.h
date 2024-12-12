@@ -144,10 +144,30 @@ class _TRACE_CUR_FUNC {
 #define TRACE_CUR_FUN() \
     auto __trace_obj = _TRACE_CUR_FUNC(__func__, input)
 
+////////////////////////////////////////////////////////////////
+
 #define RECORD_INPUT_STREAM_PROGRESS() \
     auto ___initial_input_pos = size_t(input.tellg())
 
 #define GET_INPUT_STREAM_PROGRESS() \
     (size_t(input.tellg()) - ___initial_input_pos)
+
+
+
+// template <typename T>
+// size_t token_len(T entity);
+
+template <typename... Targs>
+size_t token_len(const std::variant<Targs...>& entityVariant) {
+    return std::visit(
+        [](auto* entity){return entity->_tokenLen;},
+        entityVariant
+    );
+}
+
+template <typename T>
+size_t token_len(T entity) {
+    return entity._tokenLen;
+}
 
 #endif // COMMON_H

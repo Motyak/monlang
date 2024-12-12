@@ -11,6 +11,7 @@ template<>
 struct MayFail_<SquareBracketsGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
+    size_t _tokenLen = 0;
     MayFail_() = default;
     explicit MayFail_(std::vector<MayFail<MayFail_<Term>>>);
 

@@ -10,6 +10,7 @@ template <>
 struct MayFail_<SquareBracketsTerm> {
     MayFail<MayFail_<Term>> term;
 
+    size_t _tokenLen = 0;
     MayFail_() = default;
     explicit MayFail_(MayFail<MayFail_<Term>>);
 

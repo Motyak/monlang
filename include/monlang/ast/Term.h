@@ -9,6 +9,10 @@ struct Term {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Word> words;
+
+    size_t _tokenLen = 0;
+    Term() = default;
+    Term(std::vector<Word>);
 };
 
 #endif // AST_TERM_H

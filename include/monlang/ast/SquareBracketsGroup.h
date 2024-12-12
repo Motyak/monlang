@@ -10,6 +10,10 @@ struct SquareBracketsGroup {
     static const std::vector<char> RESERVED_CHARACTERS;
 
     std::vector<Term> terms;
+
+    size_t _tokenLen = 0;
+    SquareBracketsGroup() = default;
+    SquareBracketsGroup(std::vector<Term>);
 };
 
 #endif // AST_SQUARE_BRACKETS_GROUP_H

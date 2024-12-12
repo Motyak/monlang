@@ -15,6 +15,7 @@ struct MayFail_<PostfixParenthesesGroup> {
     Word leftPart; // never Malformed, by design
     MayFail<MayFail_<ParenthesesGroup>> rightPart;
 
+    size_t _tokenLen = 0;
     explicit MayFail_(Word, MayFail<MayFail_<ParenthesesGroup>>);
 
     explicit MayFail_(PostfixParenthesesGroup);
@@ -24,7 +25,8 @@ struct MayFail_<PostfixParenthesesGroup> {
 template <typename T>
 MayFail<MayFail_<PostfixParenthesesGroup>*>
 consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream& input) {
-    auto left_word = variant_cast(*accumulatedPostfixLeftPart);
+    RECORD_INPUT_STREAM_PROGRESS();
+    auto left_word = (Word)variant_cast(*accumulatedPostfixLeftPart);
     auto whats_right_behind = consumeParenthesesGroupStrictly(input);
 
     if (whats_right_behind.has_error()) {
@@ -39,6 +41,7 @@ consumePostfixParenthesesGroup(T* accumulatedPostfixLeftPart, std::istringstream
         left_word,
         unwrap(whats_right_behind.value())
     };
+    ppg._tokenLen = token_len(*accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
     *accumulatedPostfixLeftPart = move_to_heap(ppg);
     return move_to_heap(wrap(
         *std::get<PostfixParenthesesGroup*>(*accumulatedPostfixLeftPart)

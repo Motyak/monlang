@@ -12,6 +12,8 @@ const std::vector<char> Association::RESERVED_CHARACTERS = {
 
 ///////////////////////////////////////////////////////////
 
+Association::Association(AssociationLeftPart leftPart, Word rightPart) : leftPart(leftPart), rightPart(rightPart){}
+
 MayFail_<Association>::MayFail_(AssociationLeftPart leftPart, MayFail<Word_> rightPart) : leftPart(leftPart), rightPart(rightPart){}
 
 MayFail_<Association>::MayFail_(Association assoc) {
