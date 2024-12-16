@@ -42,8 +42,12 @@ SquareBracketsTerm \
 Term \
 Word \
 
-OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
-DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
+ENTITY_OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
+ENTITY_DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
+
+VISITOR_SRC_FILES := $(shell find src -path '*/visitors/*.cpp')
+VISITOR_OBJS := $(VISITOR_SRC_FILES:src/%.cpp=obj/%.o)
+VISITOR_DEPS := $(VISITOR_SRC_FILES:src/%.cpp=.deps/%.d)
 
 TEST_FILENAMES := $(foreach file,$(wildcard src/test/*.cpp),$(file:src/test/%.cpp=%))
 TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
@@ -56,12 +60,12 @@ LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
 
 all: main
 
-main: $(OBJS)
+main: $(ENTITY_OBJS) $(VISITOR_OBJS)
 
 test: bin/test/all.elf
 	./run_tests.sh
 
-dist: $(OBJS)
+dist: main
 	./release.sh
 
 clean:
@@ -70,20 +74,20 @@ clean:
 mrproper:
 	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
 
-.PHONY: all main test check dist clean mrproper
+.PHONY: all main test dist clean mrproper
 
 ###########################################################
 
 macros := # filled by below makefile inclusion
 include handle_macros.mk # uses $(TRACE) $(DISABLE_WORDS) $(DISABLE_POSTFIXES) $(DISABLE_ASSOCS)
 
-$(OBJS): obj/%.o: src/%.cpp
+$(ENTITY_OBJS) $(VISITOR_OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)
 
-$(TEST_BINS): bin/test/%.elf: src/test/%.cpp $(OBJS) lib/test-libs.a
-	$(CXX) -o $@ $< $(OBJS) lib/test-libs.a $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
+$(TEST_BINS): bin/test/%.elf: src/test/%.cpp $(ENTITY_OBJS) lib/test-libs.a
+	$(CXX) -o $@ $< $(ENTITY_OBJS) lib/test-libs.a $(CXXFLAGS_TEST) $(DEPFLAGS_TEST) $(LDFLAGS) $(LDLIBS)
 
--include $(DEPS) $(TEST_DEPS)
+-include $(ENTITY_DEPS) $(VISITOR_DEPS) $(TEST_DEPS)
 
 ############################################################
 # libs
@@ -116,7 +120,7 @@ lib/montree/dist/montree.a:
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-${call shell_onrun, mkdir -p {obj,.deps,bin}/test ${LIB_OBJ_DIRS}}
+${call shell_onrun, mkdir -p {obj,.deps,bin}/test {obj,.deps}/ast/visitors ${LIB_OBJ_DIRS}}
 
 ## debug settings ##
 $(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)

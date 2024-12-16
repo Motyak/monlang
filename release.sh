@@ -14,7 +14,7 @@ set -o xtrace
 rm -rf dist/monlang-LV1; mkdir -p $_
 
 ## package objects (in background job) ##
-ar rcsvD dist/monlang-LV1.a obj/*.o & package_proc_id=$!
+ar rcsvD dist/monlang-LV1.a obj/**/*.o & package_proc_id=$!
 
 ## copy public header files ##
 cp -r include/monlang/* -t dist/monlang-LV1/
