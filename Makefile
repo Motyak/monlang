@@ -120,7 +120,7 @@ lib/montree/dist/montree.a:
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-${call shell_onrun, mkdir -p {obj,.deps,bin}/test {obj,.deps}/ast/visitors ${LIB_OBJ_DIRS}}
+${call shell_onrun, mkdir -p {.deps,bin}/test {.deps,obj}/ast/visitors ${LIB_OBJ_DIRS}}
 
 ## debug settings ##
 $(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)

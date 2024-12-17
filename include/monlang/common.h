@@ -119,9 +119,6 @@ MayFail<R> mayfail_convert(const MayFail<T>& inputMayfail) {
 
 ////////////////////////////////////////////////////////////////
 
-std::optional<char> sequenceFirstChar(const Sequence&);
-size_t sequenceLen(const Sequence&);
-
 MayFail<void> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
@@ -151,18 +148,5 @@ class _TRACE_CUR_FUNC {
 
 #define GET_INPUT_STREAM_PROGRESS() \
     (size_t(input.tellg() == -1? input.str().size() : (size_t)input.tellg()) - ___initial_input_pos)
-
-template <typename... Targs>
-size_t token_len(const std::variant<Targs...>& entityVariant) {
-    return std::visit(
-        [](auto* entity){return entity->_tokenLen;},
-        entityVariant
-    );
-}
-
-template <typename T>
-size_t token_len(const T& entity) {
-    return entity._tokenLen;
-}
 
 #endif // COMMON_H
