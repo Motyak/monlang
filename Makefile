@@ -29,18 +29,18 @@ endif
 ###########################################################
 
 ENTITIES := \
-Association \
-Atom \
-CurlyBracketsGroup \
-ParenthesesGroup \
-PostfixParenthesesGroup \
-PostfixSquareBracketsGroup \
 Program \
 ProgramSentence \
-SquareBracketsGroup \
-SquareBracketsTerm \
 Term \
 Word \
+Atom \
+SquareBracketsTerm \
+SquareBracketsGroup \
+ParenthesesGroup \
+CurlyBracketsGroup \
+PostfixSquareBracketsGroup \
+PostfixParenthesesGroup \
+Association \
 
 ENTITY_OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 ENTITY_DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
@@ -65,8 +65,8 @@ main: $(ENTITY_OBJS) $(VISITOR_OBJS)
 test: bin/test/all.elf
 	./run_tests.sh
 
-dist: main
-	./release.sh
+dist: $(ENTITY_OBJS) $(VISITOR_OBJS)
+	./release.sh $^
 
 clean:
 	$(RM) obj/* .deps/*
