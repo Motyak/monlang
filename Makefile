@@ -93,29 +93,29 @@ $(TEST_BINS): bin/test/%.elf: src/test/%.cpp $(ENTITY_OBJS) lib/test-libs.a
 # libs
 ############################################################
 
-## aggregate all libs (.o, .a) into one static lib ##
+## aggregate all main code dependencies (.o, .a) into one static lib ##
 .SECONDEXPANSION:
 lib/libs.a: $$(libs)
 	$(AR) $(ARFLAGS) $@ $^
 
-## aggregate all test lib (.o, .a) into one static lib ##
+## aggregate all test code dependencies (.o, .a) into one static lib ##
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_libs)
 # when BUILD_LIBS_ONCE is unset => we always enter this recipe
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 
-## compiles lib used for testing (catch2) ##
+## build lib used for testing (catch2) ##
 test_libs += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 	$(MAKE) -C lib/catch2
 
-## compiles our own lib used for testing (montree) ##
+## build our own lib used for testing (montree) ##
 test_libs += lib/montree/dist/montree.a
 $(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
 	.PHONY: lib/montree/dist/montree.a)
 lib/montree/dist/montree.a:
-	$(MAKE) -C lib/montree
+	$(MAKE) -C lib/montree dist
 
 ###########################################################
 

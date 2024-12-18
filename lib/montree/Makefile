@@ -15,18 +15,15 @@ endif
 
 ###########################################################
 
-SRC_FILENAMES := \
-montree \
-Print \
-
+SRC_FILENAMES := montree Print
 DEPS := $(SRC_FILENAMES:%=.deps/%.d)
 OBJS := $(SRC_FILENAMES:%=obj/%.o)
 
 ###########################################################
 
-all: dist
+all: main
 
-build: $(OBJS)
+main: $(OBJS)
 
 dist: dist/montree.a
 
@@ -37,7 +34,7 @@ mrproper:
 	$(RM) obj .deps
 
 
-.PHONY: all build dist clean mrproper
+.PHONY: all main dist clean mrproper
 
 ###########################################################
 
