@@ -5,6 +5,8 @@
 
 #include <monlang/Word.h>
 
+#include <utils/mem-utils.h>
+
 template <>
 struct MayFail_<Association> {
     AssociationLeftPart leftPart; // never Malformed, by design
