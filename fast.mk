@@ -61,8 +61,8 @@ TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_OBJS = $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
-LIB_OBJ_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/obj) # for cleaning
 LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
+LIB_ARTIFACT_DIRS := ${foreach lib,${wildcard lib/*/},$(lib:%/=%)/{.deps,obj,dist,bin}} # for cleaning
 
 ###########################################################
 
@@ -80,7 +80,7 @@ clean:
 	$(RM) obj/* .deps/*
 
 mrproper:
-	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_OBJ_DIRS)
+	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_ARTIFACT_DIRS)
 
 .PHONY: all main test dist clean mrproper
 
@@ -136,11 +136,12 @@ lib/montree/dist/montree.a:
 ###########################################################
 
 # will create all necessary directories after the Makefile is parsed
-${call shell_onrun, mkdir -p {.deps,obj,bin}/test {.deps,obj}/ast/visitors ${LIB_OBJ_DIRS}}
+${call shell_onrun, mkdir -p {.deps,obj,bin}/test {.deps,obj}/ast/visitors}
 
 ## debug settings ##
 $(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
 $(call shell_onrun, grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
 
-# .DELETE_ON_ERROR: # shall not rely on this
+## shall not rely on these ##
+# .DELETE_ON_ERROR:
 .SUFFIXES:
