@@ -35,4 +35,7 @@ bool holds_word(const ProgramWord&);
 Word get_word(const ProgramWord&);
 // ProgramWord deepcopy(const ProgramWord&); // TODO: should we add this ?
 
+struct Term;
+Term as_term(const Word&);
+
 #endif // AST_WORD_H

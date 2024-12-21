@@ -15,6 +15,9 @@
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/Association.h>
 
+/* required for casting Word to Term (while preserving _tokenLen) */
+#include <monlang/Term.h>
+
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
@@ -88,6 +91,13 @@ Word get_word(const ProgramWord& pw) {
         [](SquareBracketsTerm*) -> Word {SHOULD_NOT_HAPPEN();},
         [](auto word) -> Word {return word;},
     }, pw);
+}
+
+Term as_term(const Word& word) {
+    auto term = Term{{word}};
+    term._tokenLen = token_len(word); // require knowing..
+                                      // ..about all words
+    return term;
 }
 
 /*
