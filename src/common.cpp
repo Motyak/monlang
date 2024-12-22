@@ -87,7 +87,7 @@ MayFail<void> consumeSequence(const std::vector<CharacterAppearance>& sequence, 
         }
     }
 
-    OK();
+    return OK();
 }
 
 bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istringstream& input) {
