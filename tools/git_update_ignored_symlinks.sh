@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# assumed unchanged by git
+# assumed ignored by git
 INPUT="
 include/utils
 utils.mk
@@ -9,6 +9,10 @@ utils.mk
 set -o errexit
 set -o pipefail
 
+## un-ignore git files ##
+git ls-files -z $INPUT | xargs -0 git update-index --no-assume-unchanged
+
+## update git files with actual linked files ##
 files="$(echo "$INPUT" | xargs)"
 for file in $files; do
     [ -L "$file" ] || continue # is a symlink (broken or not)
@@ -30,3 +34,6 @@ EOF
     bash -x -c "$commands"
     >&2 echo
 done
+
+## ignore back git files ##
+git ls-files -z $INPUT | xargs -0 git update-index --assume-unchanged

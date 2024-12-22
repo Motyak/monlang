@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # pass REVERT=x as variable to revert the script
+#   -> `REVERT=x tools/git_assume_unchanged.sh`
 
 INPUT="
 include/utils
