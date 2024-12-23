@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <sstream>
+#include <optional>
+#include <variant>
 
 struct Quantifier {
   private:
