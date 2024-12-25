@@ -9,8 +9,9 @@ utils.mk
 set -o errexit
 set -o pipefail
 
-## un-ignore git files ##
+## temporarily un-ignore git files ##
 git ls-files -z $INPUT | xargs -0 git update-index --no-assume-unchanged
+trap 'git ls-files -z $INPUT | xargs -0 git update-index --assume-unchanged' EXIT
 
 ## update git files with actual linked files ##
 files="$(echo "$INPUT" | xargs)"
@@ -30,10 +31,7 @@ EOF
     >&2 awk '{print "\t" $0}' <<< "$commands"
     >&2 echo -n "confirm?(Y/n) >"
     read confirm
-    [[ "$confirm" =~ n|N ]] && { >&2 echo "skipped"; continue; }
+    [[ "$confirm" =~ n|N ]] && { >&2 echo "=== SKIPPED ==="; continue; }
     bash -x -c "$commands"
-    >&2 echo
+    >&2 echo "=== DONE ==="
 done
-
-## ignore back git files ##
-git ls-files -z $INPUT | xargs -0 git update-index --assume-unchanged
