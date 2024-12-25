@@ -30,7 +30,7 @@ EOF
     >&2 awk '{print "\t" $0}' <<< "$commands"
     >&2 echo -n "confirm?(Y/n) >"
     read confirm
-    [[ "$confirm" =~ n|N ]] && { >&2 echo "aborted"; exit; }
+    [[ "$confirm" =~ n|N ]] && { >&2 echo "skipped"; continue; }
     bash -x -c "$commands"
     >&2 echo
 done
