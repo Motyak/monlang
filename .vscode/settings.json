@@ -1,6 +1,8 @@
 {
+    "C_Cpp.autoAddFileAssociations": false,
     "search.useIgnoreFiles": true, // exclude files in .gitignore
     "search.exclude": {
+        "dist": true,
         "**/lib/monlang*": true, // modules that depends on monlang(-LV1) module
 
         "lib/**/include/monlang*": true, // other modules that use monlang(-LV1) interface

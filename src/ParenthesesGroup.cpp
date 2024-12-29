@@ -5,6 +5,7 @@
 /* impl only */
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/Association.h>
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
@@ -107,6 +108,16 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
 
         break;
     }
+
+    #ifndef DISABLE_ASSOC_IN_ATOM
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        return consumeAssociation(accumulatedPostfixLeftPart, input); /*
+            early return assoc (malformed or not).
+            Association can contain a PostfixLeftPart..
+            .., but not the other way around! (precedence rule)
+        */
+    }
+    #endif
 
     return std::visit(
         [](auto word) -> consumeParenthesesGroup_RetType {return move_to_heap(wrap(*word));},

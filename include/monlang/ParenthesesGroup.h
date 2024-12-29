@@ -7,6 +7,7 @@
 
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
+struct Association;
 
 template<>
 struct MayFail_<ParenthesesGroup> {
@@ -25,7 +26,8 @@ MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istring
 using consumeParenthesesGroup_RetType = std::variant<
     MayFail<MayFail_<ParenthesesGroup>*>,
     MayFail<MayFail_<PostfixParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixSquareBracketsGroup>*>
+    MayFail<MayFail_<PostfixSquareBracketsGroup>*>,
+    MayFail<MayFail_<Association>*>
 >;
 consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
 
