@@ -105,6 +105,27 @@ TEST_CASE ("two two-program-words sentences", "[test-1115][base]") {
     REQUIRE (output_str == expect);
 }
 
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("special atoms", "[test-1116][base]") {
+    auto input = tommy_str(R"EOF(
+       |:= [:] ..
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+        -> ProgramSentence
+          -> ProgramWord #1: Atom: `:=`
+          -> ProgramWord #2: Atom: `[:]`
+          -> ProgramWord #3: Atom: `..`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
 //==============================================================
 // ERR
 //==============================================================

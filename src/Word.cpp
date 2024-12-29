@@ -22,6 +22,12 @@
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
 
+static Atom SpecialAtom(const std::string& value) {
+    auto atom = Atom{value};
+    atom._tokenLen = value.size();
+    return atom;
+}
+
 MayFail<ProgramWord_> consumeProgramWord(std::istringstream& input) {
 
     #ifndef DISABLE_SBT
@@ -36,6 +42,21 @@ MayFail<ProgramWord_> consumeProgramWord(std::istringstream& input) {
 
 MayFail<Word_> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters;
+    std::vector<Atom> specialAtoms;
+
+    #ifndef DISABLE_SPECIAL_ATOMS
+    specialAtoms = {
+        SpecialAtom(":="), // assignment symbol
+        SpecialAtom("[:]"), // map literal
+        SpecialAtom(".."), // range operator
+    };
+    #endif
+    for (auto atom: specialAtoms) {
+        if (peekStr(atom.value, input)) {
+            input.ignore(atom.value.size());
+            return (Word_)move_to_heap(atom);
+        }
+    }
 
     terminatorCharacters = vec_union({
         terminatorCharacters,

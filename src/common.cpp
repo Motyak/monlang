@@ -125,6 +125,28 @@ bool peekSequence(const std::vector<CharacterAppearance>& sequence, std::istring
     return true;
 }
 
+bool peekStr(const std::string& str, std::istringstream& input) {
+    // save stream position
+    std::streampos initialPosition = input.tellg();
+
+    for (auto c: str) {
+        if (input.peek() != c) {
+            // reset flags if EOF reached etc..
+            input.clear();
+            // restore stream position
+            input.seekg(initialPosition);
+            return false;
+        }
+        input.ignore(1);
+    }
+
+    // reset flags if EOF reached etc..
+    input.clear();
+    // restore stream position
+    input.seekg(initialPosition);
+    return true;
+}
+
 bool peekAnyChar(const std::vector<char>& chars, std::istringstream& input) {
     for (auto c: chars) {
         if (input.peek() == c) {

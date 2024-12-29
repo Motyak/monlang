@@ -20,6 +20,7 @@ TRACE ?= # enable by passing `TRACE=x`
 DISABLE_WORDS ?= # e.g.: DISABLE_WORDS=SBG,
 DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
 DISABLE_ASSOCS ?= # e.g.: DISABLE_ASSOCSS=ATOM,
+DISABLE_SPECIAL_ATOMS ?= # disable by passing `DISABLE_SPECIAL_ATOMS=x`
 
 ifdef CLANG
 CXX := ccache clang++
