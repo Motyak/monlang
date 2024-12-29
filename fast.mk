@@ -87,7 +87,7 @@ mrproper:
 
 ###########################################################
 
-macros := # filled by below makefile inclusion
+macros = # filled by below makefile inclusion
 include handle_macros.mk # uses $(TRACE) $(DISABLE_WORDS) $(DISABLE_POSTFIXES) $(DISABLE_ASSOCS)
 
 $(ENTITY_OBJS) $(VISITOR_OBJS): obj/%.o: src/%.cpp
