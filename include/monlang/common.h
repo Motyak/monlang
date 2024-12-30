@@ -14,7 +14,8 @@ constexpr char BACKSLASH = 92;
 
 MayFail<void> consumeSequence(const Sequence&, std::istringstream&);
 bool peekSequence(const Sequence&, std::istringstream&);
-bool peekStr(const std::string&, std::istringstream&);
+// returns true if stream next characters match string + any of the terminator characters
+bool peekStrUntil(const std::string&, const std::vector<char>& terminatorCharacters, std::istringstream&);
 bool peekAnyChar(const std::vector<char>&, std::istringstream&);
 bool peekAnySeq(const std::vector<Sequence>&, std::istringstream&);
 

@@ -44,6 +44,12 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
     std::vector<char> terminatorCharacters;
     std::vector<Atom> specialAtoms;
 
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        ProgramSentence::RESERVED_CHARACTERS,
+        Term::RESERVED_CHARACTERS,
+    });
+
     #ifndef DISABLE_SPECIAL_ATOMS
     specialAtoms = {
         SpecialAtom(":="), // assignment symbol
@@ -52,17 +58,11 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
     };
     #endif
     for (auto atom: specialAtoms) {
-        if (peekStr(atom.value, input)) {
+        if (peekStrUntil(atom.value, terminatorCharacters, input)) {
             input.ignore(atom.value.size());
             return (Word_)move_to_heap(atom);
         }
     }
-
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        ProgramSentence::RESERVED_CHARACTERS,
-        Term::RESERVED_CHARACTERS,
-    });
 
     #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {

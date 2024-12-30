@@ -221,3 +221,23 @@ TEST_CASE ("one program sentence ERR missing terminator", "[test-1119][base][err
     auto output_str = montree::astToString(output);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("atom starting as a special atom", "[test-1120][base][err]") {
+    auto input = tommy_str(R"EOF(
+       |:=fds
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+        ~> ProgramSentence
+          ~> ProgramWord: Atom: ``
+            ~> ERR-992
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
