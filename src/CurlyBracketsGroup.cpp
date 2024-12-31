@@ -69,10 +69,11 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         currentSentence = consumeProgramSentence(input, indentLevel);
         if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
-            newlines += currentSentence.value()._tokenLen;
+            newlines += currentSentence.value()._tokenIndentSpaces
+                    + currentSentence.value()._tokenLen;
             continue; // ignore empty sentences
         }
-        currentSentence.val._leadingNewlines = newlines;
+        currentSentence.val._tokenLeadingNewlines = newlines;
         newlines = 0;
         sentences.push_back(currentSentence);
         if (currentSentence.has_error()) {
@@ -89,7 +90,7 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     }
 
     // add trailing newlines to the latest sentence
-    sentences.back().val._trailingNewlines = newlines;
+    sentences.back().val._tokenTrailingNewlines = newlines;
 
     auto cbg = MayFail_<CurlyBracketsGroup>{sentences};
     cbg._tokenLen = GET_INPUT_STREAM_PROGRESS();

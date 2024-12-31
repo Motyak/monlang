@@ -12,9 +12,10 @@ struct ProgramSentence {
 
     std::vector<ProgramWord> programWords;
 
-    size_t _leadingNewlines = 0;
+    size_t _tokenLeadingNewlines = 0;
+    size_t _tokenIndentSpaces = 0;
     size_t _tokenLen = 0;
-    size_t _trailingNewlines = 0;
+    size_t _tokenTrailingNewlines = 0;
     ProgramSentence() = default;
     ProgramSentence(const std::vector<ProgramWord>&);
 };

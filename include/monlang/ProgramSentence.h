@@ -9,9 +9,10 @@ template<>
 struct MayFail_<ProgramSentence> {
     std::vector<MayFail<ProgramWord_>> programWords;
 
-    size_t _leadingNewlines = 0; // added by consumeProgram / consumeCurlyBracketsGroup
+    size_t _tokenLeadingNewlines = 0; // added by consumeProgram / consumeCurlyBracketsGroup
+    size_t _tokenIndentSpaces = 0; // added by consumeCurlyBracketsGroup
     size_t _tokenLen = 0;
-    size_t _trailingNewlines = 0; // added by consumeCurlyBracketsGroup
+    size_t _tokenTrailingNewlines = 0; // added by consumeCurlyBracketsGroup
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<ProgramWord_>>&);
 

@@ -19,7 +19,7 @@ MayFail<MayFail_<Program>> consumeProgram(std::istringstream& input) {
             continue; // ignore empty sentences
         }
 
-        currentSentence.val._leadingNewlines = newlines;
+        currentSentence.val._tokenLeadingNewlines = newlines;
         newlines = 0;
         sentences.push_back(currentSentence);
 

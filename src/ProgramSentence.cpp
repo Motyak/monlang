@@ -29,7 +29,10 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
     if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
         input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
         auto empty_sentence = MayFail_<ProgramSentence>{};
-        empty_sentence._leadingNewlines = GET_INPUT_STREAM_PROGRESS();
+        empty_sentence._tokenIndentSpaces = GET_INPUT_STREAM_PROGRESS()
+                - sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE); // must do this because non-zero indentLevel..
+                                                                     // ..doesn't necessarily mean non-zero indent spaces
+        empty_sentence._tokenLen = GET_INPUT_STREAM_PROGRESS();
         return empty_sentence;
     }
 
@@ -69,7 +72,8 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
     }
 
     auto sentence = MayFail_<ProgramSentence>{programWords};
-    sentence._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    sentence._tokenIndentSpaces = sequenceLen(INDENT_SEQUENCE());
+    sentence._tokenLen = GET_INPUT_STREAM_PROGRESS() - sequenceLen(INDENT_SEQUENCE());
     return sentence;
 }
 
@@ -85,9 +89,10 @@ MayFail_<ProgramSentence>::MayFail_(const ProgramSentence& sentence) {
         programWords.push_back(wrap_pw(e));
     }
     this->programWords = programWords;
-    this->_leadingNewlines = sentence._leadingNewlines;
+    this->_tokenLeadingNewlines = sentence._tokenLeadingNewlines;
+    this->_tokenIndentSpaces = sentence._tokenIndentSpaces;
     this->_tokenLen = sentence._tokenLen;
-    this->_trailingNewlines = sentence._trailingNewlines;
+    this->_tokenTrailingNewlines = sentence._tokenTrailingNewlines;
 }
 
 MayFail_<ProgramSentence>::operator ProgramSentence() const {
@@ -96,8 +101,9 @@ MayFail_<ProgramSentence>::operator ProgramSentence() const {
         programWords.push_back(unwrap_pw(e.value()));
     }
     auto sentence = ProgramSentence{programWords};
-    sentence._leadingNewlines = this->_leadingNewlines;
+    sentence._tokenLeadingNewlines = this->_tokenLeadingNewlines;
+    sentence._tokenIndentSpaces = this->_tokenIndentSpaces;
     sentence._tokenLen = this->_tokenLen;
-    sentence._trailingNewlines = this->_trailingNewlines;
+    sentence._tokenTrailingNewlines = this->_tokenTrailingNewlines;
     return sentence;
 }
