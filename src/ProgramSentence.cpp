@@ -7,6 +7,9 @@
 
 #include <algorithm>
 
+#define SET_MALFORMED_TOKEN_FIELDS(malformed) \
+    malformed.val._tokenIndentSpaces = sequenceLen(INDENT_SEQUENCE())
+
 const Sequence ProgramSentence::TAB_SEQUENCE = {{SPACE, 4_}};
 const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {SPACE};
 const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {NEWLINE};
@@ -41,7 +44,9 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
     }
 
     if (peekSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
-        return Malformed(MayFail_<ProgramSentence>{}, ERR(121));
+        auto malformed = Malformed(MayFail_<ProgramSentence>{}, ERR(121));
+        SET_MALFORMED_TOKEN_FIELDS(malformed);
+        return malformed;
     }
 
     std::vector<MayFail<ProgramWord_>> programWords;
@@ -52,23 +57,31 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
     {
         if (!consumeSequence(ProgramSentence::CONTINUATOR_SEQUENCE, input)) {
             // this happens when we have an Atom right after a non-Atom (without a space in between)
-            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(102));
+            auto malformed = Malformed(MayFail_<ProgramSentence>{programWords}, ERR(102));
+            SET_MALFORMED_TOKEN_FIELDS(malformed);
+            return malformed;
         }
         if (peekSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(122));
+            auto malformed = Malformed(MayFail_<ProgramSentence>{programWords}, ERR(122));
+            SET_MALFORMED_TOKEN_FIELDS(malformed);
+            return malformed;
         }
     }
         currentWord = consumeProgramWord(input);
         programWords.push_back(currentWord);
         if (currentWord.has_error()) {
-            return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(129));
+            auto malformed = Malformed(MayFail_<ProgramSentence>{programWords}, ERR(129));
+            SET_MALFORMED_TOKEN_FIELDS(malformed);
+            return malformed;
         }
 
         ENDLOOP
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)) {
-        return Malformed(MayFail_<ProgramSentence>{programWords}, ERR(120));
+        auto malformed = Malformed(MayFail_<ProgramSentence>{programWords}, ERR(120));
+        SET_MALFORMED_TOKEN_FIELDS(malformed);
+        return malformed;
     }
 
     auto sentence = MayFail_<ProgramSentence>{programWords};
