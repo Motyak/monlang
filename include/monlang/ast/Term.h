@@ -13,6 +13,8 @@ struct Term {
     size_t _tokenLen = 0;
     Term() = default;
     Term(const std::vector<Word>&);
+    explicit Term(const Word&); // syntax-sugar for `as_term(word)`
+    explicit operator Word() const; // syntax-sugar for `as_word(term)`
 };
 
 #endif // AST_TERM_H

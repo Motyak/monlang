@@ -2,8 +2,12 @@
 #include <monlang/Word.h>
 #include <monlang/common.h>
 
+/* required for ProgramSentence(Term) and operator Term() */
+#include <monlang/Term.h>
+
 #include <utils/assert-utils.h>
 #include <utils/loop-utils.h>
+#include <utils/variant-utils.h>
 
 #include <algorithm>
 
@@ -92,9 +96,39 @@ MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& in
 
 ///////////////////////////////////////////////////////////
 
-ProgramSentence::ProgramSentence(const std::vector<ProgramWord>& programWords) : programWords(programWords){}
+ProgramSentence::ProgramSentence(const std::vector<ProgramWord>& programWords)
+        : programWords(programWords){}
 
-MayFail_<ProgramSentence>::MayFail_(const std::vector<MayFail<ProgramWord_>>& programWords) : programWords(programWords){}
+ProgramSentence::ProgramSentence(const Term& term) {
+    std::vector<ProgramWord> programWords;
+    for (auto word: term.words) {
+        programWords.push_back(variant_cast(word));
+    }
+    this->programWords = programWords;
+    this->_tokenLen = term._tokenLen;
+}
+
+ProgramSentence::operator Term() const {
+    std::vector<Word> words;
+    for (auto pw: programWords) {
+        words.push_back(get_word(pw));
+    }
+    auto res = Term{words};
+    res._tokenLen = this->_tokenLen;
+    return res;
+}
+
+MayFail_<ProgramSentence>::MayFail_(const std::vector<MayFail<ProgramWord_>>& programWords)
+        : programWords(programWords){}
+
+MayFail_<ProgramSentence>::MayFail_(const MayFail_<Term>& term) {
+    std::vector<MayFail<ProgramWord_>> programWords;
+    for (auto word: term.words) {
+        programWords.push_back(mayfail_cast<ProgramWord_>(word));
+    }
+    this->programWords = programWords;
+    this->_tokenLen = term._tokenLen;
+}
 
 MayFail_<ProgramSentence>::MayFail_(const ProgramSentence& sentence) {
     std::vector<MayFail<ProgramWord_>> programWords;

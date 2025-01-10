@@ -71,6 +71,14 @@ MayFail<MayFail_<Term>> consumeTerm(std::istringstream& input) {
 
 Term::Term(const std::vector<Word>& words) : words(words){}
 
+Term::Term(const Word& word) {
+    *this = as_term(word);
+}
+
+Term::operator Word() const {
+    return as_word(*this);
+}
+
 MayFail_<Term>::MayFail_(const std::vector<MayFail<Word_>>& words) : words(words){}
 
 MayFail_<Term>::MayFail_(const Term& term) {

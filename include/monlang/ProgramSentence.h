@@ -13,8 +13,10 @@ struct MayFail_<ProgramSentence> {
     size_t _tokenIndentSpaces = 0;
     size_t _tokenLen = 0;
     size_t _tokenTrailingNewlines = 0; // added by consumeCurlyBracketsGroup
+
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<ProgramWord_>>&);
+    explicit MayFail_(const MayFail_<Term>&);
 
     explicit MayFail_(const ProgramSentence&);
     explicit operator ProgramSentence() const;

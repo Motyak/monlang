@@ -145,15 +145,7 @@ CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sente
 
 CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences, const std::optional<Term>& term) : Program{sentences}, term(term){}
 
-static std::vector<ProgramSentence> toSentences(const Term& term) {
-    std::vector<ProgramWord> programWords;
-    for (auto word: term.words) {
-        programWords.push_back(variant_cast(word));
-    }
-    return {ProgramSentence{programWords}};
-}
-
-CurlyBracketsTerm::CurlyBracketsTerm(const Term& term) : CurlyBracketsGroup{toSentences(term), term} {}
+CurlyBracketsTerm::CurlyBracketsTerm(const Term& term) : CurlyBracketsGroup{{ProgramSentence{term}}, term} {}
 
 ///////////////////////////////////////////////////////////
 
@@ -185,12 +177,5 @@ MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
     return cbg;
 }
 
-static std::vector<MayFail<MayFail_<ProgramSentence>>> toSentences(const MayFail<MayFail_<Term>>& term) {
-    std::vector<MayFail<ProgramWord_>> programWords;
-    for (auto word: term.val.words) {
-        programWords.push_back(mayfail_cast<ProgramWord_>(word));
-    }
-    return {MayFail_<ProgramSentence>{programWords}};
-}
-
-MayFail_<CurlyBracketsTerm>::MayFail_(const MayFail<MayFail_<Term>>& term) : MayFail_<CurlyBracketsGroup>{toSentences(term), term} {}
+MayFail_<CurlyBracketsTerm>::MayFail_(const MayFail<MayFail_<Term>>& term)
+        : MayFail_<CurlyBracketsGroup>{{MayFail(MayFail_<ProgramSentence>(term.val), term.err)}, term} {}

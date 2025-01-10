@@ -37,5 +37,6 @@ Word get_word(const ProgramWord&);
 
 struct Term;
 Term as_term(const Word&);
+Word as_word(const Term&);
 
 #endif // AST_WORD_H

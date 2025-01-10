@@ -4,6 +4,8 @@
 #include <monlang/ast/Word.h>
 #include <monlang/ast/common.h>
 
+struct Term; // for ProgramSentence(const Term&)
+
 struct ProgramSentence {
     static const Sequence TAB_SEQUENCE;
     static const Sequence CONTINUATOR_SEQUENCE;
@@ -16,8 +18,12 @@ struct ProgramSentence {
     size_t _tokenIndentSpaces = 0;
     size_t _tokenLen = 0;
     size_t _tokenTrailingNewlines = 0;
+
     ProgramSentence() = default;
     ProgramSentence(const std::vector<ProgramWord>&);
+
+    explicit ProgramSentence(const Term&);
+    explicit operator Term() const;
 };
 
 #endif // AST_PROGRAM_SENTENCE_H

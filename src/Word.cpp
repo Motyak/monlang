@@ -115,10 +115,18 @@ Word get_word(const ProgramWord& pw) {
 }
 
 Term as_term(const Word& word) {
-    auto term = Term{{word}};
+    auto words = std::vector<Word>{word};
+    auto term = Term{words};
     term._tokenLen = token_len(word); // require knowing..
                                       // ..about all words
     return term;
+}
+
+Word as_word(const Term& term) {
+    auto word = term.words.at(0);
+    set_token_len(word, term._tokenLen); // requires knowing..
+                                         // ..about all words
+    return word;
 }
 
 /*
