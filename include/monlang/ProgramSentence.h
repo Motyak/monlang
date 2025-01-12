@@ -16,7 +16,7 @@ struct MayFail_<ProgramSentence> {
 
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<ProgramWord_>>&);
-    explicit MayFail_(const MayFail_<Term>&);
+    explicit MayFail_(const MayFail_<Term>&); // for casting term to sen
 
     explicit MayFail_(const ProgramSentence&);
     explicit operator ProgramSentence() const;

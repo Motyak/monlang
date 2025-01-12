@@ -22,7 +22,7 @@ struct ProgramSentence {
     ProgramSentence() = default;
     ProgramSentence(const std::vector<ProgramWord>&);
 
-    explicit ProgramSentence(const Term&);
+    explicit ProgramSentence(const Term&); // for casting term to sen
     explicit operator Term() const;
 };
 

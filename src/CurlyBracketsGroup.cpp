@@ -145,7 +145,7 @@ CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sente
 
 CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences, const std::optional<Term>& term) : Program{sentences}, term(term){}
 
-CurlyBracketsTerm::CurlyBracketsTerm(const Term& term) : CurlyBracketsGroup{{ProgramSentence{term}}, term} {}
+CurlyBracketsTerm::CurlyBracketsTerm(const Term& term) : CurlyBracketsGroup{{(ProgramSentence)term}, term} {}
 
 ///////////////////////////////////////////////////////////
 
@@ -178,4 +178,4 @@ MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
 }
 
 MayFail_<CurlyBracketsTerm>::MayFail_(const MayFail<MayFail_<Term>>& term)
-        : MayFail_<CurlyBracketsGroup>{{MayFail(MayFail_<ProgramSentence>(term.val), term.err)}, term} {}
+        : MayFail_<CurlyBracketsGroup>{{MayFail((MayFail_<ProgramSentence>)term.val, term.err)}, term} {}
