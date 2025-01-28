@@ -6,10 +6,6 @@
 #include <limits>
 #include <iostream>
 
-Error::operator int() const {
-    return this->code;
-}
-
 std::ostream& operator<<(std::ostream& os, const Error& err) {
     return os << err.fmt;
 }
