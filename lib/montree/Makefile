@@ -21,11 +21,9 @@ OBJS := $(SRC_FILENAMES:%=obj/%.o)
 
 ###########################################################
 
-all: main
+all: dist/montree.a
 
 main: $(OBJS)
-
-dist: dist/montree.a
 
 clean:
 	$(RM) obj/* .deps/*
@@ -34,7 +32,7 @@ mrproper:
 	$(RM) obj .deps
 
 
-.PHONY: all main dist clean mrproper
+.PHONY: all main clean mrproper
 
 ###########################################################
 
