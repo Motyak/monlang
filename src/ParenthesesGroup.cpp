@@ -109,7 +109,7 @@ consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& inpu
         break;
     }
 
-    #ifndef DISABLE_ASSOC_IN_ATOM
+    #ifndef DISABLE_ASSOC_IN_PG
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         return consumeAssociation(accumulatedPostfixLeftPart, input); /*
             early return assoc (malformed or not).

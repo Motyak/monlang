@@ -93,22 +93,22 @@ Rebuilding a compilation unit with a macro shouldn't require any other unit re-c
 ---
 
 Enable trace on consumeXXX(..) functions:
-  -> make -B common.o TRACE=x
+  -> make -B obj/common.o TRACE=x
 Restore default value (no trace):
-  -> make -B common.o TRACE=
+  -> make -B obj/common.o TRACE=
 
 Disable certain words in consumeWord(..) functions:
-  -> make -B Word.o DISABLE_WORDS=PG,SBG,CBG,
+  -> make -B obj/Word.o DISABLE_WORDS=PG,SBG,CBG,
 Restore default value (enable all words):
-  -> make -B Word.o DISABLE_WORDS=
+  -> make -B obj/Word.o DISABLE_WORDS=
 
 Disable certain composed words in consumeAtom(..) functions:
-  -> make -B Atom.o DISABLE_POSTFIXES=SBG_IN_ATOM,PG_IN_ATOM,
+  -> make -B obj/Atom.o DISABLE_POSTFIXES=SBG_IN_ATOM,PG_IN_ATOM,
 Restore default value for Atom (enable all postfixes in Atom):
-  -> make -B Atom.o DISABLE_POSTFIXES=
+  -> make -B obj/Atom.o DISABLE_POSTFIXES=
 
 Restore default value everywhere:
-  -> make -B main TRACE= DISABLE_WORDS= DISABLE_POSTFIXES=
+  -> make -B main TRACE= DISABLE_WORDS= DISABLE_POSTFIXES= DISABLE_ASSOCS= DISABLE_SPECIAL_ATOMS=
 
 ---
 

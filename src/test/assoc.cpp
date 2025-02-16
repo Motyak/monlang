@@ -41,3 +41,34 @@ TEST_CASE ("association of two pg", "[test-2112][assoc]") {
     auto output_str = montree::astToString(output_pw);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("atom with namespace subscript", "[test-2113][assoc]") {
+    auto input = tommy_str(R"EOF(
+       |fds:::sdf fds::::sdf fds:::::sdf
+       |fds::sdf:aaa::bbb
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |-> Program
+       |  -> ProgramSentence #1
+       |    -> ProgramWord #1: Association
+       |      -> Word: Atom: `fds::`
+       |      -> Word: Atom: `sdf`
+       |    -> ProgramWord #2: Atom: `fds::::sdf`
+       |    -> ProgramWord #3: Association
+       |      -> Word: Atom: `fds::::`
+       |      -> Word: Atom: `sdf`
+       |  -> ProgramSentence #2
+       |    -> ProgramWord: Association
+       |      -> Word: Atom: `fds::sdf`
+       |      -> Word: Atom: `aaa::bbb`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}

@@ -126,6 +126,31 @@ TEST_CASE ("special atoms", "[test-1116][base]") {
     REQUIRE (output_str == expect);
 }
 
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("atom with namespace subscript", "[test-1130][base]") {
+    auto input = tommy_str(R"EOF(
+       |::
+       |fds::sdf fds:: ::fds
+       |
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |-> Program
+       |  -> ProgramSentence #1
+       |    -> ProgramWord: Atom: `::`
+       |  -> ProgramSentence #2
+       |    -> ProgramWord #1: Atom: `fds::sdf`
+       |    -> ProgramWord #2: Atom: `fds::`
+       |    -> ProgramWord #3: Atom: `::fds`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgram(input_iss);
+    auto output_str = montree::astToString(output);
+    REQUIRE (output_str == expect);
+}
+
 //==============================================================
 // ERR
 //==============================================================

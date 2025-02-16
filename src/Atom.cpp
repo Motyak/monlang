@@ -25,6 +25,14 @@ MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters,
         value += currentChar;
     }
 
+    #ifndef DISABLE_ASSOC_IN_ATOM
+    if (peekSequence({':', ':'}, input)) {
+        value += input.get(); // :
+        value += input.get(); // :
+        value += consumeAtomStrictly(terminatorCharacters, input).val.value;
+    }
+    #endif
+
     // means we hit a reserved character
     if (value.size() == 0) {
         return Malformed(Atom{}, ERR(992));
