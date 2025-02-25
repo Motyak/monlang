@@ -14,6 +14,7 @@ struct MayFail_<ParenthesesGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
     size_t _tokenLen = 0;
+    bool _implicit = false;
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<MayFail_<Term>>>&);
 

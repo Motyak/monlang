@@ -12,6 +12,7 @@ struct ParenthesesGroup {
     std::vector<Term> terms;
 
     size_t _tokenLen = 0;
+    bool _implicit = false;
     ParenthesesGroup() = default;
     ParenthesesGroup(const std::vector<Term>&);
 };
