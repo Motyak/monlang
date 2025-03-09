@@ -97,9 +97,7 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     return cbg;
 }
 
-consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& input) {
-    auto cbg = consumeCurlyBracketsGroupStrictly(input);
-
+consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(const MayFail<MayFail_<CurlyBracketsGroup>>& cbg, std::istringstream& input) {
     if (cbg.has_error()) {
         return mayfail_convert<MayFail_<CurlyBracketsGroup>*>(cbg);
     }
@@ -139,6 +137,11 @@ consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& 
     );
 }
 
+consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& input) {
+    auto cbgBefore = consumeCurlyBracketsGroupStrictly(input);
+    return consumeCurlyBracketsGroup(cbgBefore, input);
+}
+
 ////////////////////////////////////////////////////////////////
 
 CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences) : Program{sentences}{}
@@ -163,17 +166,19 @@ MayFail_<CurlyBracketsGroup>::MayFail_(const CurlyBracketsGroup& cbg) {
         this->term = wrap(*cbg.term);
     }
     this->_tokenLen = cbg._tokenLen;
+    this->_dollars = cbg._dollars;
 }
 
 MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
     CurlyBracketsGroup cbg;
-    for (auto e: sentences) {
+    for (auto e: this->sentences) {
         cbg.sentences.push_back(unwrap(e.value()));
     }
-    if (term.has_value()) {
-        cbg.term = unwrap(term->value());
+    if (this->term.has_value()) {
+        cbg.term = unwrap(this->term->value());
     }
-    cbg._tokenLen = _tokenLen;
+    cbg._tokenLen = this->_tokenLen;
+    cbg._dollars = this->_dollars;
     return cbg;
 }
 

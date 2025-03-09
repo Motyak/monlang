@@ -13,6 +13,7 @@ struct MayFail_<CurlyBracketsGroup> : public MayFail_<Program> {
     std::optional<MayFail<MayFail_<Term>>> term;
 
     size_t _tokenLen = 0;
+    bool _dollars = false;
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>&);
 
@@ -38,5 +39,12 @@ using consumeCurlyBracketsGroup_RetType = std::variant<
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
+
+// used to separately call the strict version then the complete one while passing previous result
+// e.g.:
+// auto cbgBefore = consumeCurlyBracketsGroupStrictly(input);
+// <can do stuff on cbgBefore here>
+// auto cbg = consumeCurlyBracketsGroup(cbgBefore, input);
+consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(const MayFail<MayFail_<CurlyBracketsGroup>>& before, std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

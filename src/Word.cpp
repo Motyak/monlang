@@ -85,6 +85,18 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
     #endif
 
     #ifndef DISABLE_CBG
+    #ifndef DISABLE_DOLLARS_CBG
+    auto dollars_cbg_seq = vec_concat({Sequence{'$'}, CurlyBracketsGroup::INITIATOR_SEQUENCE});
+    if (peekSequence(dollars_cbg_seq, input)) {
+        input.ignore(1); // $
+        auto dollars_cbg = consumeCurlyBracketsGroupStrictly(input);
+        dollars_cbg.val._dollars = true;
+        if (!dollars_cbg.has_error()) {
+            dollars_cbg.val._tokenLen += 1; // $
+        }
+        return mayfail_cast<Word_>(consumeCurlyBracketsGroup(dollars_cbg, input));
+    }
+    #endif
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_cast<Word_>(consumeCurlyBracketsGroup(input));
     }

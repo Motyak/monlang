@@ -81,6 +81,24 @@ TEST_CASE ("curly brackets group", "[test-4114][cbg]") {
     REQUIRE (output_str == expect);
 }
 
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("dollars-prefixed curly brackets group", "[test-4141][cbg]") {
+    auto input = "${fds}";
+
+    auto expect = tommy_str(R"EOF(
+       |-> CurlyBracketsGroup
+       |  -> Term
+       |    -> Word: Atom: `fds`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
+    REQUIRE (true == std::get<MayFail_<CurlyBracketsGroup>*>(output_word.val)->_dollars);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
 //==============================================================
 // ERR
 //==============================================================
