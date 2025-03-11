@@ -4,6 +4,7 @@
 ## word ##
 %/Word.o: word_macros := $(call buildmacros, DISABLE_, $(DISABLE_WORDS))
 %/Word.o: word_macros += $(if $(DISABLE_SPECIAL_ATOMS), -D DISABLE_SPECIAL_ATOMS)
+%/Word.o: word_macros += $(if $(DISABLE_DOLLARS_CBG), -D DISABLE_DOLLARS_CBG)
 
 ## postfix ##
 %/Atom.o: postfix_macros := $(call buildmacros, DISABLE_P, $(DISABLE_POSTFIXES), %_IN_ATOM)
