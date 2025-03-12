@@ -8,6 +8,7 @@
 
 using AssociationLeftPart = std::variant<
     Atom*,
+    Quotation*,
     /* no SquareBracketsTerm* here */
     GROUP_ENTITIES,
     POSTFIXES

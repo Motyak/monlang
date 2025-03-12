@@ -36,6 +36,7 @@ ProgramSentence \
 Term \
 Word \
 Atom \
+Quotation \
 SquareBracketsTerm \
 SquareBracketsGroup \
 ParenthesesGroup \
@@ -117,7 +118,7 @@ test_libs += lib/montree/dist/montree.a
 $(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
 	.PHONY: lib/montree/dist/montree.a)
 lib/montree/dist/montree.a:
-	$(MAKE) -C lib/montree dist
+	$(MAKE) -C lib/montree dist/montree.a
 
 ###########################################################
 

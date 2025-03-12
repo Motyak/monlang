@@ -154,3 +154,27 @@ TEST_CASE ("postfix sbg off of cbg", "[test-3317][postfix]") {
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("postfix sbg off of quot", "[test-3318][postfix]") {
+    SKIP("TODO: not yet implemented");
+
+    auto input = tommy_str(R"EOF(
+        "str"[index]
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |-> PostfixSquareBracketsGroup
+       |  -> Word: Quotation: `str`
+       |  -> SquareBracketsGroup
+       |    -> Term
+       |      -> Word: Atom: `index`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}

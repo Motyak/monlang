@@ -30,7 +30,7 @@ TODO
 Pour ajouter une entité grammaticale:
 - Ajouter le header file dans include/monlang/
 - Ajouter le source file dans src/ (si il définit des fonctions)
-- Ajouter le nouveau type dans le variant Word dans Word.h
+- Ajouter le nouveau type dans le variant Word dans Word.h et AssociationLeftPart dans Association.h
 - Compléter Word::consumeWord dans Word.cpp: ajouter bloc de code appelant la fonction consumeXXX
 - Dans toutes les implémentations de AstVisitor, ajouter une nouvelle opération pour le nouveau type
   -> .h ET .cpp
@@ -38,6 +38,8 @@ Pour ajouter une entité grammaticale:
     -> visitor/Unparse
     -> lib/montree/Print
 - Ajouter l'entité en haut du Makefile monlang/ (si il a un .cpp)
+- Dans LV2: ajouter include en dessous de /* require knowing all words for token_len() */
+- Dans LV2: ajouter à ReconstructLV1Tokens
 
 ---
 

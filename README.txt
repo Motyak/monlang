@@ -21,6 +21,7 @@
 51 CurlyBracketsTerm
 52 SquareBracketsTerm
 53 Quotation
+54 MultilineQuotation (Quotation)
 
 99 Atom
 
@@ -38,10 +39,12 @@ xyz -> custom error (refer to manual)
 
 131 Term can't start with a continuator (leading continuator met)
 
-412 multiline CurlyBracketsGroup expect empty newline after initiator
+412 multiline CurlyBracketsGroup expect indented/empty newline after initiator
 413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
 
 521 SquareBracketsTerm cannot be empty
+
+541 MultilineQuotation expect indented/empty newline after initiator
 
 992 Atom cannot be empty (hit a reserved character)
 
@@ -63,6 +66,7 @@ xyz -> custom error (refer to manual)
 
 101 => Program has no continuator seq
 502 => SquareBracketsTerm has no continuator seq
+503 => Quotation has no continuator seq
 909 => Atom has no continuator seq
 
 110 => Program has no terminator seq

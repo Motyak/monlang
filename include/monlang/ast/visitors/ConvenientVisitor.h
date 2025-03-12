@@ -22,6 +22,7 @@ class ConvenientVisitor<void> : public AstVisitor<void> {
     virtual void operator()(const Word&) override;
 
     virtual void operator()(Atom*);
+    virtual void operator()(Quotation*);
     virtual void operator()(SquareBracketsTerm*);
     virtual void operator()(ParenthesesGroup*);
     virtual void operator()(SquareBracketsGroup*);

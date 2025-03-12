@@ -13,6 +13,7 @@
 
 #include <utils/mem-utils.h>
 #include <utils/variant-utils.h>
+#include <utils/assert-utils.h>
 
 void ConvenientVisitor<void>::operator()(const Program& prog) {
     for (auto progSentence: prog.sentences) {
@@ -42,7 +43,9 @@ void ConvenientVisitor<void>::operator()(const Word& word) {
 
 ////////////////////////////////////////////////////////////////
 
-void ConvenientVisitor<void>::operator()(Atom*){} // operation-specific
+void ConvenientVisitor<void>::operator()(Atom*){TODO();} // operation-specific
+
+void ConvenientVisitor<void>::operator()(Quotation*){TODO();} // operation-specific
 
 void ConvenientVisitor<void>::operator()(SquareBracketsTerm* sbt) {
     operator()(sbt->term);

@@ -4,6 +4,7 @@
 #include <variant>
 
 struct Atom;
+struct Quotation;
 struct SquareBracketsTerm;
 struct ParenthesesGroup;
 struct SquareBracketsGroup;
@@ -17,6 +18,7 @@ struct Association;
 
 using ProgramWord = std::variant<
     Atom*,
+    Quotation*,
     SquareBracketsTerm*,
     GROUP_ENTITIES,
     POSTFIXES,
@@ -25,6 +27,7 @@ using ProgramWord = std::variant<
 
 using Word = std::variant<
     Atom*,
+    Quotation*,
     /* no SquareBracketsTerm* here */
     GROUP_ENTITIES,
     POSTFIXES,

@@ -9,6 +9,7 @@
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
+#include <monlang/Quotation.h>
 
 /* required by the (un)wrap functions only */
 #include <monlang/PostfixParenthesesGroup.h>
@@ -85,6 +86,13 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
     #endif
 
     #ifndef DISABLE_CBG
+    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_cast<Word_>(consumeCurlyBracketsGroup(input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        CurlyBracketsGroup::RESERVED_CHARACTERS
+    });
     #ifndef DISABLE_DOLLARS_CBG
     auto dollars_cbg_seq = vec_concat({Sequence{'$'}, CurlyBracketsGroup::INITIATOR_SEQUENCE});
     if (peekSequence(dollars_cbg_seq, input)) {
@@ -97,13 +105,25 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
         return mayfail_cast<Word_>(consumeCurlyBracketsGroup(dollars_cbg, input));
     }
     #endif
-    if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeCurlyBracketsGroup(input));
+    #endif
+
+    #ifndef DISABLE_QUOT
+    if (peekSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
+        return mayfail_cast<Word_>(consumeQuotation(input));
     }
     terminatorCharacters = vec_union({
         terminatorCharacters,
-        CurlyBracketsGroup::RESERVED_CHARACTERS
+        Quotation::SINGLELINE_RESERVED_CHARACTERS
     });
+    #ifndef DISABLE_MULTILINE_QUOT
+    if (peekSequence(Quotation::ALT_DELIMITERS_SEQUENCE, input)) {
+        return mayfail_cast<Word_>(consumeMultilineQuotation(input));
+    }
+    terminatorCharacters = vec_union({
+        terminatorCharacters,
+        Quotation::MULTILINE_RESERVED_CHARACTERS
+    });
+    #endif
     #endif
 
     /* Atom is the "fall-through" Word */
