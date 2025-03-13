@@ -199,6 +199,8 @@ consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
     );
 }
 
+Quotation::Quotation(const std::string& quoted) : quoted(quoted){}
+
 MayFail_<Quotation>::MayFail_(const std::string& quoted) : quoted(quoted){}
 
 MayFail_<Quotation>::MayFail_(Quotation quot) {
