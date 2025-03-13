@@ -58,8 +58,6 @@ TEST_CASE ("singleline quotation with escape sequences", "[test-5312][quot]") {
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("multiline quotation", "[test-5313][quot]") {
-    SKIP("TODO: not yet implemented");
-
     auto input = tommy_str(R"EOF(
        |```
        |    line1
@@ -82,8 +80,6 @@ TEST_CASE ("multiline quotation", "[test-5313][quot]") {
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("empty multiline quotation", "[test-5314][quot]") {
-    SKIP("TODO: not yet implemented");
-
     auto input = tommy_str(R"EOF(
        |```
        |
@@ -104,8 +100,6 @@ TEST_CASE ("empty multiline quotation", "[test-5314][quot]") {
 ////////////////////////////////////////////////////////////////
 
 TEST_CASE ("traling backslash in multiline quotation", "[test-5315][quot]") {
-    SKIP("TODO: not yet implemented");
-
     auto input = tommy_str(R"EOF(
        |```
        |    \
@@ -128,20 +122,39 @@ TEST_CASE ("traling backslash in multiline quotation", "[test-5315][quot]") {
 //==============================================================
 
 TEST_CASE ("ERR MultilineQuotation expect indented/empty newline after initiator", "[test-5331][quot][err]") {
-    SKIP("TODO: not yet implemented");
-
     auto input = tommy_str(R"EOF(
        |```
        |```
     )EOF");
 
     auto expect = tommy_str(R"EOF(
-        |~> Quotation: ``
-        |  ~> ERR-541
-     )EOF");
+       |~> Quotation: ``
+       |  ~> ERR-541
+    )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeQuotationStrictly(input_iss);
+    auto output = consumeMultilineQuotationStrictly(input_iss);
+    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("ERR MultilineQuotation line has wrong indentation", "[test-5332][quot][err]") {
+    auto input = tommy_str(R"EOF(
+       |```
+       |wrong
+       |```
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |~> Quotation: ``
+       |  ~> ERR-542
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeMultilineQuotationStrictly(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);

@@ -24,9 +24,16 @@ const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value()
 };
 
-MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input, int indentLevel) {
+thread_local int indentLevel = 0;
+
+Sequence INDENT_SEQUENCE() {
+    return indentLevel * ProgramSentence::TAB_SEQUENCE;
+}
+
+MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     TRACE_CUR_FUN();
+    GLOBAL indentLevel;
 
     if (input.peek() == EOF) {
         return Malformed(MayFail_<ProgramSentence>{}, ERR(125));

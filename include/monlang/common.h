@@ -10,6 +10,8 @@ constexpr char NEWLINE = 10;
 constexpr char TAB = 9;
 constexpr char BACKSLASH = 92;
 
+#define GLOBAL (void) // to declare a global variable used within a scope
+
 ////////////////////////////////////////////////////////////////
 
 MayFail<void> consumeSequence(const Sequence&, std::istringstream&);

@@ -6,6 +6,7 @@
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
+#include <monlang/Quotation.h>
 
 ////////////////////////////////////////////////////////////////
 
@@ -157,9 +158,7 @@ TEST_CASE ("postfix sbg off of cbg", "[test-3317][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("postfix sbg off of quot", "[test-3318][postfix]") {
-    SKIP("TODO: not yet implemented");
-
+TEST_CASE ("postfix sbg off of singleline quot", "[test-3318][postfix]") {
     auto input = tommy_str(R"EOF(
         "str"[index]
     )EOF");
@@ -173,7 +172,7 @@ TEST_CASE ("postfix sbg off of quot", "[test-3318][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output = consumeQuotation(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);

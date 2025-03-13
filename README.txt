@@ -45,6 +45,7 @@ xyz -> custom error (refer to manual)
 521 SquareBracketsTerm cannot be empty
 
 541 MultilineQuotation expect indented/empty newline after initiator
+542 MultilineQuotation line has wrong indentation
 
 992 Atom cannot be empty (hit a reserved character)
 
@@ -67,6 +68,7 @@ xyz -> custom error (refer to manual)
 101 => Program has no continuator seq
 502 => SquareBracketsTerm has no continuator seq
 503 => Quotation has no continuator seq
+504 => MultilineQuotation has no continuator seq
 909 => Atom has no continuator seq
 
 110 => Program has no terminator seq

@@ -22,8 +22,9 @@ struct MayFail_<ProgramSentence> {
     explicit operator ProgramSentence() const;
 };
 
-MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input, int indentLevel = 0);
+extern thread_local int indentLevel;
+Sequence INDENT_SEQUENCE();
 
-#define INDENT_SEQUENCE() (indentLevel * ProgramSentence::TAB_SEQUENCE)
+MayFail<MayFail_<ProgramSentence>> consumeProgramSentence(std::istringstream& input);
 
 #endif // PROGRAM_SENTENCE_H

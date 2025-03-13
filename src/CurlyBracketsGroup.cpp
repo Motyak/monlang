@@ -22,7 +22,7 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
 MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
-    static thread_local int indentLevel = 0;
+    GLOBAL indentLevel;
     auto indentedTerminatorSeq = vec_concat({INDENT_SEQUENCE(), CurlyBracketsGroup::TERMINATOR_SEQUENCE});
 
     if (!consumeSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
@@ -60,14 +60,14 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     }
 
     indentLevel++;
-    defer { indentLevel--; }; // restore indent level, because static
+    defer { indentLevel--; }; // restore indent level, because global
 
     std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
     MayFail<MayFail_<ProgramSentence>> currentSentence;
 
     auto newlines = size_t(0);
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
-        currentSentence = consumeProgramSentence(input, indentLevel);
+        currentSentence = consumeProgramSentence(input);
         if (!currentSentence.has_error() && currentSentence.value().programWords.size() == 0) {
             newlines += currentSentence.value()._tokenIndentSpaces
                     + currentSentence.value()._tokenLen;

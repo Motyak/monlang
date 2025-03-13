@@ -2,8 +2,15 @@
 
 /* impl only */
 #include <monlang/common.h>
+#include <monlang/ProgramSentence.h> // indentLevel global var
+#include <monlang/SquareBracketsGroup.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/loop-utils.h>
+#include <utils/vec-utils.h>
+#include <utils/defer-util.h>
+#include <utils/str-utils.h>
+#include <utils/mem-utils.h>
 
 const Sequence Quotation::DELIMITERS_SEQUENCE = {'"'};
 
@@ -21,7 +28,6 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     const std::vector<char> terminatorCharacters = {
-        NEWLINE,
         sequenceFirstChar(Quotation::DELIMITERS_SEQUENCE).value(),
     };
 
@@ -33,7 +39,8 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     char currentChar;
     bool escaped = false;
 
-    until (input.peek() == EOF || (!escaped && peekAnyChar(terminatorCharacters, input))) {
+    until (input.peek() == EOF || input.peek() == NEWLINE \
+            || (!escaped && peekAnyChar(terminatorCharacters, input))) {
         input.get(currentChar);
         if (escaped) {
             quoted += currentChar == 'n'? '\n' : currentChar;
@@ -55,25 +62,141 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     quot._tokenLen = GET_INPUT_STREAM_PROGRESS();
     return quot;
 }
-#include <utils/assert-utils.h>
+
+static std::string consumeQuotedLine(std::istringstream&);
+
 MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstream& input) {
-    // TRACE_CUR_FUN();
-    // RECORD_INPUT_STREAM_PROGRESS();
-    (void)input;
-    TODO();
+    TRACE_CUR_FUN();
+    RECORD_INPUT_STREAM_PROGRESS();
+    GLOBAL indentLevel;
+    auto blockIndentSeq = indentLevel * ProgramSentence::TAB_SEQUENCE;
+    auto quotIndentSeq = (indentLevel + 1) * ProgramSentence::TAB_SEQUENCE;
+    auto indentedTerminatorSeq = vec_concat({
+        blockIndentSeq, Quotation::ALT_DELIMITERS_SEQUENCE
+    });
+
+    if (!consumeSequence(Quotation::ALT_DELIMITERS_SEQUENCE, input)) {
+        return Malformed(MayFail_<Quotation>{}, ERR(054));
+    }
+
+    input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
+
+    if (consumeSequence(indentedTerminatorSeq, input)) {
+        return Malformed(MayFail_<Quotation>{}, ERR(541));
+    }
+
+    indentLevel++;
+    defer { indentLevel--; }; // restore indent level, because global
+
+    std::vector<std::string> quotedLines;
+
+    until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
+        if (input.peek() != NEWLINE && !consumeSequence(quotIndentSeq, input)) {
+            auto quoted = join(quotedLines, NEWLINE);
+            return Malformed(MayFail_<Quotation>{quoted}, ERR(542));
+        }
+        quotedLines.push_back(consumeQuotedLine(input));
+    }
+
+    if (!consumeSequence(indentedTerminatorSeq, input)) {
+        auto quoted = join(quotedLines, NEWLINE);
+        return Malformed(MayFail_<Quotation>{quoted}, ERR(540));
+    }
+
+    auto quoted = join(quotedLines, NEWLINE);
+    auto quot = MayFail_<Quotation>{quoted};
+    quot._tokenLen = GET_INPUT_STREAM_PROGRESS();
+    quot._multiline = true;
+    return quot;
 }
 
+std::string consumeQuotedLine(std::istringstream& input) {
+    std::string res;
+    char currentChar;
+    bool escaped = false;
+
+    until (input.peek() == EOF || input.peek() == NEWLINE) {
+        input.get(currentChar);
+        if (escaped) {
+            res += currentChar; // no special character in multiline quot
+            escaped = false;
+        }
+        else if (currentChar == BACKSLASH) {
+            escaped = true;
+        }
+        else {
+            res += currentChar;
+        }
+    }
+    input.ignore(1); // consume line terminator
+
+    return res;
+}
 
 consumeQuotation_RetType consumeQuotation(std::istringstream& input) {
     auto quot = consumeQuotationStrictly(input);
 
-    //TODO: tmp
-    return mayfail_convert<MayFail_<Quotation>*>(quot);
+    if (quot.has_error()) {
+        return mayfail_convert<MayFail_<Quotation>*>(quot);
+    }
+
+    /* look behind */
+
+    using PostfixLeftPart = std::variant<Quotation*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((Quotation)quot);
+
+    for (;;) {
+        #ifndef DISABLE_PSBG_IN_QUOT
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
+            if (psbg.has_error()) {
+                return psbg; // malformed postfix
+            }
+            continue;
+        }
+        #endif
+
+        break;
+    }
+
+    return std::visit(
+        [](auto word) -> consumeQuotation_RetType {return move_to_heap(wrap(*word));},
+        accumulatedPostfixLeftPart
+    );
 }
 
 consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
-    (void)input;
-    TODO();
+    auto quot = consumeMultilineQuotationStrictly(input);
+
+    if (quot.has_error()) {
+        return mayfail_convert<MayFail_<Quotation>*>(quot);
+    }
+
+    /* look behind */
+
+    using PostfixLeftPart = std::variant<Quotation*, PostfixSquareBracketsGroup*>;
+    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((Quotation)quot);
+
+    for (;;) {
+        #ifndef DISABLE_PSBG_IN_QUOT
+        #ifndef DISABLE_PSBG_IN_MULTILINE_QUOT
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
+            if (psbg.has_error()) {
+                return psbg; // malformed postfix
+            }
+            continue;
+        }
+        #endif
+        #endif
+
+        break;
+    }
+
+    return std::visit(
+        [](auto word) -> consumeQuotation_RetType {return move_to_heap(wrap(*word));},
+        accumulatedPostfixLeftPart
+    );
 }
 
 MayFail_<Quotation>::MayFail_(const std::string& quoted) : quoted(quoted){}
