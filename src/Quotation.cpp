@@ -8,7 +8,6 @@
 
 #include <utils/loop-utils.h>
 #include <utils/vec-utils.h>
-#include <utils/defer-util.h>
 #include <utils/str-utils.h>
 #include <utils/mem-utils.h>
 
@@ -182,8 +181,7 @@ consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((Quotation)quot);
 
     for (;;) {
-        #ifndef DISABLE_PSBG_IN_QUOT
-        #ifndef DISABLE_PSBG_IN_MULTILINE_QUOT
+        #if !defined DISABLE_PSBG_IN_QUOT && !defined DISABLE_PSBG_IN_MULTILINE_QUOT
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
             if (psbg.has_error()) {
@@ -191,7 +189,6 @@ consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
             }
             continue;
         }
-        #endif
         #endif
 
         break;
