@@ -55,7 +55,9 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     }
 
     if (!consumeSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
-        return Malformed(MayFail_<Quotation>{quoted}, ERR(530));
+        auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(530));
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        return malformed;
     }
 
     auto quot = MayFail_<Quotation>{quoted};
@@ -79,28 +81,30 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
         return Malformed(MayFail_<Quotation>{}, ERR(054));
     }
 
-    input.ignore(sequenceLen(ProgramSentence::TERMINATOR_SEQUENCE));
-
-    if (consumeSequence(indentedTerminatorSeq, input)) {
-        return Malformed(MayFail_<Quotation>{}, ERR(541));
+    if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)
+            || peekSequence(indentedTerminatorSeq, input)) {
+        auto malformed = Malformed(MayFail_<Quotation>{}, ERR(541));
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        return malformed;
     }
-
-    indentLevel++;
-    defer { indentLevel--; }; // restore indent level, because global
 
     std::vector<std::string> quotedLines;
 
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         if (input.peek() != NEWLINE && !consumeSequence(quotIndentSeq, input)) {
             auto quoted = join(quotedLines, NEWLINE);
-            return Malformed(MayFail_<Quotation>{quoted}, ERR(542));
+            auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(542));
+            malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+            return malformed;
         }
         quotedLines.push_back(consumeQuotedLine(input));
     }
 
     if (!consumeSequence(indentedTerminatorSeq, input)) {
         auto quoted = join(quotedLines, NEWLINE);
-        return Malformed(MayFail_<Quotation>{quoted}, ERR(540));
+        auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(540));
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        return malformed;
     }
 
     auto quoted = join(quotedLines, NEWLINE);
