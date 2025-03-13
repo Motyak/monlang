@@ -12,7 +12,6 @@ struct MayFail_<Quotation> {
     std::string quoted;
 
     size_t _tokenLen = 0;
-    bool _multiline = false;
 
     MayFail_() = default;
     explicit MayFail_(const std::string&);

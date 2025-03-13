@@ -109,7 +109,6 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
     auto quoted = join(quotedLines, NEWLINE);
     auto quot = MayFail_<Quotation>{quoted};
     quot._tokenLen = GET_INPUT_STREAM_PROGRESS();
-    quot._multiline = true;
     return quot;
 }
 
@@ -205,13 +204,11 @@ MayFail_<Quotation>::MayFail_(const std::string& quoted) : quoted(quoted){}
 MayFail_<Quotation>::MayFail_(Quotation quot) {
     this->quoted = quot.quoted;
     this->_tokenLen = quot._tokenLen;
-    this->_multiline = quot._multiline;
 }
 
 MayFail_<Quotation>::operator Quotation() const {
     Quotation quot;
     quot.quoted = this->quoted;
     quot._tokenLen = this->_tokenLen;
-    quot._multiline = this->_multiline;
     return quot;
 }

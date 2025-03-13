@@ -14,7 +14,6 @@ struct Quotation {
     std::string quoted;
 
     size_t _tokenLen = 0;
-    bool _multiline = false;
 
     Quotation() = default;
     Quotation(const std::string&);
