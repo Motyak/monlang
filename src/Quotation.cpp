@@ -55,7 +55,7 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
 
     if (!consumeSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
         auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(530));
-        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
 
@@ -83,7 +83,7 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)
             || peekSequence(indentedTerminatorSeq, input)) {
         auto malformed = Malformed(MayFail_<Quotation>{}, ERR(541));
-        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
 
@@ -93,7 +93,7 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
         if (input.peek() != NEWLINE && !consumeSequence(quotIndentSeq, input)) {
             auto quoted = join(quotedLines, NEWLINE);
             auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(542));
-            malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+            malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
             return malformed;
         }
         quotedLines.push_back(consumeQuotedLine(input));
@@ -102,7 +102,7 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
     if (!consumeSequence(indentedTerminatorSeq, input)) {
         auto quoted = join(quotedLines, NEWLINE);
         auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(540));
-        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS() + 1; // for err reporting
+        malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
 

@@ -99,7 +99,7 @@ TEST_CASE ("empty multiline quotation", "[test-5314][quot]") {
 
 ////////////////////////////////////////////////////////////////
 
-TEST_CASE ("traling backslash in multiline quotation", "[test-5315][quot]") {
+TEST_CASE ("trailing backslash in multiline quotation", "[test-5315][quot]") {
     auto input = tommy_str(R"EOF(
        |```
        |    \

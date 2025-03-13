@@ -43,9 +43,9 @@ void ConvenientVisitor<void>::operator()(const Word& word) {
 
 ////////////////////////////////////////////////////////////////
 
-void ConvenientVisitor<void>::operator()(Atom*){TODO();} // operation-specific
+void ConvenientVisitor<void>::operator()(Atom*){SHOULD_NOT_HAPPEN();} // operation-specific
 
-void ConvenientVisitor<void>::operator()(Quotation*){TODO();} // operation-specific
+void ConvenientVisitor<void>::operator()(Quotation*){SHOULD_NOT_HAPPEN();} // operation-specific
 
 void ConvenientVisitor<void>::operator()(SquareBracketsTerm* sbt) {
     operator()(sbt->term);
