@@ -3,6 +3,7 @@
 #include <monlang/common.h>
 
 /* impl only */
+#include <monlang/ast/ProgramSentence.h>
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/Association.h>
@@ -27,11 +28,13 @@ MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istring
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     std::vector<char> terminatorCharacters = {
-        sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
+        sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value(),
+        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value(),
     };
     const std::vector<char> termTerminatorChars = {
         sequenceFirstChar(ParenthesesGroup::CONTINUATOR_SEQUENCE).value(),
-        sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value()
+        sequenceFirstChar(ParenthesesGroup::TERMINATOR_SEQUENCE).value(),
+        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value(),
     };
 
     if (!consumeSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {

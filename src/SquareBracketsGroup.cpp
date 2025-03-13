@@ -3,6 +3,7 @@
 #include <monlang/common.h>
 
 /* impl only */
+#include <monlang/ast/ProgramSentence.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 
 #include <utils/loop-utils.h>
@@ -25,11 +26,13 @@ MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::i
     RECORD_INPUT_STREAM_PROGRESS();
     TRACE_CUR_FUN();
     const std::vector<char> terminatorCharacters = {
-        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
+        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value(),
+        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value(),
     };
     const std::vector<char> termTerminatorChars = {
         sequenceFirstChar(SquareBracketsGroup::CONTINUATOR_SEQUENCE).value(),
-        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value()
+        sequenceFirstChar(SquareBracketsGroup::TERMINATOR_SEQUENCE).value(),
+        sequenceFirstChar(ProgramSentence::TERMINATOR_SEQUENCE).value(),
     };
 
     if (!consumeSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {

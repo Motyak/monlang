@@ -38,6 +38,7 @@ xyz -> custom error (refer to manual)
 123 ProgramSentence has wrong indentation
 
 131 Term can't start with a continuator (leading continuator met)
+135 Term cannot be empty (hit early EOF)
 
 412 multiline CurlyBracketsGroup expect indented/empty newline after initiator
 413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
@@ -53,8 +54,6 @@ xyz -> custom error (refer to manual)
 
 125 ProgramSentence cannot be empty (hit early EOF)
       => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
-135 Term cannot be empty (hit early EOF)
-      => in all "group" entities comprising of terms, we check for EOF before loop first iteration
 995 Atom cannot be empty (hit early EOF)
       => `consumeProgram` checks for EOF way before...
 
