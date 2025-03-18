@@ -6,6 +6,7 @@
 #include <monlang/Word.h>
 
 #include <utils/mem-utils.h>
+#include <utils/variant-utils.h>
 
 template <>
 struct MayFail_<Association> {
