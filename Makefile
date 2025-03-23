@@ -43,6 +43,7 @@ ParenthesesGroup \
 CurlyBracketsGroup \
 PostfixSquareBracketsGroup \
 PostfixParenthesesGroup \
+Path \
 Association \
 
 ENTITY_OBJS := $(ENTITIES:%=obj/%.o) obj/common.o

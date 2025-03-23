@@ -14,6 +14,7 @@ using ProgramWord_ = std::variant<
     MayFail_<SquareBracketsTerm>*,
     GROUP_ENTITIES_,
     POSTFIXES_,
+    MayFail_<Path>*,
     MayFail_<Association>*
 >;
 
@@ -23,6 +24,7 @@ using Word_ = std::variant<
     /* no MayFail_<SquareBracketsTerm>* here */
     GROUP_ENTITIES_,
     POSTFIXES_,
+    MayFail_<Path>*,
     MayFail_<Association>*
 >;
 

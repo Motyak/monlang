@@ -1,6 +1,15 @@
 #include <monlang/Association.h>
 #include <monlang/common.h>
 
+/* require knowing all words for token_len() */
+#include <monlang/ast/Atom.h>
+#include <monlang/ast/Quotation.h>
+#include <monlang/ast/SquareBracketsGroup.h>
+#include <monlang/ast/CurlyBracketsGroup.h>
+#include <monlang/ast/PostfixParenthesesGroup.h>
+#include <monlang/ast/PostfixSquareBracketsGroup.h>
+#include <monlang/ast/Path.h>
+
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
 
@@ -9,6 +18,22 @@ const Sequence Association::SEPARATOR_SEQUENCE = {':', {':', 0_}};
 const std::vector<char> Association::RESERVED_CHARACTERS = {
     sequenceFirstChar(Association::SEPARATOR_SEQUENCE).value()
 };
+
+MayFail<MayFail_<Association>*>
+consumeAssociation(const AssociationLeftPart& assocLeftPart, std::istringstream& input) {
+    RECORD_INPUT_STREAM_PROGRESS();
+    input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE));
+    auto whats_right_behind = consumeWord(input);
+    auto assoc = move_to_heap(MayFail_<Association>{
+        variant_cast(assocLeftPart),
+        whats_right_behind
+    });
+    if (whats_right_behind.has_error()) {
+        return Malformed(assoc, ERR(219));
+    }
+    assoc->_tokenLen = token_len(assocLeftPart) + GET_INPUT_STREAM_PROGRESS();
+    return assoc;
+}
 
 ///////////////////////////////////////////////////////////
 

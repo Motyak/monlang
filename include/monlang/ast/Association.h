@@ -11,7 +11,8 @@ using AssociationLeftPart = std::variant<
     Quotation*,
     /* no SquareBracketsTerm* here */
     GROUP_ENTITIES,
-    POSTFIXES
+    POSTFIXES,
+    Path*
     /* no Association* here */
 >;
 

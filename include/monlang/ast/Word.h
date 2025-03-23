@@ -11,6 +11,7 @@ struct SquareBracketsGroup;
 struct CurlyBracketsGroup;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
+struct Path;
 struct Association;
 
 #define GROUP_ENTITIES ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*
@@ -22,6 +23,7 @@ using ProgramWord = std::variant<
     SquareBracketsTerm*,
     GROUP_ENTITIES,
     POSTFIXES,
+    Path*,
     Association*
 >;
 
@@ -31,6 +33,7 @@ using Word = std::variant<
     /* no SquareBracketsTerm* here */
     GROUP_ENTITIES,
     POSTFIXES,
+    Path*,
     Association*
 >;
 

@@ -9,6 +9,7 @@
 #include <monlang/ast/CurlyBracketsGroup.h>
 #include <monlang/ast/PostfixParenthesesGroup.h>
 #include <monlang/ast/PostfixSquareBracketsGroup.h>
+#include <monlang/ast/Path.h>
 #include <monlang/ast/Association.h>
 
 #include <utils/mem-utils.h>
@@ -70,13 +71,18 @@ void ConvenientVisitor<void>::operator()(CurlyBracketsGroup* cbg) {
 }
 
 void ConvenientVisitor<void>::operator()(PostfixParenthesesGroup* ppg) {
-    operator()(ppg->leftPart);
-    operator()(move_to_heap(ppg->rightPart));
+    operator()((Word)variant_cast(ppg->leftPart));
+    operator()(&ppg->rightPart);
 }
 
 void ConvenientVisitor<void>::operator()(PostfixSquareBracketsGroup* psbg) {
-    operator()(psbg->leftPart);
-    operator()(move_to_heap(psbg->rightPart));
+    operator()((Word)variant_cast(psbg->leftPart));
+    operator()(&psbg->rightPart);
+}
+
+void ConvenientVisitor<void>::operator()(Path* path) {
+    operator()((Word)variant_cast(path->leftPart));
+    operator()(&path->rightPart);
 }
 
 void ConvenientVisitor<void>::operator()(Association* assoc) {

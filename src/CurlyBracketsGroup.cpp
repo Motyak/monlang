@@ -3,10 +3,6 @@
 #include <monlang/Term.h>
 #include <monlang/common.h>
 
-/* in impl only */
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
-
 #include <utils/vec-utils.h>
 #include <utils/defer-util.h>
 
@@ -19,7 +15,7 @@ const std::vector<char> CurlyBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream& input) {
+MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     GLOBAL indentLevel;
@@ -97,58 +93,16 @@ MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::ist
     return cbg;
 }
 
-consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(const MayFail<MayFail_<CurlyBracketsGroup>>& cbg, std::istringstream& input) {
-    if (cbg.has_error()) {
-        return mayfail_convert<MayFail_<CurlyBracketsGroup>*>(cbg);
-    }
-
-    /* look behind */
-
-    using PostfixLeftPart = std::variant<CurlyBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((CurlyBracketsGroup)cbg);
-
-    for (;;) {
-        #ifndef DISABLE_PPG_IN_CBG
-        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (ppg.has_error()) {
-                return ppg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        #ifndef DISABLE_PSBG_IN_CBG
-        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (psbg.has_error()) {
-                return psbg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        break;
-    }
-
-    return std::visit(
-        [](auto word) -> consumeCurlyBracketsGroup_RetType {return move_to_heap(wrap(*word));},
-        accumulatedPostfixLeftPart
-    );
-}
-
-consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream& input) {
-    auto cbgBefore = consumeCurlyBracketsGroupStrictly(input);
-    return consumeCurlyBracketsGroup(cbgBefore, input);
-}
-
 ////////////////////////////////////////////////////////////////
 
-CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences) : Program{sentences}{}
+CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences)
+        : Program{sentences}{}
 
-CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences, const std::optional<Term>& term) : Program{sentences}, term(term){}
+CurlyBracketsGroup::CurlyBracketsGroup(const std::vector<ProgramSentence>& sentences, const std::optional<Term>& term)
+        : Program{sentences}, term(term){}
 
-CurlyBracketsTerm::CurlyBracketsTerm(const Term& term) : CurlyBracketsGroup{{(ProgramSentence)term}, term} {}
+CurlyBracketsTerm::CurlyBracketsTerm(const Term& term)
+        : CurlyBracketsGroup{{(ProgramSentence)term}, term} {}
 
 ///////////////////////////////////////////////////////////
 

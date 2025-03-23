@@ -19,13 +19,6 @@ struct MayFail_<SquareBracketsGroup> {
     explicit operator SquareBracketsGroup() const;
 };
 
-MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream&);
-
-using consumeSquareBracketsGroup_RetType = std::variant<
-    MayFail<MayFail_<SquareBracketsGroup>*>,
-    MayFail<MayFail_<PostfixParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixSquareBracketsGroup>*>
->;
-consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);
+MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroup(std::istringstream&);
 
 #endif // SQUARE_BRACKETS_GROUP_H

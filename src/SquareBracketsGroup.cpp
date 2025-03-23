@@ -4,8 +4,6 @@
 
 /* impl only */
 #include <monlang/ast/ProgramSentence.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/PostfixParenthesesGroup.h>
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
@@ -23,7 +21,7 @@ const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::istringstream& input) {
+MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroup(std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     TRACE_CUR_FUN();
     const std::vector<char> terminatorCharacters = {
@@ -73,48 +71,6 @@ MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::i
     auto sbg = MayFail_<SquareBracketsGroup>{terms};
     sbg._tokenLen = GET_INPUT_STREAM_PROGRESS();
     return sbg;
-}
-
-consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream& input) {
-    auto sbg = consumeSquareBracketsGroupStrictly(input);
-
-    if (sbg.has_error()) {
-        return mayfail_convert<MayFail_<SquareBracketsGroup>*>(sbg);
-    }
-
-    /* look behind */
-
-    using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((SquareBracketsGroup)sbg);
-
-    for (;;) {
-        #ifndef DISABLE_PPG_IN_SBG
-        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (ppg.has_error()) {
-                return ppg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        #ifndef DISABLE_PSBG_IN_SBG
-        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (psbg.has_error()) {
-                return psbg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        break;
-    }
-
-    return std::visit(
-        [](auto word) -> consumeSquareBracketsGroup_RetType {return move_to_heap(wrap(*word));},
-        accumulatedPostfixLeftPart
-    );
 }
 
 ///////////////////////////////////////////////////////////

@@ -28,23 +28,8 @@ using Subprogram_ = MayFail_<CurlyBracketsGroup>;
 template <>
 struct MayFail_<CurlyBracketsTerm> : public MayFail_<CurlyBracketsGroup> {
     MayFail_(const MayFail<MayFail_<Term>>&);
-    explicit MayFail_(const CurlyBracketsTerm&);
 };
 
-MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroupStrictly(std::istringstream&);
-
-using consumeCurlyBracketsGroup_RetType = std::variant<
-    MayFail<MayFail_<CurlyBracketsGroup>*>,
-    MayFail<MayFail_<PostfixParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixSquareBracketsGroup>*>
->;
-consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(std::istringstream&);
-
-// used to separately call the strict version then the complete one while passing previous result
-// e.g.:
-// auto cbgBefore = consumeCurlyBracketsGroupStrictly(input);
-// <can do stuff on cbgBefore here>
-// auto cbg = consumeCurlyBracketsGroup(cbgBefore, input);
-consumeCurlyBracketsGroup_RetType consumeCurlyBracketsGroup(const MayFail<MayFail_<CurlyBracketsGroup>>& before, std::istringstream&);
+MayFail<MayFail_<CurlyBracketsGroup>> consumeCurlyBracketsGroup(std::istringstream&);
 
 #endif // CURLY_BRACKETS_GROUP_H

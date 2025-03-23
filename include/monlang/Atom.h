@@ -9,14 +9,6 @@ struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 struct Association;
 
-MayFail<Atom> consumeAtomStrictly(const std::vector<char>& terminatorCharacters, std::istringstream& input);
-
-using consumeAtom_RetType = std::variant<
-    MayFail<Atom*>,
-    MayFail<MayFail_<PostfixParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixSquareBracketsGroup>*>,
-    MayFail<MayFail_<Association>*>
->;
-consumeAtom_RetType consumeAtom(/*copy*/ std::vector<char> terminatorCharacters, std::istringstream& input);
+MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // ATOM_H

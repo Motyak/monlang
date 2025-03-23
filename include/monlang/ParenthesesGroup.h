@@ -5,10 +5,6 @@
 
 #include <monlang/Term.h>
 
-struct PostfixParenthesesGroup;
-struct PostfixSquareBracketsGroup;
-struct Association;
-
 template<>
 struct MayFail_<ParenthesesGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
@@ -22,14 +18,6 @@ struct MayFail_<ParenthesesGroup> {
     explicit operator ParenthesesGroup() const;
 };
 
-MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream&);
-
-using consumeParenthesesGroup_RetType = std::variant<
-    MayFail<MayFail_<ParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixParenthesesGroup>*>,
-    MayFail<MayFail_<PostfixSquareBracketsGroup>*>,
-    MayFail<MayFail_<Association>*>
->;
-consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream&);
+MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroup(std::istringstream&);
 
 #endif // PARENTHESES_GROUP_H
