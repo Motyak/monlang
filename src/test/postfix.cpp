@@ -70,6 +70,32 @@ TEST_CASE ("postfix sbg off of sbg", "[test-3313][postfix]") {
 
 ////////////////////////////////////////////////////////////////
 
+TEST_CASE ("postfix pg off of sbg", "[test-3331][postfix]") {
+    auto input = "[elems][index](arg)";
+
+    auto expect = tommy_str(R"EOF(
+       |-> PostfixParenthesesGroup
+       |  -> Word: PostfixSquareBracketsGroup
+       |    -> Word: SquareBracketsGroup
+       |      -> Term
+       |        -> Word: Atom: `elems`
+       |    -> SquareBracketsGroup
+       |      -> Term
+       |        -> Word: Atom: `index`
+       |  -> ParenthesesGroup
+       |    -> Term
+       |      -> Word: Atom: `arg`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
 TEST_CASE ("postfix pg off of pg", "[test-3314][postfix]") {
     auto input = "(func)(arg)";
 

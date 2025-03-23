@@ -23,6 +23,7 @@ MayFail<MayFail_<SquareBracketsGroup>> consumeSquareBracketsGroupStrictly(std::i
 
 using consumeSquareBracketsGroup_RetType = std::variant<
     MayFail<MayFail_<SquareBracketsGroup>*>,
+    MayFail<MayFail_<PostfixParenthesesGroup>*>,
     MayFail<MayFail_<PostfixSquareBracketsGroup>*>
 >;
 consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream&);

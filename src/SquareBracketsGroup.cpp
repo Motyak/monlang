@@ -5,6 +5,7 @@
 /* impl only */
 #include <monlang/ast/ProgramSentence.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/PostfixParenthesesGroup.h>
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
@@ -83,10 +84,20 @@ consumeSquareBracketsGroup_RetType consumeSquareBracketsGroup(std::istringstream
 
     /* look behind */
 
-    using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixSquareBracketsGroup*>;
+    using PostfixLeftPart = std::variant<SquareBracketsGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
     PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((SquareBracketsGroup)sbg);
 
     for (;;) {
+        #ifndef DISABLE_PPG_IN_SBG
+        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
+            if (ppg.has_error()) {
+                return ppg; // malformed postfix
+            }
+            continue;
+        }
+        #endif
+
         #ifndef DISABLE_PSBG_IN_SBG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
