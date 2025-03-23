@@ -23,7 +23,7 @@ const std::vector<char> Quotation::MULTILINE_RESERVED_CHARACTERS = {
     sequenceFirstChar(Quotation::ALT_DELIMITERS_SEQUENCE).value(),
 };
 
-MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input) {
+MayFail<Quotation> consumeQuotationStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     const std::vector<char> terminatorCharacters = {
@@ -31,7 +31,7 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     };
 
     if (!consumeSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
-        return Malformed(MayFail_<Quotation>{}, ERR(053));
+        return Malformed(Quotation{}, ERR(053));
     }
 
     std::string quoted;
@@ -54,19 +54,19 @@ MayFail<MayFail_<Quotation>> consumeQuotationStrictly(std::istringstream& input)
     }
 
     if (!consumeSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
-        auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(530));
+        auto malformed = Malformed(Quotation{quoted}, ERR(530));
         malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
 
-    auto quot = MayFail_<Quotation>{quoted};
+    auto quot = Quotation{quoted};
     quot._tokenLen = GET_INPUT_STREAM_PROGRESS();
     return quot;
 }
 
 static std::string consumeQuotedLine(std::istringstream&);
 
-MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstream& input) {
+MayFail<Quotation> consumeMultilineQuotationStrictly(std::istringstream& input) {
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     GLOBAL indentLevel;
@@ -77,12 +77,12 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
     });
 
     if (!consumeSequence(Quotation::ALT_DELIMITERS_SEQUENCE, input)) {
-        return Malformed(MayFail_<Quotation>{}, ERR(054));
+        return Malformed(Quotation{}, ERR(054));
     }
 
     if (!consumeSequence(ProgramSentence::TERMINATOR_SEQUENCE, input)
             || peekSequence(indentedTerminatorSeq, input)) {
-        auto malformed = Malformed(MayFail_<Quotation>{}, ERR(541));
+        auto malformed = Malformed(Quotation{}, ERR(541));
         malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
@@ -92,7 +92,7 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
     until (input.peek() == EOF || peekSequence(indentedTerminatorSeq, input)) {
         if (input.peek() != NEWLINE && !consumeSequence(quotIndentSeq, input)) {
             auto quoted = join(quotedLines, NEWLINE);
-            auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(542));
+            auto malformed = Malformed(Quotation{quoted}, ERR(542));
             malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
             return malformed;
         }
@@ -101,13 +101,13 @@ MayFail<MayFail_<Quotation>> consumeMultilineQuotationStrictly(std::istringstrea
 
     if (!consumeSequence(indentedTerminatorSeq, input)) {
         auto quoted = join(quotedLines, NEWLINE);
-        auto malformed = Malformed(MayFail_<Quotation>{quoted}, ERR(540));
+        auto malformed = Malformed(Quotation{quoted}, ERR(540));
         malformed.val._tokenLen = GET_INPUT_STREAM_PROGRESS(); // for err reporting
         return malformed;
     }
 
     auto quoted = join(quotedLines, NEWLINE);
-    auto quot = MayFail_<Quotation>{quoted};
+    auto quot = Quotation{quoted};
     quot._tokenLen = GET_INPUT_STREAM_PROGRESS();
     return quot;
 }
@@ -139,7 +139,7 @@ consumeQuotation_RetType consumeQuotation(std::istringstream& input) {
     auto quot = consumeQuotationStrictly(input);
 
     if (quot.has_error()) {
-        return mayfail_convert<MayFail_<Quotation>*>(quot);
+        return mayfail_convert<Quotation*>(quot);
     }
 
     /* look behind */
@@ -161,17 +161,17 @@ consumeQuotation_RetType consumeQuotation(std::istringstream& input) {
         break;
     }
 
-    return std::visit(
-        [](auto word) -> consumeQuotation_RetType {return move_to_heap(wrap(*word));},
-        accumulatedPostfixLeftPart
-    );
+    return std::visit(overload{
+        [](Quotation* quot) -> consumeQuotation_RetType {return quot;},
+        [](PostfixSquareBracketsGroup* psbg) -> consumeQuotation_RetType {return move_to_heap(wrap(*psbg));},
+    }, accumulatedPostfixLeftPart);
 }
 
 consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
     auto quot = consumeMultilineQuotationStrictly(input);
 
     if (quot.has_error()) {
-        return mayfail_convert<MayFail_<Quotation>*>(quot);
+        return mayfail_convert<Quotation*>(quot);
     }
 
     /* look behind */
@@ -193,24 +193,10 @@ consumeQuotation_RetType consumeMultilineQuotation(std::istringstream& input) {
         break;
     }
 
-    return std::visit(
-        [](auto word) -> consumeQuotation_RetType {return move_to_heap(wrap(*word));},
-        accumulatedPostfixLeftPart
-    );
+    return std::visit(overload{
+        [](Quotation* quot) -> consumeQuotation_RetType {return quot;},
+        [](PostfixSquareBracketsGroup* psbg) -> consumeQuotation_RetType {return move_to_heap(wrap(*psbg));},
+    }, accumulatedPostfixLeftPart);
 }
 
 Quotation::Quotation(const std::string& quoted) : quoted(quoted){}
-
-MayFail_<Quotation>::MayFail_(const std::string& quoted) : quoted(quoted){}
-
-MayFail_<Quotation>::MayFail_(Quotation quot) {
-    this->quoted = quot.quoted;
-    this->_tokenLen = quot._tokenLen;
-}
-
-MayFail_<Quotation>::operator Quotation() const {
-    Quotation quot;
-    quot.quoted = this->quoted;
-    quot._tokenLen = this->_tokenLen;
-    return quot;
-}

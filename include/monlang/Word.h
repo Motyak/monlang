@@ -10,7 +10,7 @@
 
 using ProgramWord_ = std::variant<
     Atom*,
-    MayFail_<Quotation>*,
+    Quotation*,
     MayFail_<SquareBracketsTerm>*,
     GROUP_ENTITIES_,
     POSTFIXES_,
@@ -19,7 +19,7 @@ using ProgramWord_ = std::variant<
 
 using Word_ = std::variant<
     Atom*,
-    MayFail_<Quotation>*,
+    Quotation*,
     /* no MayFail_<SquareBracketsTerm>* here */
     GROUP_ENTITIES_,
     POSTFIXES_,

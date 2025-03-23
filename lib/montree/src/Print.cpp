@@ -210,7 +210,7 @@ void Print::operator()(const MayFail<Word_>& word) {
 
 ///////////////////////////////////////////////////////////////
 
-void Print::operator()(MayFail_<Quotation>* quot) {
+void Print::operator()(Quotation* quot) {
     auto quotedLines = split(quot->quoted, "\n");
     ASSERT (quotedLines.size() > 0);
     output("Quotation: `", quotedLines[0].c_str(), "`");

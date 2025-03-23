@@ -169,6 +169,7 @@ Word as_word(const Term& term) {
 ProgramWord unwrap_pw(const ProgramWord_& pw_) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord {return atom;},
+        [](Quotation* quot) -> ProgramWord {return quot;},
         [](auto pw_) -> ProgramWord {return move_to_heap(unwrap(*pw_));}
     }, pw_);
 }
@@ -176,6 +177,7 @@ ProgramWord unwrap_pw(const ProgramWord_& pw_) {
 Word unwrap_w(const Word_& word_) {
     return std::visit(overload{
         [](Atom* atom) -> Word {return atom;},
+        [](Quotation* quot) -> Word {return quot;},
         [](auto word_) -> Word {return move_to_heap(unwrap(*word_));}
     }, word_);
 }
@@ -183,6 +185,7 @@ Word unwrap_w(const Word_& word_) {
 ProgramWord_ wrap_pw(const ProgramWord& pw) {
     return std::visit(overload{
         [](Atom* atom) -> ProgramWord_ {return atom;},
+        [](Quotation* quot) -> ProgramWord_ {return quot;},
         [](auto pw) -> ProgramWord_ {return move_to_heap(wrap(*pw));}
     }, pw);
 }
@@ -190,6 +193,7 @@ ProgramWord_ wrap_pw(const ProgramWord& pw) {
 Word_ wrap_w(const Word& word) {
     return std::visit(overload{
         [](Atom* atom) -> Word_ {return atom;},
+        [](Quotation* quot) -> Word_ {return quot;},
         [](auto word) -> Word_ {return move_to_heap(wrap(*word));}
     }, word);
 }
