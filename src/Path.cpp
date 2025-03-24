@@ -19,7 +19,7 @@ const std::vector<char> Path::RESERVED_CHARACTERS = {
     sequenceFirstChar(Path::SEPARATOR_SEQUENCE).value()
 };
 
-MayFail<MayFail_<Path>*>
+Malformed<Malformed_<Path>*>
 consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     auto whats_right_behind = consumeAtom(terminatorCharacters, input);
@@ -34,7 +34,7 @@ consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>
 
     auto path = Path{
         accumulatedPostfixLeftPart,
-        whats_right_behind.value()
+        (Atom)whats_right_behind
     };
     path._tokenLen = token_len(accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
     accumulatedPostfixLeftPart = move_to_heap(path);

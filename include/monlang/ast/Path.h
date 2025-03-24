@@ -2,7 +2,6 @@
 #define AST_PATH_H
 
 #include <monlang/ast/_PostfixLeftPart.h>
-#include <monlang/ast/Word.h>
 #include <monlang/ast/Atom.h>
 #include <monlang/common.h>
 

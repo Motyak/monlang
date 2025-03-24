@@ -1,5 +1,4 @@
 #include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/Word.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/common.h>
 
@@ -20,25 +19,25 @@ consumePostfixSquareBracketsGroup(PostfixLeftPart& accumulatedPostfixLeftPart, s
     auto whats_right_behind = consumeSquareBracketsGroup(input);
 
     if (whats_right_behind.has_error()) {
-        auto ppg = MayFail_<PostfixSquareBracketsGroup>{
+        auto psbg = MayFail_<PostfixSquareBracketsGroup>{
             accumulatedPostfixLeftPart,
             whats_right_behind
         };
-        return Malformed(move_to_heap(ppg), ERR(319));
+        return Malformed(move_to_heap(psbg), ERR(329));
     }
 
-    auto ppg = PostfixSquareBracketsGroup{
+    auto psbg = PostfixSquareBracketsGroup{
         accumulatedPostfixLeftPart,
-        unwrap(whats_right_behind.value())
+        (SquareBracketsGroup)whats_right_behind
     };
-    ppg._tokenLen = token_len(accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
-    accumulatedPostfixLeftPart = move_to_heap(ppg);
+    psbg._tokenLen = token_len(accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
+    accumulatedPostfixLeftPart = move_to_heap(psbg);
 
     // return value is only used in presence of error,..
     // ..in the absence of error what matters is the assignment of the OUT parameter..
     // ..therefore the return value here is useless
 
-    // return move_to_heap(wrap(ppg));
+    // return move_to_heap(wrap(psbg));
     return nullptr;
 }
 
@@ -50,14 +49,14 @@ PostfixSquareBracketsGroup::PostfixSquareBracketsGroup(const PostfixLeftPart& le
 MayFail_<PostfixSquareBracketsGroup>::MayFail_(const PostfixLeftPart& leftPart, const MayFail<MayFail_<SquareBracketsGroup>>& rightPart)
         : leftPart(leftPart), rightPart(rightPart){}
 
-MayFail_<PostfixSquareBracketsGroup>::MayFail_(const PostfixSquareBracketsGroup& ppg) {
-    this->leftPart = ppg.leftPart;
-    this->rightPart = MayFail_<SquareBracketsGroup>(ppg.rightPart);
-    this->_tokenLen = ppg._tokenLen;
+MayFail_<PostfixSquareBracketsGroup>::MayFail_(const PostfixSquareBracketsGroup& psbg) {
+    this->leftPart = psbg.leftPart;
+    this->rightPart = MayFail_<SquareBracketsGroup>(psbg.rightPart);
+    this->_tokenLen = psbg._tokenLen;
 }
 
 MayFail_<PostfixSquareBracketsGroup>::operator PostfixSquareBracketsGroup() const {
-    auto ppg = PostfixSquareBracketsGroup{leftPart, (SquareBracketsGroup)rightPart.value()};
-    ppg._tokenLen = this->_tokenLen;
-    return ppg;
+    auto psbg = PostfixSquareBracketsGroup{leftPart, (SquareBracketsGroup)rightPart};
+    psbg._tokenLen = this->_tokenLen;
+    return psbg;
 }

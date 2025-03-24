@@ -1,5 +1,4 @@
 #include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/Word.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/common.h>
 
@@ -29,7 +28,7 @@ consumePostfixParenthesesGroup(PostfixLeftPart& accumulatedPostfixLeftPart, std:
 
     auto ppg = PostfixParenthesesGroup{
         accumulatedPostfixLeftPart,
-        unwrap(whats_right_behind.value())
+        (ParenthesesGroup)whats_right_behind
     };
     ppg._tokenLen = token_len(accumulatedPostfixLeftPart) + GET_INPUT_STREAM_PROGRESS();
     accumulatedPostfixLeftPart = move_to_heap(ppg);
@@ -57,7 +56,7 @@ MayFail_<PostfixParenthesesGroup>::MayFail_(const PostfixParenthesesGroup& ppg) 
 }
 
 MayFail_<PostfixParenthesesGroup>::operator PostfixParenthesesGroup() const {
-    auto ppg = PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart.value()};
+    auto ppg = PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart};
     ppg._tokenLen = this->_tokenLen;
     return ppg;
 }

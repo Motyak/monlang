@@ -2,7 +2,6 @@
 #define PATH_H
 
 #include <monlang/ast/Path.h>
-#include <monlang/ast/Word.h>
 #include <monlang/Atom.h>
 
 // this "entity" would never be returned if left part was Malformed
@@ -18,7 +17,7 @@ struct MayFail_<Path> {
     explicit operator Path() const;
 };
 
-MayFail<MayFail_<Path>*>
+Malformed<Malformed_<Path>*>
 consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // PATH_H
