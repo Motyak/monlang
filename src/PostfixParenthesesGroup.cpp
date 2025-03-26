@@ -13,7 +13,7 @@
 
 #include <utils/mem-utils.h>
 
-Malformed<Malformed_<PostfixParenthesesGroup>*>
+Malformed<Malformed_<PostfixParenthesesGroup>>
 consumePostfixParenthesesGroup(PostfixLeftPart& accumulatedPostfixLeftPart, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     auto whats_right_behind = consumeParenthesesGroup(input);
@@ -23,7 +23,7 @@ consumePostfixParenthesesGroup(PostfixLeftPart& accumulatedPostfixLeftPart, std:
             accumulatedPostfixLeftPart,
             whats_right_behind
         };
-        return Malformed(move_to_heap(ppg), ERR(319));
+        return Malformed(ppg, ERR(319));
     }
 
     auto ppg = PostfixParenthesesGroup{
@@ -37,8 +37,7 @@ consumePostfixParenthesesGroup(PostfixLeftPart& accumulatedPostfixLeftPart, std:
     // ..in the absence of error what matters is the assignment of the OUT parameter..
     // ..therefore the return value here is useless
 
-    // return move_to_heap(wrap(ppg));
-    return nullptr;
+    return wrap(ppg);
 }
 
 ///////////////////////////////////////////////////////////

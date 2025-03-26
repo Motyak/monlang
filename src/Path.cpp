@@ -19,7 +19,7 @@ const std::vector<char> Path::RESERVED_CHARACTERS = {
     sequenceFirstChar(Path::SEPARATOR_SEQUENCE).value()
 };
 
-Malformed<Malformed_<Path>*>
+Malformed<Malformed_<Path>>
 consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     auto whats_right_behind = consumeAtom(terminatorCharacters, input);
@@ -29,7 +29,7 @@ consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>
             accumulatedPostfixLeftPart,
             whats_right_behind
         };
-        return Malformed(move_to_heap(path), ERR(229));
+        return Malformed(path, ERR(229));
     }
 
     auto path = Path{
@@ -43,8 +43,7 @@ consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>
     // ..in the absence of error what matters is the assignment of the OUT parameter..
     // ..therefore the return value here is useless
 
-    // return move_to_heap(wrap(path));
-    return nullptr;
+    return wrap(path);
 }
 
 ///////////////////////////////////////////////////////////

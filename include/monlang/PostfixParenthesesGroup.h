@@ -19,7 +19,7 @@ struct MayFail_<PostfixParenthesesGroup> {
     explicit operator PostfixParenthesesGroup() const;
 };
 
-Malformed<Malformed_<PostfixParenthesesGroup>*>
+Malformed<Malformed_<PostfixParenthesesGroup>>
 consumePostfixParenthesesGroup(PostfixLeftPart&, std::istringstream&);
 
 #endif // POSTFIX_PARENTHESES_GROUP_H

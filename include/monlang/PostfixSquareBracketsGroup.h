@@ -19,7 +19,7 @@ struct MayFail_<PostfixSquareBracketsGroup> {
     explicit operator PostfixSquareBracketsGroup() const;
 };
 
-Malformed<Malformed_<PostfixSquareBracketsGroup>*>
+Malformed<Malformed_<PostfixSquareBracketsGroup>>
 consumePostfixSquareBracketsGroup(PostfixLeftPart&, std::istringstream&);
 
 #endif // POSTFIX_SQUARE_BRACKETS_GROUP_H

@@ -17,7 +17,7 @@ struct MayFail_<Path> {
     explicit operator Path() const;
 };
 
-Malformed<Malformed_<Path>*>
+Malformed<Malformed_<Path>>
 consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>& terminatorCharacters, std::istringstream& input);
 
 #endif // PATH_H

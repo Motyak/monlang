@@ -20,7 +20,7 @@ struct MayFail_<Association> {
     explicit operator Association() const;
 };
 
-MayFail<MayFail_<Association>*>
+MayFail<MayFail_<Association>>
 consumeAssociation(const AssociationLeftPart&, std::istringstream&);
 
 #endif // ASSOCIATION_H

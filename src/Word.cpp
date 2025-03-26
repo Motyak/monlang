@@ -164,7 +164,7 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
         if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
             auto ppg = consumePostfixParenthesesGroup(/*OUT*/accumulatedPostfixLeftPart, input);
             if (ppg.has_error()) {
-                return mayfail_cast<Word_>(ppg); // malformed postfix
+                return mayfail_convert<Word_>(ppg); // malformed postfix
             }
             continue;
         }
@@ -174,7 +174,7 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(/*OUT*/accumulatedPostfixLeftPart, input);
             if (psbg.has_error()) {
-                return mayfail_cast<Word_>(psbg); // malformed postfix
+                return mayfail_convert<Word_>(psbg); // malformed postfix
             }
             continue;
         }
@@ -184,7 +184,7 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
         if (peekSequence(Path::SEPARATOR_SEQUENCE, input)) {
             auto path = consumePath(/*OUT*/accumulatedPostfixLeftPart, terminatorCharacters, input);
             if (path.has_error()) {
-                return mayfail_cast<Word_>(path); // malformed postfix
+                return mayfail_convert<Word_>(path); // malformed postfix
             }
             continue;
         }
@@ -196,7 +196,7 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
     #ifndef DISABLE_ASSOC
     if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
         auto assoc = consumeAssociation(accumulatedPostfixLeftPart, input);
-        return mayfail_cast<Word_>(assoc); /*
+        return mayfail_convert<Word_>(assoc); /*
             early return assoc (malformed or not).
             Association can contain a PostfixLeftPart..
             .., but not the other way around! (precedence rule)

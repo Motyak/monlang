@@ -19,19 +19,19 @@ const std::vector<char> Association::RESERVED_CHARACTERS = {
     sequenceFirstChar(Association::SEPARATOR_SEQUENCE).value()
 };
 
-MayFail<MayFail_<Association>*>
+MayFail<MayFail_<Association>>
 consumeAssociation(const AssociationLeftPart& assocLeftPart, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
     input.ignore(sequenceLen(Association::SEPARATOR_SEQUENCE));
     auto whats_right_behind = consumeWord(input);
-    auto assoc = move_to_heap(MayFail_<Association>{
-        variant_cast(assocLeftPart),
+    auto assoc = MayFail_<Association>{
+        assocLeftPart,
         whats_right_behind
-    });
+    };
     if (whats_right_behind.has_error()) {
         return Malformed(assoc, ERR(219));
     }
-    assoc->_tokenLen = token_len(assocLeftPart) + GET_INPUT_STREAM_PROGRESS();
+    assoc._tokenLen = token_len(assocLeftPart) + GET_INPUT_STREAM_PROGRESS();
     return assoc;
 }
 

@@ -1,11 +1,6 @@
 #include <monlang/Atom.h>
 #include <monlang/common.h>
 
-/* in impl only */
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/Association.h>
-
 #include <utils/loop-utils.h>
 #include <utils/vec-utils.h>
 
