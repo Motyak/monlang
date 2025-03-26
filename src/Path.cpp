@@ -13,7 +13,7 @@
 
 #include <utils/mem-utils.h>
 
-const Sequence Path::SEPARATOR_SEQUENCE = {'.', {'.', 0_}};
+const Sequence Path::SEPARATOR_SEQUENCE = {'.'};
 
 const std::vector<char> Path::RESERVED_CHARACTERS = {
     sequenceFirstChar(Path::SEPARATOR_SEQUENCE).value()

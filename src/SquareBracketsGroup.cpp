@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = {'[', {SPACE, 0_}};
+const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = {'['};
 const Sequence SquareBracketsGroup::CONTINUATOR_SEQUENCE = {',', SPACE};
 const Sequence SquareBracketsGroup::TERMINATOR_SEQUENCE = {']'};
 

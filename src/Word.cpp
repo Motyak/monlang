@@ -10,8 +10,6 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
 #include <monlang/Quotation.h>
-
-/* required by the (un)wrap functions only */
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/Path.h>
@@ -57,18 +55,38 @@ MayFail<ProgramWord_> consumeProgramWord(std::istringstream& input) {
 static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorCharacters, std::istringstream& input) {
     std::vector<Atom> specialAtoms;
 
-    terminatorCharacters = {};
+    terminatorCharacters = {EOF};
     terminatorCharacters = vec_union({
         terminatorCharacters,
         ProgramSentence::RESERVED_CHARACTERS,
         Term::RESERVED_CHARACTERS,
+        #if !defined DISABLE_PG || !defined DISABLE_PPG
+        ParenthesesGroup::RESERVED_CHARACTERS,
+        #endif
+        #if !defined DISABLE_SBG || !defined DISABLE_PSBG
+        SquareBracketsGroup::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_CBG
+        CurlyBracketsGroup::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_QUOT
+        Quotation::SINGLELINE_RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_MULTILINE_QUOT
+        Quotation::MULTILINE_RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_PATH
+        Path::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_ASSOC
+        Association::RESERVED_CHARACTERS,
+        #endif
     });
 
     #ifndef DISABLE_SPECIAL_ATOMS
     specialAtoms = {
         SpecialAtom(":="), // assignment symbol
         SpecialAtom("[:]"), // map literal
-        SpecialAtom(".."), // range operator
     };
     #endif
     for (auto atom: specialAtoms) {
@@ -82,30 +100,18 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeParenthesesGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        ParenthesesGroup::RESERVED_CHARACTERS
-    });
     #endif
 
     #ifndef DISABLE_SBG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeSquareBracketsGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        SquareBracketsGroup::RESERVED_CHARACTERS
-    });
     #endif
 
     #ifndef DISABLE_CBG
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeCurlyBracketsGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        CurlyBracketsGroup::RESERVED_CHARACTERS
-    });
     #ifndef DISABLE_DOLLARS_CBG
     auto dollars_cbg_seq = vec_concat({Sequence{'$'}, CurlyBracketsGroup::INITIATOR_SEQUENCE});
     if (peekSequence(dollars_cbg_seq, input)) {
@@ -124,18 +130,10 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
     if (peekSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeQuotation(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        Quotation::SINGLELINE_RESERVED_CHARACTERS
-    });
     #ifndef DISABLE_MULTILINE_QUOT
     if (peekSequence(Quotation::ALT_DELIMITERS_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeMultilineQuotation(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        Quotation::MULTILINE_RESERVED_CHARACTERS
-    });
     #endif
     #endif
 
@@ -241,11 +239,6 @@ Word as_word(const Term& term) {
                                          // ..about all words
     return word;
 }
-
-/*
-    for the (un)wrappers to work we not only need..
-    ..Postfixes/Assoc interfaces, but their impl as well
-*/
 
 ProgramWord unwrap_pw(const ProgramWord_& pw_) {
     return std::visit(overload{

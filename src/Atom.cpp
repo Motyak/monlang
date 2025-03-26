@@ -20,13 +20,16 @@ MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::is
         value += currentChar;
     }
 
-    #ifndef DISABLE_ASSOC_IN_ATOM
     if (peekSequence({':', ':'}, input)) {
         value += input.get(); // :
         value += input.get(); // :
         value += consumeAtom(terminatorCharacters, input).val.value;
     }
-    #endif
+    if (peekSequence({'.', '.'}, input)) {
+        value += input.get(); // .
+        value += input.get(); // .
+        value += consumeAtom(terminatorCharacters, input).val.value;
+    }
 
     // means we hit a reserved character
     if (value.size() == 0) {

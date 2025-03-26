@@ -401,7 +401,7 @@ void Print::operator()(MayFail_<PostfixSquareBracketsGroup>* psbg) {
     numbering = std::stack<int>({NO_NUMBERING});
 
     currIndent++;
-    operator()(MayFail(wrap_w(psbg->leftPart)));
+    operator()(MayFail(wrap_w(variant_cast(psbg->leftPart))));
     currIndent--;
 
     currIndent++;
@@ -419,7 +419,7 @@ void Print::operator()(MayFail_<PostfixParenthesesGroup>* ppg) {
     numbering = std::stack<int>({NO_NUMBERING});
 
     currIndent++;
-    operator()(MayFail(wrap_w(ppg->leftPart)));
+    operator()(MayFail(wrap_w(variant_cast(ppg->leftPart))));
     currIndent--;
 
     currIndent++;

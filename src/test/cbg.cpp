@@ -13,7 +13,7 @@ TEST_CASE ("empty curly brackets group", "[test-4111][cbg]") {
     auto expect = "-> CurlyBracketsGroup (empty)";
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -31,7 +31,7 @@ TEST_CASE ("single word curly brackets term", "[test-4112][cbg]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -50,7 +50,7 @@ TEST_CASE ("two words curly brackets term", "[test-4113][cbg]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -75,7 +75,7 @@ TEST_CASE ("curly brackets group", "[test-4114][cbg]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -112,7 +112,7 @@ TEST_CASE ("ERR cbg missing initiator", "[test-4115][cbg][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -131,7 +131,7 @@ TEST_CASE ("ERR curly brackets term missing terminator", "[test-4116][cbg][err]"
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -149,7 +149,7 @@ TEST_CASE ("ERR curly brackets term leading space", "[test-4141][cbg][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -169,7 +169,7 @@ TEST_CASE ("ERR curly brackets term trailing space", "[test-4142][cbg][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -189,7 +189,7 @@ TEST_CASE ("ERR cbg missing indented newline after initiator", "[test-4117][cbg]
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -211,7 +211,7 @@ TEST_CASE ("ERR multiline cbg must contain at least one sentence (empty lines)",
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -233,7 +233,7 @@ TEST_CASE ("ERR prog sentence wrong indent", "[test-4118][cbg][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -256,7 +256,7 @@ TEST_CASE ("ERR cbg missing terminator", "[test-4119][cbg][err]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroupStrictly(input_iss);
+    auto output = consumeCurlyBracketsGroup(input_iss);
     auto output_word = mayfail_convert<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
