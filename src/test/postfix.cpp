@@ -62,7 +62,7 @@ TEST_CASE ("postfix sbg off of sbg", "[test-3313][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -88,7 +88,7 @@ TEST_CASE ("postfix pg off of sbg", "[test-3331][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeSquareBracketsGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -110,7 +110,7 @@ TEST_CASE ("postfix pg off of pg", "[test-3314][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeParenthesesGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -132,7 +132,7 @@ TEST_CASE ("postfix sbg off of pg", "[test-3315][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeParenthesesGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -154,7 +154,7 @@ TEST_CASE ("postfix pg off of cbg", "[test-3316][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -176,7 +176,7 @@ TEST_CASE ("postfix sbg off of cbg", "[test-3317][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeCurlyBracketsGroup(input_iss);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
@@ -198,7 +198,46 @@ TEST_CASE ("postfix sbg off of singleline quot", "[test-3318][postfix]") {
     )EOF");
 
     auto input_iss = std::istringstream(input);
-    auto output = consumeQuotation(input_iss);
+    auto output = consumeWord(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("path off of an atom", "[test-3319][postfix]") {
+    auto input = "a.b";
+
+    auto expect = tommy_str(R"EOF(
+       |-> Path
+       |  -> Word: Atom: `a`
+       |  -> Atom: `b`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+//==============================================================
+// ERR
+//==============================================================
+
+TEST_CASE ("ERR path into non-atom", "[test-3320][postfix][err]") {
+    auto input = "a.(b)";
+
+    auto expect = tommy_str(R"EOF(
+       |~> Path
+       |  -> Word: Atom: `a`
+       |  ~> Atom: ``
+       |    ~> ERR-992
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);

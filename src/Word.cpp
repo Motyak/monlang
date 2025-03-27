@@ -10,10 +10,9 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
 #include <monlang/Quotation.h>
-
-/* required by the (un)wrap functions only */
 #include <monlang/PostfixParenthesesGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
+#include <monlang/Path.h>
 #include <monlang/Association.h>
 
 /* required for casting Word to Term (while preserving _tokenLen) */
@@ -22,6 +21,18 @@
 #include <utils/vec-utils.h>
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
+
+namespace {
+    using WordStrictly_ = std::variant<
+        Atom*,
+        Quotation*,
+        /* no MayFail_<SquareBracketsTerm>* here */
+        GROUP_ENTITIES_
+        /* no POSTFIXES_ here */
+        /* no MayFail_<Path>* here */
+        /* no MayFail_<Association>* here */
+    >;
+}
 
 static Atom SpecialAtom(const std::string& value) {
     auto atom = Atom{value};
@@ -41,93 +52,161 @@ MayFail<ProgramWord_> consumeProgramWord(std::istringstream& input) {
     return mayfail_cast<ProgramWord_>(consumeWord(input));
 }
 
-MayFail<Word_> consumeWord(std::istringstream& input) {
-    std::vector<char> terminatorCharacters;
+static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorCharacters, std::istringstream& input) {
     std::vector<Atom> specialAtoms;
 
+    terminatorCharacters = {EOF};
     terminatorCharacters = vec_union({
         terminatorCharacters,
         ProgramSentence::RESERVED_CHARACTERS,
         Term::RESERVED_CHARACTERS,
+        #if !defined DISABLE_PG || !defined DISABLE_PPG
+        ParenthesesGroup::RESERVED_CHARACTERS,
+        #endif
+        #if !defined DISABLE_SBG || !defined DISABLE_PSBG
+        SquareBracketsGroup::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_CBG
+        CurlyBracketsGroup::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_QUOT
+        Quotation::SINGLELINE_RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_MULTILINE_QUOT
+        Quotation::MULTILINE_RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_PATH
+        Path::RESERVED_CHARACTERS,
+        #endif
+        #ifndef DISABLE_ASSOC
+        Association::RESERVED_CHARACTERS,
+        #endif
     });
 
     #ifndef DISABLE_SPECIAL_ATOMS
     specialAtoms = {
         SpecialAtom(":="), // assignment symbol
         SpecialAtom("[:]"), // map literal
-        SpecialAtom(".."), // range operator
     };
     #endif
     for (auto atom: specialAtoms) {
         if (peekStrUntil(atom.value, terminatorCharacters, input)) {
             input.ignore(atom.value.size());
-            return (Word_)move_to_heap(atom);
+            return (WordStrictly_)move_to_heap(atom);
         }
     }
 
     #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeParenthesesGroup(input));
+        return mayfail_convert<WordStrictly_>(consumeParenthesesGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        ParenthesesGroup::RESERVED_CHARACTERS
-    });
     #endif
 
     #ifndef DISABLE_SBG
     if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeSquareBracketsGroup(input));
+        return mayfail_convert<WordStrictly_>(consumeSquareBracketsGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        SquareBracketsGroup::RESERVED_CHARACTERS
-    });
     #endif
 
     #ifndef DISABLE_CBG
     if (peekSequence(CurlyBracketsGroup::INITIATOR_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeCurlyBracketsGroup(input));
+        return mayfail_convert<WordStrictly_>(consumeCurlyBracketsGroup(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        CurlyBracketsGroup::RESERVED_CHARACTERS
-    });
     #ifndef DISABLE_DOLLARS_CBG
     auto dollars_cbg_seq = vec_concat({Sequence{'$'}, CurlyBracketsGroup::INITIATOR_SEQUENCE});
     if (peekSequence(dollars_cbg_seq, input)) {
         input.ignore(1); // $
-        auto dollars_cbg = consumeCurlyBracketsGroupStrictly(input);
+        auto dollars_cbg = consumeCurlyBracketsGroup(input);
         dollars_cbg.val._dollars = true;
         if (!dollars_cbg.has_error()) {
             dollars_cbg.val._tokenLen += 1; // $
         }
-        return mayfail_cast<Word_>(consumeCurlyBracketsGroup(dollars_cbg, input));
+        return mayfail_convert<WordStrictly_>(dollars_cbg);
     }
     #endif
     #endif
 
     #ifndef DISABLE_QUOT
     if (peekSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeQuotation(input));
+        return mayfail_convert<WordStrictly_>(consumeQuotation(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        Quotation::SINGLELINE_RESERVED_CHARACTERS
-    });
     #ifndef DISABLE_MULTILINE_QUOT
     if (peekSequence(Quotation::ALT_DELIMITERS_SEQUENCE, input)) {
-        return mayfail_cast<Word_>(consumeMultilineQuotation(input));
+        return mayfail_convert<WordStrictly_>(consumeMultilineQuotation(input));
     }
-    terminatorCharacters = vec_union({
-        terminatorCharacters,
-        Quotation::MULTILINE_RESERVED_CHARACTERS
-    });
     #endif
     #endif
 
     /* Atom is the "fall-through" Word */
-    return mayfail_cast<Word_>(consumeAtom(terminatorCharacters, input));
+    return mayfail_convert<WordStrictly_>(consumeAtom(terminatorCharacters, input));
+}
+
+MayFail<Word_> consumeWord(std::istringstream& input) {
+    std::vector<char> terminatorCharacters;
+    auto word = consumeWordStrictly(/*OUT*/terminatorCharacters, input);
+
+    if (word.has_error()) {
+        return MayFail<Word_>(variant_cast(word.val), word.err);
+    }
+
+    /* look behind */
+
+    auto accumulatedPostfixLeftPart = std::visit(overload{
+        [](Atom* atom) -> PostfixLeftPart {return atom;},
+        [](Quotation* quot) -> PostfixLeftPart {return quot;},
+        [](auto* mf_) -> PostfixLeftPart {return move_to_heap(unwrap(*mf_));},
+    }, word.value());
+
+    for (;;) {
+        #ifndef DISABLE_PPG
+        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
+            auto ppg = consumePostfixParenthesesGroup(/*OUT*/accumulatedPostfixLeftPart, input);
+            if (ppg.has_error()) {
+                return mayfail_convert<Word_>(ppg); // malformed postfix
+            }
+            continue;
+        }
+        #endif
+
+        #ifndef DISABLE_PSBG
+        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+            auto psbg = consumePostfixSquareBracketsGroup(/*OUT*/accumulatedPostfixLeftPart, input);
+            if (psbg.has_error()) {
+                return mayfail_convert<Word_>(psbg); // malformed postfix
+            }
+            continue;
+        }
+        #endif
+
+        #ifndef DISABLE_PATH
+        if (peekSequence(Path::SEPARATOR_SEQUENCE, input)) {
+            auto path = consumePath(/*OUT*/accumulatedPostfixLeftPart, terminatorCharacters, input);
+            if (path.has_error()) {
+                return mayfail_convert<Word_>(path); // malformed postfix
+            }
+            continue;
+        }
+        #endif
+
+        break;
+    }
+
+    #ifndef DISABLE_ASSOC
+    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
+        auto assoc = consumeAssociation(accumulatedPostfixLeftPart, input);
+        return mayfail_convert<Word_>(assoc); /*
+            early return assoc (malformed or not).
+            Association can contain a PostfixLeftPart..
+            .., but not the other way around! (precedence rule)
+        */
+    }
+    #endif
+
+    return std::visit(overload{
+        [](Atom* atom) -> Word_ {return atom;},
+        [](Quotation* quot) -> Word_ {return quot;},
+        [](auto* other) -> Word_ {return move_to_heap(wrap(*other));},
+    }, accumulatedPostfixLeftPart);
 }
 
 ///////////////////////////////////////////////////////////
@@ -160,11 +239,6 @@ Word as_word(const Term& term) {
                                          // ..about all words
     return word;
 }
-
-/*
-    for the (un)wrappers to work we not only need..
-    ..Postfixes/Assoc interfaces, but their impl as well
-*/
 
 ProgramWord unwrap_pw(const ProgramWord_& pw_) {
     return std::visit(overload{

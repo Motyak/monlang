@@ -4,9 +4,6 @@
 
 /* impl only */
 #include <monlang/ast/ProgramSentence.h>
-#include <monlang/PostfixParenthesesGroup.h>
-#include <monlang/PostfixSquareBracketsGroup.h>
-#include <monlang/Association.h>
 
 #include <utils/loop-utils.h>
 #include <utils/variant-utils.h>
@@ -24,7 +21,7 @@ const std::vector<char> ParenthesesGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(TERMINATOR_SEQUENCE).value(),
 };
 
-MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istringstream& input) {
+MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroup(std::istringstream& input) {
     TRACE_CUR_FUN();
     RECORD_INPUT_STREAM_PROGRESS();
     std::vector<char> terminatorCharacters = {
@@ -74,58 +71,6 @@ MayFail<MayFail_<ParenthesesGroup>> consumeParenthesesGroupStrictly(std::istring
     auto pg = MayFail_<ParenthesesGroup>{terms};
     pg._tokenLen = GET_INPUT_STREAM_PROGRESS();
     return pg;
-}
-
-consumeParenthesesGroup_RetType consumeParenthesesGroup(std::istringstream& input) {
-    auto pg = consumeParenthesesGroupStrictly(input);
-
-    if (pg.has_error()) {
-        return mayfail_convert<MayFail_<ParenthesesGroup>*>(pg);
-    }
-
-    /* look behind */
-
-    using PostfixLeftPart = std::variant<ParenthesesGroup*, PostfixParenthesesGroup*, PostfixSquareBracketsGroup*>;
-    PostfixLeftPart accumulatedPostfixLeftPart = move_to_heap((ParenthesesGroup)pg);
-
-    for (;;) {
-        #ifndef DISABLE_PPG_IN_PG
-        if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
-            auto ppg = consumePostfixParenthesesGroup(&accumulatedPostfixLeftPart, input);
-            if (ppg.has_error()) {
-                return ppg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        #ifndef DISABLE_PSBG_IN_PG
-        if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
-            auto psbg = consumePostfixSquareBracketsGroup(&accumulatedPostfixLeftPart, input);
-            if (psbg.has_error()) {
-                return psbg; // malformed postfix
-            }
-            continue;
-        }
-        #endif
-
-        break;
-    }
-
-    #ifndef DISABLE_ASSOC_IN_PG
-    if (peekSequence(Association::SEPARATOR_SEQUENCE, input)) {
-        return consumeAssociation(accumulatedPostfixLeftPart, input); /*
-            early return assoc (malformed or not).
-            Association can contain a PostfixLeftPart..
-            .., but not the other way around! (precedence rule)
-        */
-    }
-    #endif
-
-    return std::visit(
-        [](auto word) -> consumeParenthesesGroup_RetType {return move_to_heap(wrap(*word));},
-        accumulatedPostfixLeftPart
-    );
 }
 
 ///////////////////////////////////////////////////////////

@@ -43,7 +43,7 @@ MayFail_<SquareBracketsTerm>::MayFail_(const SquareBracketsTerm& sbt) {
 }
 
 MayFail_<SquareBracketsTerm>::operator SquareBracketsTerm() const {
-    auto sbt = SquareBracketsTerm{(Term)term.value()};
+    auto sbt = SquareBracketsTerm{(Term)term};
     sbt._tokenLen = this->_tokenLen;
     return sbt;
 }

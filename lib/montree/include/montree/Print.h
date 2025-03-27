@@ -30,6 +30,7 @@ class Print : public AstVisitor_<void> {
     void operator()(Atom*);
     void operator()(MayFail_<PostfixSquareBracketsGroup>*);
     void operator()(MayFail_<PostfixParenthesesGroup>*);
+    void operator()(MayFail_<Path>*);
     void operator()(MayFail_<Association>*);
 
     void operator()(auto); // fall-through
