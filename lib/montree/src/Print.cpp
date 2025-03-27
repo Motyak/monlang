@@ -15,6 +15,7 @@
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
 #include <monlang/PostfixParenthesesGroup.h>
+#include <monlang/Path.h>
 #include <monlang/Association.h>
 
 #include <utils/nb-utils.h>
@@ -210,29 +211,6 @@ void Print::operator()(const MayFail<Word_>& word) {
 
 ///////////////////////////////////////////////////////////////
 
-void Print::operator()(Quotation* quot) {
-    auto quotedLines = split(quot->quoted, "\n");
-    ASSERT (quotedLines.size() > 0);
-    output("Quotation: `", quotedLines[0].c_str(), "`");
-    if (quotedLines.size() > 1) {
-        output(" (", INT2CSTR(quotedLines.size() - 1), " more ");
-        output(quotedLines.size() > 2? "lines" : "line", ")");
-        currIndent++;
-        for (auto it = quotedLines.begin() + 1; it != quotedLines.end(); ++it) {
-            outputLine();
-            output("-> `", it->c_str(), "`");
-        }
-        currIndent--;
-    }
-    outputLine();
-
-    if (curWord.has_error()) {
-        currIndent++;
-        outputLine("~> ", SERIALIZE_ERR(curWord));
-        currIndent--;
-    }
-}
-
 void Print::operator()(MayFail_<SquareBracketsTerm>* sbt) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
@@ -384,6 +362,29 @@ void Print::operator()(MayFail_<CurlyBracketsGroup>* cbg) {
     currIndent--;
 }
 
+void Print::operator()(Quotation* quot) {
+    auto quotedLines = split(quot->quoted, "\n");
+    ASSERT (quotedLines.size() > 0);
+    output("Quotation: `", quotedLines[0].c_str(), "`");
+    if (quotedLines.size() > 1) {
+        output(" (", INT2CSTR(quotedLines.size() - 1), " more ");
+        output(quotedLines.size() > 2? "lines" : "line", ")");
+        currIndent++;
+        for (auto it = quotedLines.begin() + 1; it != quotedLines.end(); ++it) {
+            outputLine();
+            output("-> `", it->c_str(), "`");
+        }
+        currIndent--;
+    }
+    outputLine();
+
+    if (curWord.has_error()) {
+        currIndent++;
+        outputLine("~> ", SERIALIZE_ERR(curWord));
+        currIndent--;
+    }
+}
+
 void Print::operator()(Atom* atom) {
     outputLine("Atom: `", atom->value.c_str(), "`");
     if (curWord.has_error()) {
@@ -424,6 +425,24 @@ void Print::operator()(MayFail_<PostfixParenthesesGroup>* ppg) {
 
     currIndent++;
     operator()(mayfail_convert<Word_>(ppg->rightPart));
+    currIndent--;
+
+    numbering = savedStack;
+}
+
+void Print::operator()(MayFail_<Path>* path) {
+    outputLine("Path");
+
+    auto savedStack = numbering;
+    /* add `Word: ` prefix in tree */
+    numbering = std::stack<int>({NO_NUMBERING});
+
+    currIndent++;
+    operator()(MayFail(wrap_w(variant_cast(path->leftPart))));
+    currIndent--;
+
+    currIndent++;
+    operator()(mayfail_convert<Word_>(path->rightPart));
     currIndent--;
 
     numbering = savedStack;

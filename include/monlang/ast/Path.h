@@ -3,7 +3,7 @@
 
 #include <monlang/ast/_PostfixLeftPart.h>
 #include <monlang/ast/Atom.h>
-#include <monlang/common.h>
+#include <monlang/ast/common.h>
 
 using PathLeftPart = PostfixLeftPart;
 

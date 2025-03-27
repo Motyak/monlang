@@ -203,3 +203,42 @@ TEST_CASE ("postfix sbg off of singleline quot", "[test-3318][postfix]") {
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("path off of an atom", "[test-3319][postfix]") {
+    auto input = "a.b";
+
+    auto expect = tommy_str(R"EOF(
+       |-> Path
+       |  -> Word: Atom: `a`
+       |  -> Atom: `b`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+//==============================================================
+// ERR
+//==============================================================
+
+TEST_CASE ("ERR path into non-atom", "[test-3320][postfix][err]") {
+    auto input = "a.(b)";
+
+    auto expect = tommy_str(R"EOF(
+       |~> Path
+       |  -> Word: Atom: `a`
+       |  ~> Atom: ``
+       |    ~> ERR-992
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeWord(input_iss);
+    auto output_word = mayfail_cast<ProgramWord_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}

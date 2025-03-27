@@ -22,6 +22,7 @@ const std::vector<char> Path::RESERVED_CHARACTERS = {
 Malformed<Malformed_<Path>>
 consumePath(PostfixLeftPart& accumulatedPostfixLeftPart, const std::vector<char>& terminatorCharacters, std::istringstream& input) {
     RECORD_INPUT_STREAM_PROGRESS();
+    input.ignore(1); // .
     auto whats_right_behind = consumeAtom(terminatorCharacters, input);
 
     if (whats_right_behind.has_error()) {
