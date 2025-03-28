@@ -3,13 +3,7 @@
 #include <monlang/common.h>
 
 /* require knowing all words for token_len() */
-#include <monlang/ast/Atom.h>
-#include <monlang/ast/Quotation.h>
-#include <monlang/ast/ParenthesesGroup.h>
-#include <monlang/ast/CurlyBracketsGroup.h>
-#include <monlang/ast/PostfixParenthesesGroup.h>
-#include <monlang/ast/Path.h>
-#include <monlang/ast/Association.h>
+#include <monlang/ast/token_len.h>
 
 #include <utils/mem-utils.h>
 

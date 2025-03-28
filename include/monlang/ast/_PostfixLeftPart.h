@@ -1,3 +1,7 @@
+/*
+    standalone header, no .cpp
+*/
+
 #ifndef AST_POSTFIX_LEFT_PART_H
 #define AST_POSTFIX_LEFT_PART_H
 
