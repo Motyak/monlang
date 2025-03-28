@@ -15,12 +15,12 @@ DEPFLAGS = -MMD -MP -MF .deps/$*.d
 DEPFLAGS_TEST = -MMD -MP -MF .deps/test/$*.d
 ARFLAGS = D -M < <(tools/aggregate-libs.mri.sh $@ $^); :
 
-BUILD_LIBS_ONCE ?= x # disable by passing `BUILD_LIBS_ONCE=`
 TRACE ?= # enable by passing `TRACE=x`
 DISABLE_WORDS ?= # e.g.: DISABLE_WORDS=SBG,
-DISABLE_POSTFIXES ?= # e.g.: DISABLE_POSTFIXES=PG_IN_ATOM,
-DISABLE_ASSOCS ?= # e.g.: DISABLE_ASSOCS=ATOM,
+DISABLE_POSTFIXES ?= # disable by passing `DISABLE_POSTFIXES=x`
+DISABLE_ASSOCS ?= # disable by passing `DISABLE_ASSOCS=x`
 DISABLE_SPECIAL_ATOMS ?= # disable by passing `DISABLE_SPECIAL_ATOMS=x`
+DISABLE_DOLLARS_CBG ?= # disable by passing `DISABLE_DOLLARS_CBG=x`
 
 ifdef CLANG
 CXX := ccache clang++
@@ -118,7 +118,6 @@ lib/libs.a: $$(libs)
 ## aggregate all test lib (.o, .a) into one static lib ##
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_libs)
-# when BUILD_LIBS_ONCE is unset => we always enter this recipe
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 
@@ -129,7 +128,7 @@ lib/catch2/obj/catch_amalgamated.o:
 
 ## compiles our own lib used for testing (montree) ##
 test_libs += lib/montree/dist/montree.a
-$(if $(and $(call not,$(BUILD_LIBS_ONCE)),$(call askmake, lib/montree)), \
+$(if $(call askmake, lib/montree), \
 	.PHONY: lib/montree/dist/montree.a)
 lib/montree/dist/montree.a:
 	$(MAKE) -C lib/montree dist

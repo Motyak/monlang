@@ -107,11 +107,6 @@ Disable certain words in consumeWord(..) functions:
 Restore default value (enable all words):
   -> make -B obj/Word.o DISABLE_WORDS=
 
-Disable certain composed words in consumeAtom(..) functions:
-  -> make -B obj/Atom.o DISABLE_POSTFIXES=SBG_IN_ATOM,PG_IN_ATOM,
-Restore default value for Atom (enable all postfixes in Atom):
-  -> make -B obj/Atom.o DISABLE_POSTFIXES=
-
 Restore default value everywhere:
   -> make -B main TRACE= DISABLE_WORDS= DISABLE_POSTFIXES= DISABLE_ASSOCS= DISABLE_SPECIAL_ATOMS= DISABLE_DOLLARS_CBG=
 
@@ -119,7 +114,7 @@ Restore default value everywhere:
 
 A more convenient way to pass the same set of parameters to each build command is to add them in the make alias in env.sh.
 e.g.:
-`local EXTRA_ARGS="-j16 BUILD_LIBS_ONCE= DISABLE_WORDS=PG,SBG, DISABLE_POSTFIXES=PSBG_IN_ATOM"`
+`local EXTRA_ARGS="-j16 DISABLE_WORDS=PG,SBG, DISABLE_POSTFIXES=x"`
 
 Despite having "persisted" some parameters, it will remain possible to use a parameter default value by appending `DISABLE_WORDS=` for instance into the build command (the last set values will be taken into account).
   -> make DISABLE_WORDS=PG -B Word.o DISABLE_WORDS=
