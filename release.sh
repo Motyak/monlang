@@ -11,20 +11,29 @@ export BASH_XTRACEFD=9
 trap '{ echo RELEASE FAILED, trace was saved in /tmp/monlang_trace.txt; } 9>/dev/null' ERR
 set -o xtrace
 
-rm -rf dist/monlang-LV1; mkdir -p $_
+[ "$1" == "-B" ] && rm -rf .release
+mkdir -p dist/monlang-LV1 .release/monlang 
 
 ## package objects (in background job) ##
-ar rcsvD dist/monlang-LV1.a "${@:-obj/**/*.o}" & package_proc_id=$!
+if [ "$1" == "-B" ]; then
+    ar rcsvD dist/monlang-LV1.a obj/**/*.o & package_proc_id=$!
+else
+    ar rcsvD dist/monlang-LV1.a ${@:-obj/**/*.o} & package_proc_id=$!
+fi
 
 ## copy public header files ##
-cp -r include/monlang/* -t dist/monlang-LV1/
-for header in dist/monlang-LV1/**/*.h; do
-    perl -i -pe 's/<monlang\//<monlang-LV1\//g' $header;
+updated_headers="$(rsync -rc --out-format='%f' include/monlang/ .release/monlang/ | grep '.h$' || true)"
+for header in $updated_headers; do
+    target_file=${header/include\/monlang/dist\/monlang-LV1}
+    mkdir -p ${target_file%/*}
+    cp $header $target_file
+    perl -i -pe 's/<monlang\//<monlang-LV1\//g' $target_file
 done
 
 ## add LV1:: namespace for each entity in public ast/ headers ##
 cd dist/monlang-LV1/ast
 for header in [A-Z]*.h; do
+    grep -q "^include/monlang/ast/${header}$" <<< "$updated_headers" || continue
     camelcase_entity_name=${header%.h*}
     uppercase_entity_name=$(
         cat <<< $camelcase_entity_name \
@@ -44,7 +53,9 @@ cat <<'EOF'
 namespace LV1 { using ProgramWord = ::ProgramWord; }
 EOF
 )
-perl -i -pe 's/(#endif \/\/ AST_WORD_H)/'"$added_code"'\n\n$1/' $word_h
+grep -q "^${word_h/dist\/monlang-LV1/include\/monlang}$" <<< "$updated_headers" && {
+    perl -i -pe 's/(#endif \/\/ AST_WORD_H)/'"$added_code"'\n\n$1/' $word_h
+}
 
 ## add LV1:: namespace for Ast in public ast/visitor.h ##
 visitor_h=dist/monlang-LV1/ast/visitors/visitor.h
@@ -53,7 +64,9 @@ cat <<'EOF'
 namespace LV1 { using Ast = ::Ast; }
 EOF
 )
-perl -i -pe 's/(#endif \/\/ AST_VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+grep -q "^${visitor_h/dist\/monlang-LV1/include\/monlang}$" <<< "$updated_headers" && {
+    perl -i -pe 's/(#endif \/\/ AST_VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+}
 
 ## add LV1:: namespace for Ast_ in public visitor.h ##
 visitor_h=dist/monlang-LV1/visitors/visitor.h
@@ -62,8 +75,12 @@ cat <<'EOF'
 namespace LV1 { using Ast_ = ::Ast_; }
 EOF
 )
-perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+grep -q "^${visitor_h/dist\/monlang-LV1/include\/monlang}$" <<< "$updated_headers" && {
+    perl -i -pe 's/(#endif \/\/ VISITOR_H)/'"$added_code"'\n\n$1/' $visitor_h
+}
 
 wait $package_proc_id
+
+echo -e "\nupdated headers:\n${updated_headers:-<none>}\n"
 
 echo RELEASE DONE

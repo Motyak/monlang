@@ -1,4 +1,5 @@
 .deps
+.release
 bin
 obj
 dist
