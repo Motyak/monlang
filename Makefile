@@ -75,7 +75,7 @@ clean:
 	$(RM) obj/* .deps/*
 
 mrproper:
-	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_ARTIFACT_DIRS)
+	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_ARTIFACT_DIRS) .release
 
 .PHONY: all main test dist clean mrproper
 
