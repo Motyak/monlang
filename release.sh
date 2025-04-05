@@ -22,7 +22,7 @@ else
 fi
 
 ## copy public header files ##
-updated_headers="$(rsync -rc --out-format='%f' include/monlang/ .release/monlang/ | grep '.h$' || true)"
+updated_headers="$(rsync -rc --out-format='%f' include/monlang/ .release/monlang/ | { grep '.h$' || true; })"
 for header in $updated_headers; do
     target_file=${header/include\/monlang/dist\/monlang-LV1}
     mkdir -p ${target_file%/*}
