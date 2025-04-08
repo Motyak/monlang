@@ -1,3 +1,10 @@
+.git/info/exclude
+  -> après avoir créé les liens symboliques,
+     pour pas que git fasse chier
+	 (tout en gardant les fichiers originaux sur le repo)
+
+---
+
 TODO
 
 - refactor l'algo de chaque entité (consumeXXX(..))

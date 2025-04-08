@@ -21,6 +21,7 @@ DISABLE_POSTFIXES ?= # disable by passing `DISABLE_POSTFIXES=x`
 DISABLE_ASSOCS ?= # disable by passing `DISABLE_ASSOCS=x`
 DISABLE_SPECIAL_ATOMS ?= # disable by passing `DISABLE_SPECIAL_ATOMS=x`
 DISABLE_DOLLARS_CBG ?= # disable by passing `DISABLE_DOLLARS_CBG=x`
+DISABLE_PSBG_SUFFICES ?= # disable by passing `DISABLE_PSBG_SUFFIX=x`
 
 ifdef CLANG
 CXX := ccache clang++
@@ -88,7 +89,7 @@ mrproper:
 ###########################################################
 
 macros = # filled by below makefile inclusion
-include handle_macros.mk # uses $(TRACE) $(DISABLE_WORDS) $(DISABLE_POSTFIXES) $(DISABLE_ASSOCS)
+include handle_macros.mk # uses $(TRACE) $(DISABLE_WORDS) $(DISABLE_POSTFIXES) $(DISABLE_ASSOCS) ..
 
 $(ENTITY_OBJS) $(VISITOR_OBJS): obj/%.o: src/%.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(DEPFLAGS) $(macros)

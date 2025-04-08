@@ -2,11 +2,13 @@
 #include <montree/montree.h>
 #include <catch2/catch_amalgamated.hpp>
 
+#include <monlang/ProgramSentence.h>
 #include <monlang/Word.h>
 #include <monlang/SquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Quotation.h>
+#include <monlang/PostfixSquareBracketsGroup.h>
 
 ////////////////////////////////////////////////////////////////
 
@@ -220,6 +222,35 @@ TEST_CASE ("path off of an atom", "[test-3319][postfix]") {
     auto output_word = mayfail_cast<ProgramWord_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("psbg suffices", "[test-3321][postfix]") {
+    using PostfixSquareBracketsGroup::Suffix::NONE;
+    using PostfixSquareBracketsGroup::Suffix::EXCLAMATION_MARK;
+    using PostfixSquareBracketsGroup::Suffix::QUESTION_MARK;
+
+    auto input = "a[a] b[b]! c[c]?";
+
+    auto input_iss = std::istringstream(input);
+    auto output = consumeProgramSentence(input_iss);
+    REQUIRE (output.val.programWords.size() == 3);
+    {
+        REQUIRE (std::holds_alternative<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[0].val)));
+        auto psbg = *std::get<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[0].val));
+        REQUIRE (psbg._suffix == NONE);
+    }
+    {
+        REQUIRE (std::holds_alternative<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[1].val)));
+        auto psbg = *std::get<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[1].val));
+        REQUIRE (psbg._suffix == EXCLAMATION_MARK);
+    }
+    {
+        REQUIRE (std::holds_alternative<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[2].val)));
+        auto psbg = *std::get<PostfixSquareBracketsGroup*>(unwrap_pw(output.val.programWords[2].val));
+        REQUIRE (psbg._suffix == QUESTION_MARK);
+    }
 }
 
 //==============================================================

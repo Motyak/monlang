@@ -9,9 +9,12 @@
 // this "entity" would never be returned if left part was Malformed
 template <>
 struct MayFail_<PostfixSquareBracketsGroup> {
+    using Suffix = PostfixSquareBracketsGroup::Suffix;
+
     PostfixLeftPart leftPart; // never Malformed, by design
     MayFail<MayFail_<SquareBracketsGroup>> rightPart;
 
+    Suffix _suffix = Suffix::NONE;
     size_t _tokenLen = 0;
     explicit MayFail_(const PostfixLeftPart&, const MayFail<MayFail_<SquareBracketsGroup>>&);
 

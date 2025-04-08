@@ -171,6 +171,14 @@ MayFail<Word_> consumeWord(std::istringstream& input) {
         #ifndef DISABLE_PSBG
         if (peekSequence(SquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
             auto psbg = consumePostfixSquareBracketsGroup(/*OUT*/accumulatedPostfixLeftPart, input);
+            #ifndef DISABLE_PSBG_SUFFICES
+            using Sx = PostfixSquareBracketsGroup::Suffix;
+            if (peekAnyChar({Sx::EXCLAMATION_MARK, Sx::QUESTION_MARK}, input)) {
+                auto& psbg = *std::get<PostfixSquareBracketsGroup*>(accumulatedPostfixLeftPart);
+                psbg._suffix = Sx(input.get());
+                psbg._tokenLen += 1; // ! | ?
+            }
+            #endif
             if (psbg.has_error()) {
                 return mayfail_convert<Word_>(psbg); // malformed postfix
             }
