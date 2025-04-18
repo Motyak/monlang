@@ -8,5 +8,6 @@
 %/Word.o: word_macros += $(if $(DISABLE_SPECIAL_ATOMS), -D DISABLE_SPECIAL_ATOMS)
 %/Word.o: word_macros += $(if $(DISABLE_DOLLARS_CBG), -D DISABLE_DOLLARS_CBG)
 %/Word.o: word_macros += $(if $(DISABLE_PSBG_SUFFICES), -D DISABLE_PSBG_SUFFICES)
+%/Word.o: word_macros += $(if $(DISABLE_ATOM_QUOT), -D DISABLE_ATOM_QUOT)
 
 macros = $(strip $(trace_macro) $(word_macros))

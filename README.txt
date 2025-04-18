@@ -108,7 +108,7 @@ Restore default value (enable all words):
   -> make -B obj/Word.o DISABLE_WORDS=
 
 Restore default value everywhere:
-  -> make -B main TRACE= DISABLE_WORDS= DISABLE_POSTFIXES= DISABLE_ASSOCS= DISABLE_SPECIAL_ATOMS= DISABLE_DOLLARS_CBG=
+  -> make -B main
 
 ---
 

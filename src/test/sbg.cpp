@@ -16,7 +16,7 @@ TEST_CASE ("empty square brackets group", "[test-4311][sbg]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -34,7 +34,7 @@ TEST_CASE ("one one-word term in square brackets group", "[test-4312][sbg]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -54,7 +54,7 @@ TEST_CASE ("two one-word terms in square brackets group", "[test-4313][sbg]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -73,7 +73,7 @@ TEST_CASE ("one two-words term in square brackets group", "[test-4314][sbg]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -95,7 +95,7 @@ TEST_CASE ("two two-words terms in square brackets group", "[test-4315][sbg]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -114,7 +114,7 @@ TEST_CASE ("ERR missing sbg initiator", "[test-4316][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -131,7 +131,7 @@ TEST_CASE ("ERR premature EOF", "[test-4317][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -150,7 +150,7 @@ TEST_CASE ("ERR empty term", "[test-4318][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -170,7 +170,7 @@ TEST_CASE ("ERR trailing continuator in term", "[test-4319][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -189,7 +189,7 @@ TEST_CASE ("ERR missing continuator", "[test-4320][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -210,7 +210,7 @@ TEST_CASE ("ERR empty second term", "[test-4321][sbg][err]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeSquareBracketsGroup(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }

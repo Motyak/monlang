@@ -15,7 +15,7 @@ TEST_CASE ("empty (singleline) quotation", "[test-5311][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -31,7 +31,7 @@ TEST_CASE ("singleline quotation", "[test-5312][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -50,7 +50,7 @@ TEST_CASE ("singleline quotation with escape sequences", "[test-5312][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -72,7 +72,7 @@ TEST_CASE ("multiline quotation", "[test-5313][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeMultilineQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -92,7 +92,7 @@ TEST_CASE ("empty multiline quotation", "[test-5314][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeMultilineQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -112,7 +112,41 @@ TEST_CASE ("trailing backslash in multiline quotation", "[test-5315][quot]") {
 
     auto input_iss = std::istringstream(input);
     auto output = consumeMultilineQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("atom quot", "[test-5316][quot]") {
+    auto input = tommy_str(R"EOF(
+        'somevalue
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |-> Quotation: `somevalue`
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
+    auto output_str = montree::astToString(output_word);
+    REQUIRE (output_str == expect);
+}
+
+////////////////////////////////////////////////////////////////
+
+TEST_CASE ("empty atom quot", "[test-5317][quot]") {
+    auto input = tommy_str(R"EOF(
+        '
+    )EOF");
+
+    auto expect = tommy_str(R"EOF(
+       |-> Quotation: ``
+    )EOF");
+
+    auto input_iss = std::istringstream(input);
+    auto output_word = consumeWord(input_iss);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -134,7 +168,7 @@ TEST_CASE ("ERR MultilineQuotation expect indented/empty newline after initiator
 
     auto input_iss = std::istringstream(input);
     auto output = consumeMultilineQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }
@@ -155,7 +189,7 @@ TEST_CASE ("ERR MultilineQuotation line has wrong indentation", "[test-5332][quo
 
     auto input_iss = std::istringstream(input);
     auto output = consumeMultilineQuotation(input_iss);
-    auto output_word = mayfail_convert<ProgramWord_>(output);
+    auto output_word = mayfail_convert<Word_>(output);
     auto output_str = montree::astToString(output_word);
     REQUIRE (output_str == expect);
 }

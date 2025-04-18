@@ -22,6 +22,7 @@ DISABLE_ASSOCS ?= # disable by passing `DISABLE_ASSOCS=x`
 DISABLE_SPECIAL_ATOMS ?= # disable by passing `DISABLE_SPECIAL_ATOMS=x`
 DISABLE_DOLLARS_CBG ?= # disable by passing `DISABLE_DOLLARS_CBG=x`
 DISABLE_PSBG_SUFFICES ?= # disable by passing `DISABLE_PSBG_SUFFIX=x`
+DISABLE_ATOM_QUOT ?= # disable by passing `DISABLE_ATOM_QUOT=x`
 
 ifdef CLANG
 CXX := ccache clang++

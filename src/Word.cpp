@@ -22,6 +22,8 @@
 #include <utils/variant-utils.h>
 #include <utils/assert-utils.h>
 
+#define unless(x) if(!(x))
+
 namespace {
     using WordStrictly_ = std::variant<
         Atom*,
@@ -126,6 +128,8 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
     #endif
     #endif
 
+    auto atom = consumeAtom(terminatorCharacters, input);
+
     #ifndef DISABLE_QUOT
     if (peekSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeQuotation(input));
@@ -135,10 +139,22 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
         return mayfail_convert<WordStrictly_>(consumeMultilineQuotation(input));
     }
     #endif
+    #ifndef DISABLE_ATOM_QUOT
+    auto atom_quot_prefix = '\'';
+    /* breakable block */ for (int i = 1; i <= 1; ++i)
+    {
+        unless (!atom.has_error()) break;
+        ASSERT (atom.val.value.size() > 0);
+        unless (atom.val.value[0] == atom_quot_prefix) break;
+        auto atom_quot = Quotation{atom.val.value.substr(1)};
+        atom_quot._tokenLen = atom.val.value.size();
+        return (WordStrictly_)move_to_heap(atom_quot);
+    }
+    #endif
     #endif
 
     /* Atom is the "fall-through" Word */
-    return mayfail_convert<WordStrictly_>(consumeAtom(terminatorCharacters, input));
+    return mayfail_convert<WordStrictly_>(atom);
 }
 
 MayFail<Word_> consumeWord(std::istringstream& input) {
