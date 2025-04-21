@@ -40,6 +40,7 @@ Atom \
 Quotation \
 SquareBracketsTerm \
 SquareBracketsGroup \
+MultilineSquareBracketsGroup \
 ParenthesesGroup \
 CurlyBracketsGroup \
 PostfixSquareBracketsGroup \
@@ -59,7 +60,7 @@ TEST_DEPS := $(TEST_FILENAMES:%=.deps/test/%.d)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
-LIB_ARTIFACT_DIRS := ${foreach lib,${wildcard lib/*/},$(lib:%/=%)/{.deps,obj,dist,bin}} # for cleaning
+LIB_ARTIFACT_DIRS := ${foreach lib,${wildcard lib/*/},$(lib:%/=%)/{.deps,obj,dist,bin}}# for cleaning
 
 ###########################################################
 

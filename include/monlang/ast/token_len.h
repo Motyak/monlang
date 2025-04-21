@@ -21,6 +21,7 @@
 #include <monlang/ast/SquareBracketsTerm.h>
 #include <monlang/ast/ParenthesesGroup.h>
 #include <monlang/ast/SquareBracketsGroup.h>
+#include <monlang/ast/MultilineSquareBracketsGroup.h>
 #include <monlang/ast/CurlyBracketsGroup.h>
 #include <monlang/ast/PostfixParenthesesGroup.h>
 #include <monlang/ast/PostfixSquareBracketsGroup.h>

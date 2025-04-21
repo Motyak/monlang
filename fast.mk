@@ -48,6 +48,7 @@ PostfixSquareBracketsGroup \
 Program \
 ProgramSentence \
 SquareBracketsGroup \
+MultilineSquareBracketsGroup \
 SquareBracketsTerm \
 Term \
 Word \
@@ -65,7 +66,7 @@ TEST_OBJS = $(TEST_FILENAMES:%=obj/test/%.o)
 TEST_BINS := $(TEST_FILENAMES:%=bin/test/%.elf)
 
 LIB_INCLUDE_DIRS := $(foreach lib,$(wildcard lib/*/),$(lib:%/=%)/include)
-LIB_ARTIFACT_DIRS := ${foreach lib,${wildcard lib/*/},$(lib:%/=%)/{.deps,obj,dist,bin}} # for cleaning
+LIB_ARTIFACT_DIRS := ${foreach lib,${wildcard lib/*/},$(lib:%/=%)/{.deps,obj,dist,bin}}# for cleaning
 
 ###########################################################
 

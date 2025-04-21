@@ -9,11 +9,9 @@
 #include <utils/variant-utils.h>
 #include <utils/vec-utils.h>
 
-#include <algorithm>
-
-const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE = {'['};
+const Sequence SquareBracketsGroup::INITIATOR_SEQUENCE __attribute__((init_priority(3000))) = {'['};
 const Sequence SquareBracketsGroup::CONTINUATOR_SEQUENCE = {',', SPACE};
-const Sequence SquareBracketsGroup::TERMINATOR_SEQUENCE = {']'};
+const Sequence SquareBracketsGroup::TERMINATOR_SEQUENCE __attribute__((init_priority(3000))) = {']'};
 
 const std::vector<char> SquareBracketsGroup::RESERVED_CHARACTERS = {
     sequenceFirstChar(INITIATOR_SEQUENCE).value(),

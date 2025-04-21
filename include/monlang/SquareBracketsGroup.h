@@ -5,9 +5,7 @@
 
 #include <monlang/Term.h>
 
-struct PostfixSquareBracketsGroup;
-
-template<>
+template <>
 struct MayFail_<SquareBracketsGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 

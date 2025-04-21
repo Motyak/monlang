@@ -17,6 +17,7 @@
 41 CurlyBracketsGroup
 42 ParenthesesGroup
 43 SquareBracketsGroup
+44 MultilineSquareBracketsGroup
 
 51 CurlyBracketsTerm
 52 SquareBracketsTerm
@@ -42,6 +43,9 @@ xyz -> custom error (refer to manual)
 
 412 multiline CurlyBracketsGroup expect indented/empty newline after initiator
 413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
+
+441 MultilineSquareBracketsGroup expect indented/empty newline after initiator
+442 MultilineSquareBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
 
 521 SquareBracketsTerm cannot be empty
 

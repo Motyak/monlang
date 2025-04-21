@@ -16,7 +16,7 @@
 
 const Sequence ProgramSentence::TAB_SEQUENCE = {{SPACE, 4_}};
 const Sequence ProgramSentence::CONTINUATOR_SEQUENCE = {SPACE};
-const Sequence ProgramSentence::TERMINATOR_SEQUENCE = {NEWLINE};
+const Sequence ProgramSentence::TERMINATOR_SEQUENCE __attribute__((init_priority(3000))) = {NEWLINE};
 
 const std::vector<char> ProgramSentence::RESERVED_CHARACTERS = {
     sequenceFirstChar(TAB_SEQUENCE).value(),

@@ -8,13 +8,15 @@ struct Quotation;
 struct SquareBracketsTerm;
 struct ParenthesesGroup;
 struct SquareBracketsGroup;
+struct MultilineSquareBracketsGroup;
 struct CurlyBracketsGroup;
 struct PostfixParenthesesGroup;
 struct PostfixSquareBracketsGroup;
 struct Path;
 struct Association;
 
-#define GROUP_ENTITIES ParenthesesGroup*, SquareBracketsGroup*, CurlyBracketsGroup*
+#define GROUP_ENTITIES ParenthesesGroup*, SquareBracketsGroup* \
+        , CurlyBracketsGroup*, MultilineSquareBracketsGroup*
 #define POSTFIXES PostfixParenthesesGroup*, PostfixSquareBracketsGroup*
 
 using ProgramWord = std::variant<

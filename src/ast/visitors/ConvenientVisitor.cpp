@@ -6,6 +6,7 @@
 #include <monlang/ast/SquareBracketsTerm.h>
 #include <monlang/ast/ParenthesesGroup.h>
 #include <monlang/ast/SquareBracketsGroup.h>
+#include <monlang/ast/MultilineSquareBracketsGroup.h>
 #include <monlang/ast/CurlyBracketsGroup.h>
 #include <monlang/ast/PostfixParenthesesGroup.h>
 #include <monlang/ast/PostfixSquareBracketsGroup.h>
@@ -61,6 +62,12 @@ void ConvenientVisitor<void>::operator()(ParenthesesGroup* pg) {
 void ConvenientVisitor<void>::operator()(SquareBracketsGroup* sbg) {
     for (auto term: sbg->terms) {
         operator()(term);
+    }
+}
+
+void ConvenientVisitor<void>::operator()(MultilineSquareBracketsGroup* msbg) {
+    for (auto sentence: msbg->sentences) {
+        operator()(sentence);
     }
 }
 

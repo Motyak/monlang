@@ -11,6 +11,7 @@
 #include <monlang/Quotation.h>
 #include <monlang/SquareBracketsTerm.h>
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/MultilineSquareBracketsGroup.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/PostfixSquareBracketsGroup.h>
@@ -269,6 +270,38 @@ void Print::operator()(MayFail_<SquareBracketsGroup>* sbg) {
     currIndent--;
 }
 
+void Print::operator()(MayFail_<MultilineSquareBracketsGroup>* msbg) {
+    auto curWord_ = curWord;
+    outputLine("MultilineSquareBracketsGroup");
+    currIndent++;
+
+    if (msbg->sentences.size() > 1) {
+        for (int n : range(msbg->sentences.size(), 0)) {
+            numbering.push(n);
+        }
+    } else {
+        numbering.push(NO_NUMBERING);
+    }
+
+    if (msbg->sentences.size() == 0) {
+        ASSERT(curWord_.has_error());
+        outputLine("~> ", SERIALIZE_ERR(curWord_));
+    } else {
+        int nb_of_malformed_sentences = 0;
+        for (auto sentence : msbg->sentences) {
+            if (sentence.has_error()) {
+                nb_of_malformed_sentences++;
+            }
+            operator()(sentence);
+        }
+        if (nb_of_malformed_sentences == 0 && curWord_.has_error()) {
+            outputLine("~> ", SERIALIZE_ERR(curWord_));
+        }
+    }
+
+    currIndent--;
+}
+
 void Print::operator()(MayFail_<ParenthesesGroup>* pg) {
     auto curWord_ = curWord; // backup because it gets overriden by `handleTerm`..
                              // ..(which calls operator()(Word))
@@ -468,10 +501,6 @@ void Print::operator()(MayFail_<Association>* assoc) {
     currIndent--;
 
     numbering = savedStack;
-}
-
-void Print::operator()(auto) {
-    outputLine("<ENTITY NOT IMPLEMENTED YET>");
 }
 
 ///////////////////////////////////////////////////////////////

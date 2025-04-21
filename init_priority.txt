@@ -1,0 +1,24 @@
+
+Some translation unit initialize constants with static storage duration
+    (e.g.: a class static const variable).
+  -> it's performed at runtime because the type of the variables isn't trivial (e.g.: Sequence)
+In rare occasions, a translation unit constant may depend on the value of a constant
+    from ANOTHER translation unit (e.g.: the MSBG init seq is SBG init seq + sentence term seq).
+
+Problem: C++ "static initialization order problem": the linker has no way to know that he needs
+    to initialize the dependencies first, and linking may be done in different uncontrollable
+    settings (if someone wants to link against some of its code, he shouldn't bother about
+    the order of the linking)
+
+Solutions:
+  -> The only solution I found that both solve the linking order once and for all
+     AND doesn't change the existing API for my codebase, is to specify the linking
+     order with GCC attribute "init_priority".
+
+---
+
+At the moment, the intialization dependencies are the following:
+
+[init_priority(6000)] MultilineSquareBracketsGroup::INITIATOR_SEQUENCE
+<depends on>
+[init_priority(3000)] SquareBracketsGroup::INITIATOR_SEQUENCE, ProgramSentence::TERMINATOR_SEQUENCE

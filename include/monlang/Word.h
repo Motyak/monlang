@@ -5,7 +5,8 @@
 
 #include <monlang/common.h>
 
-#define GROUP_ENTITIES_ MayFail_<ParenthesesGroup>*, MayFail_<SquareBracketsGroup>*, MayFail_<CurlyBracketsGroup>*
+#define GROUP_ENTITIES_ MayFail_<ParenthesesGroup>*, MayFail_<SquareBracketsGroup>* \
+        , MayFail_<CurlyBracketsGroup>*, MayFail_<MultilineSquareBracketsGroup>*
 #define POSTFIXES_ MayFail_<PostfixParenthesesGroup>*, MayFail_<PostfixSquareBracketsGroup>*
 
 using ProgramWord_ = std::variant<

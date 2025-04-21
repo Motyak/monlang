@@ -5,6 +5,8 @@
 #include "sbg.cpp" // SquareBracketsGroup/Term/Word..
                    // .., covers ParenthesesGroup as well
 
+#include "msbg.cpp" // MultilineSquareBracketsGroup
+
 #include "cbg.cpp" // CurlyBracketsGroup
 
 #include "postfix.cpp" // PostfixSquareBracketsGroup..

@@ -7,6 +7,7 @@
 #include <monlang/SquareBracketsTerm.h>
 #include <monlang/ParenthesesGroup.h>
 #include <monlang/SquareBracketsGroup.h>
+#include <monlang/MultilineSquareBracketsGroup.h>
 #include <monlang/CurlyBracketsGroup.h>
 #include <monlang/Atom.h>
 #include <monlang/Quotation.h>
@@ -68,6 +69,9 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
         #if !defined DISABLE_SBG || !defined DISABLE_PSBG
         SquareBracketsGroup::RESERVED_CHARACTERS,
         #endif
+        #ifndef DISABLE_MSBG
+        MultilineSquareBracketsGroup::RESERVED_CHARACTERS,
+        #endif
         #ifndef DISABLE_CBG
         CurlyBracketsGroup::RESERVED_CHARACTERS,
         #endif
@@ -101,6 +105,12 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
     #ifndef DISABLE_PG
     if (peekSequence(ParenthesesGroup::INITIATOR_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeParenthesesGroup(input));
+    }
+    #endif
+
+    #ifndef DISABLE_MSBG
+    if (peekSequence(MultilineSquareBracketsGroup::INITIATOR_SEQUENCE, input)) {
+        return mayfail_convert<WordStrictly_>(consumeMultilineSquareBracketsGroup(input));
     }
     #endif
 

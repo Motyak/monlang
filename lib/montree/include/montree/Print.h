@@ -24,6 +24,7 @@ class Print : public AstVisitor_<void> {
 
     void operator()(MayFail_<SquareBracketsTerm>*);
     void operator()(MayFail_<SquareBracketsGroup>*);
+    void operator()(MayFail_<MultilineSquareBracketsGroup>*);
     void operator()(MayFail_<ParenthesesGroup>*);
     void operator()(MayFail_<CurlyBracketsGroup>*);
     void operator()(Quotation*);
@@ -32,8 +33,6 @@ class Print : public AstVisitor_<void> {
     void operator()(MayFail_<PostfixParenthesesGroup>*);
     void operator()(MayFail_<Path>*);
     void operator()(MayFail_<Association>*);
-
-    void operator()(auto); // fall-through
 
   private:
     static constexpr int NO_NUMBERING = -1;
