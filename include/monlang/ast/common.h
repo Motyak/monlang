@@ -51,4 +51,17 @@ void set_token_len(const std::variant<Targs...>& entityVariant, size_t tokenLen)
     );
 }
 
+template <typename... Targs>
+size_t token_id(const std::variant<Targs...>& entityVariant) {
+    return std::visit(
+        [](auto* entity){return entity->_tokenId;},
+        entityVariant
+    );
+}
+
+template <typename T>
+size_t token_id(const T& entity) {
+    return entity._tokenId;
+}
+
 #endif // AST_COMMON_H
