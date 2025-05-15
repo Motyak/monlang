@@ -89,6 +89,7 @@ MayFail_<MultilineSquareBracketsGroup>::MayFail_(const MultilineSquareBracketsGr
 
     this->sentences = sentences;
     this->_tokenLen = msbg._tokenLen;
+    this->_tokenId = msbg._tokenId;
 }
 
 MayFail_<MultilineSquareBracketsGroup>::operator MultilineSquareBracketsGroup() const {
@@ -99,5 +100,6 @@ MayFail_<MultilineSquareBracketsGroup>::operator MultilineSquareBracketsGroup() 
 
     auto msbg = MultilineSquareBracketsGroup{sentences};
     msbg._tokenLen = this->_tokenLen;
+    msbg._tokenId = this->_tokenId;
     return msbg;
 }

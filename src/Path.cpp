@@ -52,11 +52,13 @@ MayFail_<Path>::MayFail_(const Path& path) {
     this->leftPart = path.leftPart;
     this->rightPart = path.rightPart;
     this->_tokenLen = path._tokenLen;
+    this->_tokenId = path._tokenId;
 }
 
 MayFail_<Path>::operator Path() const {
     auto path = Path{leftPart, (Atom)rightPart};
     path._tokenLen = this->_tokenLen;
+    path._tokenId = this->_tokenId;
     return path;
 }
 

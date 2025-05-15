@@ -16,6 +16,7 @@ struct CurlyBracketsGroup : public Program {
     std::optional<Term> term;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     bool _dollars = false;
     CurlyBracketsGroup() = default;
     CurlyBracketsGroup(const std::vector<ProgramSentence>&);

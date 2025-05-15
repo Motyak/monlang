@@ -35,12 +35,18 @@ MayFail<MayFail_<Program>> consumeProgram(std::istringstream& input) {
 
 ///////////////////////////////////////////////////////////
 
+Program::Program(const std::vector<ProgramSentence>& sentences) : sentences(sentences){}
+
 MayFail_<Program>::MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>& sentences) : sentences(sentences){}
 
 MayFail_<Program>::MayFail_(const Program& prog) {
     this->sentences = vec_cast<MayFail<MayFail_<ProgramSentence>>>(prog.sentences);
+    this->_tokenId = prog._tokenId;
 }
 
 MayFail_<Program>::operator Program() const {
-    return Program{vec_cast<ProgramSentence>(sentences)};
+    auto sentences = vec_cast<ProgramSentence>(this->sentences);
+    auto prog = Program{sentences};
+    prog._tokenId = this->_tokenId;
+    return prog;
 }

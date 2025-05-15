@@ -13,6 +13,7 @@ struct MayFail_<PostfixParenthesesGroup> {
     MayFail<MayFail_<ParenthesesGroup>> rightPart;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     explicit MayFail_(const PostfixLeftPart&, const MayFail<MayFail_<ParenthesesGroup>>&);
 
     explicit MayFail_(const PostfixParenthesesGroup&);

@@ -47,11 +47,13 @@ MayFail_<PostfixSquareBracketsGroup>::MayFail_(const PostfixSquareBracketsGroup&
     this->rightPart = MayFail_<SquareBracketsGroup>(psbg.rightPart);
     this->_suffix = psbg._suffix;
     this->_tokenLen = psbg._tokenLen;
+    this->_tokenId = psbg._tokenId;
 }
 
 MayFail_<PostfixSquareBracketsGroup>::operator PostfixSquareBracketsGroup() const {
     auto psbg = PostfixSquareBracketsGroup{leftPart, (SquareBracketsGroup)rightPart};
     psbg._suffix = this->_suffix;
     psbg._tokenLen = this->_tokenLen;
+    psbg._tokenId = this->_tokenId;
     return psbg;
 }

@@ -40,10 +40,12 @@ MayFail_<SquareBracketsTerm>::MayFail_(const MayFail<MayFail_<Term>>& term) : te
 MayFail_<SquareBracketsTerm>::MayFail_(const SquareBracketsTerm& sbt) {
     this->term = MayFail_<Term>(sbt.term);
     this->_tokenLen = sbt._tokenLen;
+    this->_tokenId = sbt._tokenId;
 }
 
 MayFail_<SquareBracketsTerm>::operator SquareBracketsTerm() const {
     auto sbt = SquareBracketsTerm{(Term)term};
     sbt._tokenLen = this->_tokenLen;
+    sbt._tokenId = this->_tokenId;
     return sbt;
 }

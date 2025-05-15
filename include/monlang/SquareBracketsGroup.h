@@ -10,6 +10,7 @@ struct MayFail_<SquareBracketsGroup> {
     std::vector<MayFail<MayFail_<Term>>> terms;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<MayFail_<Term>>>&);
 

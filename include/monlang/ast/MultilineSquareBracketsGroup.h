@@ -11,6 +11,7 @@ struct MultilineSquareBracketsGroup {
     std::vector<ProgramSentence> sentences;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     MultilineSquareBracketsGroup() = default;
     MultilineSquareBracketsGroup(const std::vector<ProgramSentence>&);
 };

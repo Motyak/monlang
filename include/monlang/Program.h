@@ -10,6 +10,8 @@ template<>
 struct MayFail_<Program> {
     std::vector<MayFail<MayFail_<ProgramSentence>>> sentences;
 
+    size_t _tokenId = 123456789;
+
     MayFail_() = default;
     explicit MayFail_(const std::vector<MayFail<MayFail_<ProgramSentence>>>&);
 

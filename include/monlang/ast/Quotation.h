@@ -14,6 +14,7 @@ struct Quotation {
     std::string quoted;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
 
     Quotation() = default;
     Quotation(const std::string&);

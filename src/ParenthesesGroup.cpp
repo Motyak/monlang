@@ -82,10 +82,12 @@ MayFail_<ParenthesesGroup>::MayFail_(const std::vector<MayFail<MayFail_<Term>>>&
 MayFail_<ParenthesesGroup>::MayFail_(const ParenthesesGroup& pg) {
     this->terms = vec_cast<MayFail<MayFail_<Term>>>(pg.terms);
     this->_tokenLen = pg._tokenLen;
+    this->_tokenId = pg._tokenId;
 }
 
 MayFail_<ParenthesesGroup>::operator ParenthesesGroup() const {
     auto ppg = ParenthesesGroup{vec_cast<Term>(terms)};
     ppg._tokenLen = this->_tokenLen;
+    ppg._tokenId = this->_tokenId;
     return ppg;
 }

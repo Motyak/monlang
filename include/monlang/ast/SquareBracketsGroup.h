@@ -12,6 +12,7 @@ struct SquareBracketsGroup {
     std::vector<Term> terms;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     SquareBracketsGroup() = default;
     SquareBracketsGroup(const std::vector<Term>&);
 };

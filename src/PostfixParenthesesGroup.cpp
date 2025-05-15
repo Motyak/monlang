@@ -46,11 +46,13 @@ MayFail_<PostfixParenthesesGroup>::MayFail_(const PostfixParenthesesGroup& ppg) 
     this->leftPart = ppg.leftPart;
     this->rightPart = MayFail_<ParenthesesGroup>(ppg.rightPart);
     this->_tokenLen = ppg._tokenLen;
+    this->_tokenId = ppg._tokenId;
 }
 
 MayFail_<PostfixParenthesesGroup>::operator PostfixParenthesesGroup() const {
     auto ppg = PostfixParenthesesGroup{leftPart, (ParenthesesGroup)rightPart};
     ppg._tokenLen = this->_tokenLen;
+    ppg._tokenId = this->_tokenId;
     return ppg;
 }
 

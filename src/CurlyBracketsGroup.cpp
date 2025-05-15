@@ -120,6 +120,7 @@ MayFail_<CurlyBracketsGroup>::MayFail_(const CurlyBracketsGroup& cbg) {
         this->term = wrap(*cbg.term);
     }
     this->_tokenLen = cbg._tokenLen;
+    this->_tokenId = cbg._tokenId;
     this->_dollars = cbg._dollars;
 }
 
@@ -132,6 +133,7 @@ MayFail_<CurlyBracketsGroup>::operator CurlyBracketsGroup() const {
         cbg.term = unwrap(this->term->value());
     }
     cbg._tokenLen = this->_tokenLen;
+    cbg._tokenId = this->_tokenId;
     cbg._dollars = this->_dollars;
     return cbg;
 }

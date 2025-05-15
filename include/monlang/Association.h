@@ -14,6 +14,7 @@ struct MayFail_<Association> {
     MayFail<Word_> rightPart;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     explicit MayFail_(const AssociationLeftPart&, const MayFail<Word_>&);
 
     explicit MayFail_(const Association&);

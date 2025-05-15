@@ -147,6 +147,7 @@ MayFail_<ProgramSentence>::MayFail_(const ProgramSentence& sentence) {
     this->_tokenIndentSpaces = sentence._tokenIndentSpaces;
     this->_tokenLen = sentence._tokenLen;
     this->_tokenTrailingNewlines = sentence._tokenTrailingNewlines;
+    this->_tokenId = sentence._tokenId;
 }
 
 MayFail_<ProgramSentence>::operator ProgramSentence() const {
@@ -159,5 +160,6 @@ MayFail_<ProgramSentence>::operator ProgramSentence() const {
     sentence._tokenIndentSpaces = this->_tokenIndentSpaces;
     sentence._tokenLen = this->_tokenLen;
     sentence._tokenTrailingNewlines = this->_tokenTrailingNewlines;
+    sentence._tokenId = this->_tokenId;
     return sentence;
 }

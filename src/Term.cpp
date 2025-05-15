@@ -88,6 +88,7 @@ MayFail_<Term>::MayFail_(const Term& term) {
     }
     this->words = res;
     this->_tokenLen = term._tokenLen;
+    this->_tokenId = term._tokenId;
 }
 
 MayFail_<Term>::operator Term() const {
@@ -97,5 +98,6 @@ MayFail_<Term>::operator Term() const {
     }
     auto term = Term{words};
     term._tokenLen = this->_tokenLen;
+    term._tokenId = this->_tokenId;
     return term;
 }

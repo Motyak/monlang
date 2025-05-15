@@ -39,10 +39,12 @@ MayFail_<Association>::MayFail_(const Association& assoc) {
     this->leftPart = assoc.leftPart;
     this->rightPart = wrap_w(assoc.rightPart);
     this->_tokenLen = assoc._tokenLen;
+    this->_tokenId = assoc._tokenId;
 }
 
 MayFail_<Association>::operator Association() const {
     auto assoc = Association{leftPart, unwrap_w(rightPart.value())};
     assoc._tokenLen = this->_tokenLen;
+    assoc._tokenId = this->_tokenId;
     return assoc;
 }

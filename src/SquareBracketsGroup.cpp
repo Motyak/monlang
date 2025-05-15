@@ -80,10 +80,12 @@ MayFail_<SquareBracketsGroup>::MayFail_(const std::vector<MayFail<MayFail_<Term>
 MayFail_<SquareBracketsGroup>::MayFail_(const SquareBracketsGroup& sbg) {
     this->terms = vec_cast<MayFail<MayFail_<Term>>>(sbg.terms);
     this->_tokenLen = sbg._tokenLen;
+    this->_tokenId = sbg._tokenId;
 }
 
 MayFail_<SquareBracketsGroup>::operator SquareBracketsGroup() const {
     auto sbg = SquareBracketsGroup{vec_cast<Term>(terms)};
     sbg._tokenLen = this->_tokenLen;
+    sbg._tokenId = this->_tokenId;
     return sbg;
 }

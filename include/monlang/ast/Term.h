@@ -11,6 +11,7 @@ struct Term {
     std::vector<Word> words;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     Term() = default;
     Term(const std::vector<Word>&);
     explicit Term(const Word&); // syntax-sugar for `as_term(word)`

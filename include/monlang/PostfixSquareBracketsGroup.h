@@ -16,6 +16,7 @@ struct MayFail_<PostfixSquareBracketsGroup> {
 
     Suffix _suffix = Suffix::NONE;
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     explicit MayFail_(const PostfixLeftPart&, const MayFail<MayFail_<SquareBracketsGroup>>&);
 
     explicit MayFail_(const PostfixSquareBracketsGroup&);

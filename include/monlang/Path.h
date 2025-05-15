@@ -11,6 +11,7 @@ struct MayFail_<Path> {
     MayFail<Atom> rightPart;
 
     size_t _tokenLen = 0;
+    size_t _tokenId = 123456789;
     explicit MayFail_(const PathLeftPart&, const MayFail<Atom>&);
 
     explicit MayFail_(const Path&);
