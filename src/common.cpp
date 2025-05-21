@@ -20,7 +20,7 @@ Quantifier::operator int() const {
     return n;
 }
 
-Quantifier operator "" _(unsigned long long int n) {
+Quantifier operator ""_(unsigned long long int n) {
     ASSERT(n <= std::numeric_limits<int>::max());
     return Quantifier{int(n)};
 }

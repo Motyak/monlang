@@ -14,7 +14,7 @@ struct Quantifier {
     explicit Quantifier(int);
     operator int() const; // accessor
 };
-Quantifier operator "" _(unsigned long long int);
+Quantifier operator ""_(unsigned long long int);
 
 struct CharacterAppearance {
     char c;
