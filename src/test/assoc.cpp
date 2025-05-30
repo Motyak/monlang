@@ -54,13 +54,9 @@ TEST_CASE ("atom with namespace subscript", "[test-2113][assoc]") {
     auto expect = tommy_str(R"EOF(
        |-> Program
        |  -> ProgramSentence #1
-       |    -> ProgramWord #1: Association
-       |      -> Word: Atom: `fds::`
-       |      -> Word: Atom: `sdf`
+       |    -> ProgramWord #1: Atom: `fds:::sdf`
        |    -> ProgramWord #2: Atom: `fds::::sdf`
-       |    -> ProgramWord #3: Association
-       |      -> Word: Atom: `fds::::`
-       |      -> Word: Atom: `sdf`
+       |    -> ProgramWord #3: Atom: `fds:::::sdf`
        |  -> ProgramSentence #2
        |    -> ProgramWord: Association
        |      -> Word: Atom: `fds::sdf`

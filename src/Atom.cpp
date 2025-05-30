@@ -23,11 +23,17 @@ MayFail<Atom> consumeAtom(const std::vector<char>& terminatorCharacters, std::is
     if (peekSequence({':', ':'}, input)) {
         value += input.get(); // :
         value += input.get(); // :
+        while (input.peek() == ':') {
+            value += input.get(); // :
+        }
         value += consumeAtom(terminatorCharacters, input).val.value;
     }
     if (peekSequence({'.', '.'}, input)) {
         value += input.get(); // .
         value += input.get(); // .
+        while (input.peek() == '.') {
+            value += input.get(); // .
+        }
         value += consumeAtom(terminatorCharacters, input).val.value;
     }
 
