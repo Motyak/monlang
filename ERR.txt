@@ -1,0 +1,55 @@
+ERR-041 missing CurlyBracketsGroup initiator
+ERR-042 missing ParenthesesGroup initiator
+ERR-043 missing SquareBracketsGroup initiator
+ERR-044 missing MultilineSquareBracketsGroup initiator
+ERR-052 missing SquareBracketsTerm initiator
+ERR-053 missing Quotation initiator
+ERR-054 missing MultilineQuotation initiator
+
+ERR-102 missing ProgramSentence continuator
+ERR-103 missing Term continuator
+ERR-119 malformed sub-element in Program
+ERR-120 missing ProgramSentence terminator
+ERR-121 ProgramSentence can't start with a continuator (hit leading continuator)
+ERR-122 ProgramSentence continuator must precede a word (hit trailing continuator)
+ERR-123 ProgramSentence has wrong indentation
+* ERR-125 ProgramSentence cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF before calling `consumeProgramSentence`
+ERR-129 malformed sub-element in ProgramSentence
+ERR-131 Term can't start with a continuator (leading continuator met)
+ERR-135 Term cannot be empty (hit early EOF)
+ERR-139 malformed sub-element in Term
+
+ERR-219 malformed sub-element in Association
+ERR-229 malformed sub-element in Path
+
+ERR-319 malformed sub-element in PostfixParenthesesGroup
+ERR-329 malformed sub-element in PostfixSquareBracketsGroup
+
+ERR-402 missing ParenthesesGroup continuator
+ERR-403 missing SquareBracketsGroup continuator
+ERR-410 missing CurlyBracketsGroup terminator
+ERR-412 multiline CurlyBracketsGroup expect indented/empty newline after initiator
+ERR-413 multiline CurlyBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
+ERR-419 malformed sub-element in CurlyBracketsGroup
+ERR-420 missing ParenthesesGroup terminator
+ERR-429 malformed sub-element in ParenthesesGroup
+ERR-430 missing SquareBracketsGroup terminator
+ERR-439 malformed sub-element in SquareBracketsGroup
+ERR-440 missing MultilineSquareBracketsGroup terminator
+ERR-441 MultilineSquareBracketsGroup expect indented/empty newline after initiator
+ERR-442 MultilineSquareBracketsGroup must contain at least one sentence (encountered block with empty lines exclusively)
+ERR-449 malformed sub-element in MultilineSquareBracketsGroup
+
+ERR-510 missing CurlyBracketsTerm terminator
+ERR-519 malformed sub-element in CurlyBracketsTerm
+ERR-521 SquareBracketsTerm cannot be empty
+ERR-529 malformed sub-element in SquareBracketsTerm
+ERR-530 missing Quotation terminator
+ERR-540 missing MultilineQuotation terminator
+ERR-541 MultilineQuotation expect indented/empty newline after initiator
+ERR-542 MultilineQuotation line has wrong indentation
+
+ERR-992 Atom cannot be empty (hit a reserved character)
+* ERR-995 Atom cannot be empty (hit early EOF)
+      => `consumeProgram` checks for EOF way before...
