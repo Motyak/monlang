@@ -121,7 +121,7 @@ ProgramSentence::operator Term() const {
         words.push_back(get_word(pw));
     }
     auto res = Term{words};
-    res._tokenLen = this->_tokenLen - 1;
+    res._tokenLen = this->_tokenLen;
     return res;
 }
 
