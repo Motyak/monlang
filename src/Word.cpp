@@ -138,8 +138,6 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
     #endif
     #endif
 
-    auto atom = consumeAtom(terminatorCharacters, input);
-
     #ifndef DISABLE_QUOT
     if (peekSequence(Quotation::DELIMITERS_SEQUENCE, input)) {
         return mayfail_convert<WordStrictly_>(consumeQuotation(input));
@@ -149,6 +147,9 @@ static MayFail<WordStrictly_> consumeWordStrictly(std::vector<char>& terminatorC
         return mayfail_convert<WordStrictly_>(consumeMultilineQuotation(input));
     }
     #endif
+
+    auto atom = consumeAtom(terminatorCharacters, input);
+
     #ifndef DISABLE_ATOM_QUOT
     auto atom_quot_prefix = '\'';
     /* breakable block */ for (int i = 1; i <= 1; ++i)
