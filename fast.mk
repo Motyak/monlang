@@ -21,7 +21,7 @@ DISABLE_POSTFIXES ?= # disable by passing `DISABLE_POSTFIXES=x`
 DISABLE_ASSOCS ?= # disable by passing `DISABLE_ASSOCS=x`
 DISABLE_SPECIAL_ATOMS ?= # disable by passing `DISABLE_SPECIAL_ATOMS=x`
 DISABLE_DOLLARS_CBG ?= # disable by passing `DISABLE_DOLLARS_CBG=x`
-DISABLE_PSBG_SUFFICES ?= # disable by passing `DISABLE_PSBG_SUFFIX=x`
+DISABLE_PSBG_SUFFICES ?= # disable by passing `DISABLE_PSBG_SUFFICES=x`
 DISABLE_ATOM_QUOT ?= # disable by passing `DISABLE_ATOM_QUOT=x`
 
 ifdef CLANG
@@ -39,19 +39,21 @@ endif
 ###########################################################
 
 ENTITIES := \
-Association \
-Atom \
-CurlyBracketsGroup \
-ParenthesesGroup \
-PostfixParenthesesGroup \
-PostfixSquareBracketsGroup \
 Program \
 ProgramSentence \
-SquareBracketsGroup \
-MultilineSquareBracketsGroup \
-SquareBracketsTerm \
 Term \
 Word \
+Atom \
+Quotation \
+SquareBracketsTerm \
+SquareBracketsGroup \
+MultilineSquareBracketsGroup \
+ParenthesesGroup \
+CurlyBracketsGroup \
+PostfixSquareBracketsGroup \
+PostfixParenthesesGroup \
+Path \
+Association \
 
 ENTITY_OBJS := $(ENTITIES:%=obj/%.o) obj/common.o
 ENTITY_DEPS := $(ENTITIES:%=.deps/%.d) .deps/common.d
@@ -77,14 +79,14 @@ main: $(ENTITY_OBJS) $(VISITOR_OBJS)
 test: bin/test/all.elf
 	./run_tests.sh
 
-dist: main
-	./release.sh
+dist: $(ENTITY_OBJS) $(VISITOR_OBJS)
+	./release.sh $^
 
 clean:
 	$(RM) obj/* .deps/*
 
 mrproper:
-	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_ARTIFACT_DIRS)
+	$(RM) obj .deps bin dist lib/libs.a lib/test-libs.a $(LIB_ARTIFACT_DIRS) .release
 
 .PHONY: all main test dist clean mrproper
 
@@ -113,28 +115,28 @@ bin/test/all.elf: $$(TEST_OBJS) $(ENTITY_OBJS) lib/test-libs.a
 # libs
 ############################################################
 
-## aggregate all libs (.o, .a) into one static lib ##
+## aggregate all main code dependencies (.o, .a) into one static lib ##
 .SECONDEXPANSION:
 lib/libs.a: $$(libs)
 	$(AR) $(ARFLAGS) $@ $^
 
-## aggregate all test lib (.o, .a) into one static lib ##
+## aggregate all test code dependencies (.o, .a) into one static lib ##
 .SECONDEXPANSION:
 lib/test-libs.a: $$(test_libs)
 	$(if $(call shouldrebuild, $@, $^), \
 		$(AR) $(ARFLAGS) $@ $^)
 
-## compiles lib used for testing (catch2) ##
+## build lib used for testing (catch2) ##
 test_libs += lib/catch2/obj/catch_amalgamated.o
 lib/catch2/obj/catch_amalgamated.o:
 	$(MAKE) -C lib/catch2
 
-## compiles our own lib used for testing (montree) ##
+## build our own lib used for testing (montree) ##
 test_libs += lib/montree/dist/montree.a
 $(if $(call askmake, lib/montree), \
 	.PHONY: lib/montree/dist/montree.a)
 lib/montree/dist/montree.a:
-	$(MAKE) -C lib/montree dist
+	$(MAKE) -C lib/montree dist/montree.a
 
 ###########################################################
 
@@ -142,7 +144,7 @@ lib/montree/dist/montree.a:
 ${call shell_onrun, mkdir -p {.deps,obj,bin}/test {.deps,obj}/ast/visitors}
 
 ## debug settings ##
-$(call shell_onrun, [ ! -e bin/test/.gdbinit ] && cp .gdbinit bin/test/.gdbinit)
+$(call shell_onrun, [ -e bin/test/.gdbinit ] || cp .gdbinit bin/test/.gdbinit)
 $(call shell_onrun, grep -qs '^set auto-load safe-path /$$' ~/.gdbinit || echo "set auto-load safe-path /" >> ~/.gdbinit)
 
 ## shall not rely on these ##
