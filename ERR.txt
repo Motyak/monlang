@@ -1,10 +1,12 @@
-ERR-041 missing CurlyBracketsGroup initiator
-ERR-042 missing ParenthesesGroup initiator
-ERR-043 missing SquareBracketsGroup initiator
-ERR-044 missing MultilineSquareBracketsGroup initiator
-ERR-052 missing SquareBracketsTerm initiator
-ERR-053 missing Quotation initiator
-ERR-054 missing MultilineQuotation initiator
+* ERR-041 missing CurlyBracketsGroup initiator
+* ERR-042 missing ParenthesesGroup initiator
+* ERR-043 missing SquareBracketsGroup initiator
+* ERR-044 missing MultilineSquareBracketsGroup initiator
+* ERR-052 missing SquareBracketsTerm initiator
+* ERR-053 missing Quotation initiator
+* ERR-054 missing MultilineQuotation initiator
+*   => these can only occur when calling parseXXX directly
+       (not parseProgram)
 
 ERR-102 missing ProgramSentence continuator
 ERR-103 missing Term continuator
