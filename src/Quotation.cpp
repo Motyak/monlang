@@ -121,7 +121,9 @@ std::string consumeQuotedLine(std::istringstream& input) {
             escaped = false;
         }
         else if (currentChar == BACKSLASH) {
-            escaped = true;
+            // UPDATE 14/09/2025: we don't want any char escaping in a multiline quot
+            // escaped = true;
+            res += currentChar; //
         }
         else {
             res += currentChar;
